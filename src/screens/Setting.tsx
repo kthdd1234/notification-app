@@ -1,7 +1,11 @@
-import {NView} from '../components/styled';
+import {NText, NView} from '../components/styled';
 
 const SettingScreen = () => {
-  return <NView></NView>;
+  return (
+    <NView>
+      <NText>svg</NText>
+    </NView>
+  );
 };
 
 export default SettingScreen;

@@ -6,9 +6,11 @@ import {RecoilRoot} from 'recoil';
 import {RealmProvider} from '@realm/react';
 import {realmConfig} from './src/schema';
 import HomeScreen from './src/screens/Home';
-import AddScreen from './src/screens/Add';
+import NotificationScreen from './src/screens/Notification';
 import SettingScreen from './src/screens/Setting';
 import {NSafeAreaView} from './src/components/styled';
+import TaskScreen from './src/screens/Task';
+import './src/utils/i18n/i18n.config';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
@@ -22,19 +24,21 @@ const App = () => {
       name: 'HomeScreen',
       component: HomeScreen,
       headerShown: false,
-      hedaerTitle: null,
     },
     {
-      name: 'AddScreen',
-      component: AddScreen,
+      name: 'TaskScreen',
+      component: TaskScreen,
+      headerShown: false,
+    },
+    {
+      name: 'NotificationScreen',
+      component: NotificationScreen,
       headerShown: true,
-      hedaerTitle: undefined,
     },
     {
       name: 'SettingScreen',
       component: SettingScreen,
-      headerShown: true,
-      hedaerTitle: undefined,
+      headerShown: false,
     },
   ];
 
@@ -45,13 +49,12 @@ const App = () => {
           <GestureHandlerRootView style={style}>
             <NavigationContainer>
               <Navigator initialRouteName="HomeScreen">
-                {screens.map(({name, headerShown, hedaerTitle, component}) => (
+                {screens.map(({name, headerShown, component}) => (
                   <Screen
                     key={name}
                     name={name}
                     component={component}
                     options={{
-                      headerTitle: () => hedaerTitle,
                       headerShown: headerShown,
                       headerShadowVisible: false,
                       headerBackTitleVisible: false,

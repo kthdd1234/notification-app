@@ -1,7 +1,7 @@
 import {NView} from '../components/styled';
 
-const AddScreen = () => {
+const Task = () => {
   return <NView></NView>;
 };
 
-export default AddScreen;
+export default Task;

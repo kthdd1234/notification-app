@@ -1,29 +1,32 @@
-/* eslint-disable react/react-in-jsx-scope */
 import {NTouchableOpacity} from '../styled';
 import Calendar from '../../../assets/svgs/calendar.svg';
 import Task from '../../../assets/svgs/task.svg';
 import Setting from '../../../assets/svgs/setting.svg';
-
-export type TSvg = 'calendar' | 'task' | 'setting';
+import Warning from '../../../assets/svgs/cloud-warning.svg';
+import {eSvg} from '../../types/enum';
 
 interface IProps {
   /** */
-  svg: TSvg;
+  svg: eSvg;
   /** */
-  onPress: (type: TSvg) => void;
+  size: number;
+  /** */
+  onPress: (type: eSvg) => void;
 }
 
-const SvgButton = ({svg}: IProps) => {
-  const width = 50;
-  const height = 50;
-
+const SvgButton = ({size, svg, onPress}: IProps) => {
   const svgInfo = {
-    calendar: <Calendar width={width} height={height} />,
-    task: <Task width={width} height={height} />,
-    setting: <Setting width={width} height={height} />,
+    calendar: <Calendar width={size} height={size} />,
+    task: <Task width={size} height={size} />,
+    setting: <Setting width={size} height={size} />,
+    warning: <Warning width={size} height={size} />,
   };
 
-  return <NTouchableOpacity>{svgInfo[svg]}</NTouchableOpacity>;
+  return (
+    <NTouchableOpacity className="ml-4" onPress={() => onPress(svg)}>
+      {svgInfo[svg]}
+    </NTouchableOpacity>
+  );
 };
 
 export default SvgButton;

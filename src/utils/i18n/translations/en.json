@@ -1,0 +1,17 @@
+{
+  "알림": "Notification",
+  "빠른 알림": "Quick Notification",
+  "알림 종료": "End",
+  "알림 예정": "Schedule",
+  "뒤로": "Back",
+  "다음": "Next",
+  "오전/오후": "AM/PM",
+  "오전": "AM",
+  "오후": "PM",
+  "시": "Hour",
+  "분": "Minute",
+  "완료": "Done",
+  "삭제": "Delete",
+  "예정된 알림이 없어요": "There's no notification scheduled",
+  "+ 버튼을 눌러 알림을 추가해보세요": "+ Press button to add notification"
+}
