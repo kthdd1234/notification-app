@@ -9,22 +9,22 @@ export enum eNotificationTypes {
 
 export enum eTimestampTypes {
   /** */
-  Default,
+  Default = 'Default',
   /** */
-  EveryDay,
+  EveryDay = 'EveryDay',
   /** */
-  EveryWeek,
+  EveryWeek = 'EveryWeek',
 }
 
 export enum eIntervalTypes {
   /** */
-  Day,
+  Day = 'Day',
   /** */
-  Hour,
+  Hour = 'Hour',
   /** */
-  Minute,
+  Minute = 'Minute',
   /** */
-  Second,
+  Second = 'Second',
 }
 
 export enum eDays {
@@ -53,4 +53,6 @@ export enum eSvg {
   setting = 'setting',
   /** */
   warning = 'warning',
+  /** */
+  delete = 'delete',
 }

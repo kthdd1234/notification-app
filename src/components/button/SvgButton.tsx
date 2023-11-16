@@ -4,6 +4,8 @@ import Task from '../../../assets/svgs/task.svg';
 import Setting from '../../../assets/svgs/setting.svg';
 import Warning from '../../../assets/svgs/cloud-warning.svg';
 import {eSvg} from '../../types/enum';
+import Delete from '../../../assets/svgs/delete.svg';
+import React from 'react';
 
 interface IProps {
   /** */
@@ -11,19 +13,24 @@ interface IProps {
   /** */
   size: number;
   /** */
+  containerClassName?: string;
+  /** */
   onPress: (type: eSvg) => void;
 }
 
-const SvgButton = ({size, svg, onPress}: IProps) => {
+const SvgButton = ({size, svg, containerClassName, onPress}: IProps) => {
   const svgInfo = {
     calendar: <Calendar width={size} height={size} />,
     task: <Task width={size} height={size} />,
     setting: <Setting width={size} height={size} />,
     warning: <Warning width={size} height={size} />,
+    delete: <Delete width={size} height={size} />,
   };
 
   return (
-    <NTouchableOpacity className="ml-4" onPress={() => onPress(svg)}>
+    <NTouchableOpacity
+      className={containerClassName}
+      onPress={() => onPress(svg)}>
       {svgInfo[svg]}
     </NTouchableOpacity>
   );

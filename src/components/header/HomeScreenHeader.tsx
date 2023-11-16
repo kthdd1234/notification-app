@@ -1,3 +1,4 @@
+import React from 'react';
 import {eSvg} from '../../types/enum';
 import SvgButton from '../button/SvgButton';
 import {NView} from '../styled';
@@ -28,6 +29,7 @@ const HomeScreenHeader = ({navigation}) => {
           key={info.id}
           size={30}
           svg={info.id}
+          containerClassName="ml-4"
           onPress={info.onPress}
         />
       ))}

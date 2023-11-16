@@ -1,4 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
+import {useTranslation} from 'react-i18next';
 import {NText, NTouchableOpacity} from '../styled';
+import {eNotificationTypes} from '../../types/enum';
+import React from 'react';
 
 interface IProps {
   /** */
@@ -6,7 +10,9 @@ interface IProps {
   /** */
   name: string;
   /** */
-  roundedType: 'md' | '3xl';
+  type: eNotificationTypes;
+  /** */
+  roundedType: 'md' | 'full';
   /** */
   selectedId: string;
   /** */
@@ -15,26 +21,34 @@ interface IProps {
   onPress: (id: string) => void;
 }
 
+const {Timestamp, Interval} = eNotificationTypes;
+
 const SelectButton = ({
   id,
   name,
+  type,
   selectedId,
   roundedType,
   isGap,
   onPress,
 }: IProps) => {
+  /** useTranslation */
+  const {t} = useTranslation();
+
+  /** class */
+  const viewClass = id === selectedId ? 'bg-blue-500' : 'bg-gray-100';
+  const gapClass = {[Timestamp]: isGap && 'mx-2', [Interval]: isGap && 'mr-2'}[
+    type
+  ];
+  const textClass = id === selectedId ? 'text-white' : 'text-gray-400';
+  const roundedClass = `rounded-${roundedType}`;
+
   return (
     <NTouchableOpacity
-      className={`${id === selectedId ? 'bg-blue-500' : 'bg-gray-100'} ${
-        isGap && 'mx-2'
-      } items-center flex-grow p-4  rounded-${roundedType}`}
+      style={{borderRadius: 9999}}
+      className={`${viewClass} ${gapClass} ${roundedClass} items-center flex-grow p-4`}
       onPress={() => onPress(id)}>
-      <NText
-        className={`${
-          id === selectedId ? 'text-white' : 'text-gray-400'
-        } font-bold`}>
-        {name}
-      </NText>
+      <NText className={`${textClass} font-bold`}>{t(name)}</NText>
     </NTouchableOpacity>
   );
 };
