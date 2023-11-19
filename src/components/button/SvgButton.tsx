@@ -19,7 +19,7 @@ interface IProps {
 }
 
 const SvgButton = ({size, svg, containerClassName, onPress}: IProps) => {
-  const svgInfo = {
+  const svgs = {
     calendar: <Calendar width={size} height={size} />,
     task: <Task width={size} height={size} />,
     setting: <Setting width={size} height={size} />,
@@ -31,7 +31,7 @@ const SvgButton = ({size, svg, containerClassName, onPress}: IProps) => {
     <NTouchableOpacity
       className={containerClassName}
       onPress={() => onPress(svg)}>
-      {svgInfo[svg]}
+      {svgs[svg]}
     </NTouchableOpacity>
   );
 };

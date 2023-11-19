@@ -86,7 +86,6 @@
 		13B07FAE1A68108700A75B9A /* NotificationApp */ = {
 			isa = PBXGroup;
 			children = (
-				D3BAB3FC2AFF883400E28B6D /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -117,6 +116,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				D3CAF9442B09124600652AEB /* Fonts */,
 				13B07FAE1A68108700A75B9A /* NotificationApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* NotificationAppTests */,
@@ -149,11 +149,11 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		D3BAB3FC2AFF883400E28B6D /* Fonts */ = {
+		D3CAF9442B09124600652AEB /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
 			);
-			name = Fonts;
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -612,7 +612,6 @@
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
-					" ",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -690,7 +689,6 @@
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
-					" ",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",

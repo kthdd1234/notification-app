@@ -3,9 +3,9 @@ import {
   View,
   TouchableOpacity,
   SafeAreaView,
-  Image,
   ScrollView,
   TextInput,
+  Image,
 } from 'react-native';
 import {styled} from 'nativewind';
 import Video from 'react-native-video';

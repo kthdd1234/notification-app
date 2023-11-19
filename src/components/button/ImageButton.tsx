@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {NImage, NTouchableOpacity} from '../styled';
 
 interface IProps {
@@ -25,4 +25,4 @@ const ImageButton = ({
   );
 };
 
-export default ImageButton;
+export default memo(ImageButton);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -8,15 +8,42 @@ import {realmConfig} from './src/schema';
 import HomeScreen from './src/screens/Home';
 import NotificationScreen from './src/screens/Notification';
 import SettingScreen from './src/screens/Setting';
-import {NSafeAreaView} from './src/components/styled';
 import TaskScreen from './src/screens/Task';
+import PhotoScreen from './src/screens/Photo';
+import {languageCode} from './src/utils/i18n/i18n.config';
+import {calendarLocales} from './src/utils/constants';
+import {LocaleConfig} from 'react-native-calendars';
+import moment from 'moment';
 import './src/utils/i18n/i18n.config';
+import {requestPermissionNotification} from './src/utils/notifiee';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
 
 /** style */
 const style = {flex: 1};
+
+const {monthNames, monthNamesShort, dayNames, dayNamesShort, today} =
+  calendarLocales[languageCode];
+
+LocaleConfig.locales[languageCode] = {
+  monthNames: monthNames,
+  monthNamesShort: monthNamesShort,
+  dayNames: dayNames,
+  dayNamesShort: dayNamesShort,
+  today: today,
+};
+LocaleConfig.defaultLocale = languageCode;
+
+moment.locale(languageCode, {
+  months: monthNames,
+  monthsShort: monthNamesShort,
+  monthsParseExact: true,
+  weekdays: dayNames,
+  weekdaysShort: dayNamesShort,
+  weekdaysMin: dayNamesShort,
+  weekdaysParseExact: true,
+});
 
 const App = () => {
   const screens = [
@@ -33,40 +60,51 @@ const App = () => {
     {
       name: 'NotificationScreen',
       component: NotificationScreen,
-      headerShown: true,
+      headerShown: false,
     },
     {
       name: 'SettingScreen',
       component: SettingScreen,
       headerShown: false,
     },
+    {
+      name: 'PhotoScreen',
+      component: PhotoScreen,
+      headerShown: false,
+    },
   ];
 
+  useEffect(() => {
+    const req = async () => {
+      await requestPermissionNotification();
+    };
+    req();
+  }, []);
+
   return (
-    <NSafeAreaView className="h-full">
-      <RealmProvider {...realmConfig}>
-        <RecoilRoot>
-          <GestureHandlerRootView style={style}>
-            <NavigationContainer>
-              <Navigator initialRouteName="HomeScreen">
-                {screens.map(({name, headerShown, component}) => (
-                  <Screen
-                    key={name}
-                    name={name}
-                    component={component}
-                    options={{
-                      headerShown: headerShown,
-                      headerShadowVisible: false,
-                      headerBackTitleVisible: false,
-                    }}
-                  />
-                ))}
-              </Navigator>
-            </NavigationContainer>
-          </GestureHandlerRootView>
-        </RecoilRoot>
-      </RealmProvider>
-    </NSafeAreaView>
+    <RealmProvider {...realmConfig}>
+      <RecoilRoot>
+        <GestureHandlerRootView style={style}>
+          <NavigationContainer>
+            <Navigator initialRouteName="HomeScreen">
+              {screens.map(({name, headerShown, component}) => (
+                <Screen
+                  key={name}
+                  name={name}
+                  component={component}
+                  options={{
+                    headerShown: headerShown,
+                    headerShadowVisible: false,
+                    headerBackTitleVisible: false,
+                    animation: name === 'PhotoScreen' ? 'fade' : 'default',
+                  }}
+                />
+              ))}
+            </Navigator>
+          </NavigationContainer>
+        </GestureHandlerRootView>
+      </RecoilRoot>
+    </RealmProvider>
   );
 };
 

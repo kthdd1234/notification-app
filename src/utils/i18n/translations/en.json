@@ -13,5 +13,9 @@
   "완료": "Done",
   "삭제": "Delete",
   "예정된 알림이 없어요": "There's no notification scheduled",
-  "+ 버튼을 눌러 알림을 추가해보세요": "+ Press button to add notification"
+  "+ 버튼을 눌러 알림을 추가해보세요": "+ Press button to add notification",
+  "YYYY년 MM월": "MMMM YYYY",
+  "YYYY년 MM월 Do일 (dd)": "ddd, MMMM Do, YYYY",
+  "오전 {}시 {}분": "{}:{} AM",
+  "오후 {}시 {}분": "{}:{} PM"
 }

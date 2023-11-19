@@ -1,13 +1,13 @@
 import React from 'react';
-import {NText, NView} from '../components/styled';
+import {NSafeAreaView, NText, NView, NScrollView} from '../components/styled';
 import BellSvg from '../../assets/svgs/bell.svg';
 import NotificationSvg from '../../assets/svgs/notification.svg';
 import TimerSvg from '../../assets/svgs/timer.svg';
 import {FloatingAction} from 'react-native-floating-action';
 import Tag from '../components/tag';
 import {useTranslation} from 'react-i18next';
-import HomeScreenHeader from '../components/header/HomeScreenHeader';
-import {eNotificationTypes} from '../types/enum';
+import {eNotificationTypes, eSvg} from '../types/enum';
+import CommonHeader from '../components/header/CommonHeader';
 
 /** eNotificationTypes */
 const {Timestamp, Interval} = eNotificationTypes;
@@ -22,7 +22,19 @@ const HomeScreen = ({navigation}) => {
     });
   };
 
-  const actions = [
+  const onPressCalendar = () => {
+    //
+  };
+
+  const onPressTask = () => {
+    navigation.navigate('TaskScreen');
+  };
+
+  const onPressSetting = () => {
+    navigation.navigate('SettingScreen');
+  };
+
+  const floatingActions = [
     {
       text: t('간격 알림'),
       icon: <TimerSvg width={25} height={25} />,
@@ -43,16 +55,24 @@ const HomeScreen = ({navigation}) => {
     },
   ];
 
+  const headerActions = [
+    {id: eSvg.calendar, onPress: onPressCalendar},
+    {id: eSvg.task, onPress: onPressTask},
+    {id: eSvg.setting, onPress: onPressSetting},
+  ];
+
   return (
-    <NView className="h-full p-5 bg-white">
-      <HomeScreenHeader navigation={navigation} />
-      <NView className="flex-row items-end justify-between">
-        <NText className="text-3xl font-bold">{t('알림')}</NText>
-        <NView className="flex-row">
-          <Tag color="gray" text={t('알림 종료') + ' ' + '0'} />
-          <Tag color="blue" text={t('알림 예정') + ' ' + '0'} />
+    <NSafeAreaView className="relative h-full bg-white">
+      <CommonHeader actions={headerActions} />
+      <NScrollView className="p-4 bg-white">
+        <NView className="flex-row items-end justify-between ">
+          <NText className="text-3xl font-bold">{t('알림')}</NText>
+          <NView className="flex-row">
+            <Tag color="gray" text={t('알림 종료') + ' ' + '0'} />
+            <Tag color="blue" text={t('알림 예정') + ' ' + '0'} />
+          </NView>
         </NView>
-      </NView>
+      </NScrollView>
       <NView className="absolute left-0 right-0 m-auto top-1/2">
         <NView className="flex-col items-center justify-center bottom-5">
           <BellSvg />
@@ -66,10 +86,10 @@ const HomeScreen = ({navigation}) => {
       </NView>
       <FloatingAction
         buttonSize={70}
-        actions={actions}
+        actions={floatingActions}
         onPressItem={onPressFloatingAction}
       />
-    </NView>
+    </NSafeAreaView>
   );
 };
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import {NText, NTouchableOpacity} from '../styled';
 
 interface IProps {
@@ -6,13 +7,16 @@ interface IProps {
   /** */
   isEnabled: boolean;
   /** */
+  height: number;
+  /** */
   onPress: () => void;
 }
 
-const DefaultButton = ({name, isEnabled, onPress}: IProps) => {
+const DefaultButton = ({name, isEnabled, height, onPress}: IProps) => {
   return (
     <NTouchableOpacity
-      className={`h-16 rounded-lg justify-center items-center ${
+      style={{height: height}}
+      className={`rounded-lg justify-center items-center ${
         isEnabled ? 'bg-blue-500' : 'bg-slate-200'
       }`}
       onPress={onPress}>

@@ -54,7 +54,7 @@ const BottomSheetModalContainer = ({
         {title && (
           <NText className="mt-3 font-bold text-center">{t(title!)}</NText>
         )}
-        <NView>{component}</NView>
+        <NView className="mt-3">{component}</NView>
       </BottomSheetModal>
     </BottomSheetModalProvider>
   );

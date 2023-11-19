@@ -27,7 +27,7 @@ export enum eIntervalTypes {
   Second = 'Second',
 }
 
-export enum eDays {
+export enum eKoDays {
   /** */
   일,
   /** */
@@ -55,4 +55,9 @@ export enum eSvg {
   warning = 'warning',
   /** */
   delete = 'delete',
+}
+
+export enum eIcon {
+  /** */
+  back = 'back',
 }

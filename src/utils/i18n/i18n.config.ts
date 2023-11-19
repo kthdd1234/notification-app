@@ -14,12 +14,14 @@ const resources = {
   },
 };
 
+export const languageCode = getLocales()[0].languageCode;
+
 i18n
   .use(LanguaeDetector)
   .use(initReactI18next)
   .init({
     resources: resources,
-    lng: getLocales()[0].languageCode,
+    lng: languageCode,
     fallbackLng: 'en',
     debug: true,
     compatibilityJSON: 'v3',

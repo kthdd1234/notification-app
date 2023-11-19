@@ -1,44 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React from 'react';
-import {NScrollView, NTextInput, NView} from '../components/styled';
-import {useTranslation} from 'react-i18next';
-import {useEffect, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
-  eDays,
+  NSafeAreaView,
+  NScrollView,
+  NTextInput,
+  NView,
+} from '../components/styled';
+import {useTranslation} from 'react-i18next';
+import {useRef, useState} from 'react';
+import {
+  eKoDays,
   eIntervalTypes,
   eNotificationTypes,
-  eSvg,
   eTimestampTypes,
 } from '../types/enum';
 import SelectButton from '../components/button/SelectButton';
-import UploadButton from '../components/button/UploadButton';
 import DefaultButton from '../components/button/DefaultButton';
 import DisplayButton from '../components/button/DisplayButton';
 import AddSection from '../components/section/AddSection';
 import TextButton from '../components/button/TextButton';
-import {
-  days,
-  intervalTypes,
-  timestampTypes,
-  imageLibraryOptions,
-  cameraOptions,
-  mediaErrorCode,
-} from '../utils/constants';
-import {
-  launchImageLibrary,
-  launchCamera,
-  ImagePickerResponse,
-} from 'react-native-image-picker';
+import {days, intervalTypes, timestampTypes} from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
-import SvgTextButton from '../components/button/SvgTextButton';
-import CameraSvg from '../../assets/svgs/mobile-phone-camera.svg';
-import GallerySvg from '../../assets/svgs/gallery.svg';
-import {Linking} from 'react-native';
-import Snackbar from 'react-native-snackbar';
-import ImageButton from '../components/button/ImageButton';
-import SvgButton from '../components/button/SvgButton';
-import VideoSection from '../components/section/VideoSection';
+import CommonHeader from '../components/header/CommonHeader';
+import moment from 'moment';
+import CalendarSection from '../components/section/CalendarSection';
+import TimeSection, {IParamsTime} from '../components/section/TimeSection';
+import format from 'string-format';
+import {displayNotification} from '../utils/notifiee';
+import IconSection from '../components/section/IconSection';
+import ImageList from '../../assets/images';
 
 const {Timestamp, Interval} = eNotificationTypes;
 const {Default, EveryDay, EveryWeek} = eTimestampTypes;
@@ -59,28 +50,41 @@ const Notification = ({navigation, route}) => {
   const initTypeList = {[Timestamp]: timestampTypes, [Interval]: intervalTypes}[
     notificationType
   ];
+  const initHeaderTitle = {[Timestamp]: '알림', [Interval]: '간격 알림'}[
+    notificationType
+  ];
+  const numberType = {[Timestamp]: 'odd', [Interval]: 'even'}[notificationType];
 
   /** useState */
-  const [isMediaLoading, setIsMediaLoading] = useState(false);
-  const [media, setMedia] = useState({uri: '', type: ''});
+  const [icon, setIcon] = useState(0);
   const [textState, setTextState] = useState('');
   const [seletedTypeId, setSeletedTypeId] = useState(initTypeId);
   const [selectedDays, setSeletedDays] = useState(['', '', '', '', '', '', '']);
+  const [selectedDateString, setSelectedDateString] = useState('');
+  const [selectedTimeInfo, setSelectedTimeInfo] = useState({
+    ampm: '',
+    hour: '',
+    minute: '',
+  });
 
-  /** ref */
-  const ref = useRef<BottomSheetModal>(null);
+  /** useRef */
+  const dateRef = useRef<BottomSheetModal>(null);
+  const timeRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
-    const format = {[Timestamp]: '알림', [Interval]: '간격 알림'};
-    navigation.setOptions({title: t(format[notificationType])});
+    const nowDateString = moment(Date.now()).format('YYYY-MM-DD');
+    const [ampm, hour] = moment(Date.now())
+      .add(1, 'hour')
+      .format('A,h')
+      .split(',');
+    const initAmpm = {AM: '오전', PM: '오후'}[ampm]!;
+
+    setSelectedDateString(nowDateString);
+    setSelectedTimeInfo({ampm: initAmpm, hour: `${hour}`, minute: '00'});
   }, []);
 
   const onChangeText = (text: string) => {
     setTextState(text);
-  };
-
-  const onPressUploadButton = async () => {
-    ref.current?.present();
   };
 
   const onPressNotificationType = (id: string) => {
@@ -89,104 +93,59 @@ const Notification = ({navigation, route}) => {
 
   const onPressDay = (day: string) => {
     selectedDays.includes(day)
-      ? (selectedDays[eDays[day]] = '')
-      : (selectedDays[eDays[day]] = day);
+      ? (selectedDays[eKoDays[day]] = '')
+      : (selectedDays[eKoDays[day]] = day);
 
     setSeletedDays([...selectedDays]);
   };
 
-  const onPressNotificationTest = () => {
+  const onPressDateButton = () => {
+    dateRef.current?.present();
+  };
+
+  const onPressSeletedDateButton = (value: string) => {
+    setSelectedDateString(value);
+    dateRef.current?.close();
+  };
+
+  const onPressTimeButton = () => {
+    timeRef.current?.present();
+  };
+
+  const onPressIcon = (newIcon: number) => {
+    setIcon(newIcon);
+  };
+
+  const onPressIntervalButton = () => {
     //
   };
 
-  const onPressCompleted = () => {
+  const onPressNotificationTest = async () => {
+    displayNotification({
+      title: t('앱 이름'),
+      body: textState,
+      url: ImageList[icon].url,
+    });
+  };
+
+  const onPressTimeCompleted = ({ampm, hour, minute}: IParamsTime) => {
+    timeRef.current?.close();
+    setSelectedTimeInfo({ampm, hour, minute});
+  };
+
+  const onPressNotificationCompleted = () => {
     //
-  };
-
-  const onLaunchMediaResponce = ({errorCode, assets}: ImagePickerResponse) => {
-    if (errorCode) {
-      const errMsg = t(mediaErrorCode[errorCode]);
-
-      Snackbar.show({
-        text: errMsg,
-        duration: Snackbar.LENGTH_LONG,
-        action: {text: t('이동'), onPress: () => Linking.openSettings()},
-      });
-    } else {
-      if (assets) {
-        const asset = assets![0];
-        const uri = asset.uri || '';
-        const type = asset.type ? asset.type!.split('/')[0] : '';
-
-        console.log('uri', uri);
-
-        setMedia({uri, type});
-      }
-    }
-
-    console.log('assets:', assets);
-  };
-
-  const onPressAddMedia = async (type: 'Gallery' | 'Camera') => {
-    const mediaInfo = {
-      Gallery: {
-        launch: launchImageLibrary,
-        options: imageLibraryOptions,
-        callback: onLaunchMediaResponce,
-      },
-      Camera: {
-        launch: launchCamera,
-        options: cameraOptions,
-        callback: onLaunchMediaResponce,
-      },
-    };
-    const mediaData = mediaInfo[type];
-
-    ref.current?.close();
-
-    setIsMediaLoading(true);
-    await mediaData.launch(mediaData.options, mediaData.callback);
-    setIsMediaLoading(false);
-  };
-
-  const onPressImage = () => {
-    //
-  };
-
-  const onPressDelete = () => {
-    setMedia({type: '', uri: ''});
-    setIsMediaLoading(false);
   };
 
   return (
-    <NView className="relative h-full bg-white">
-      <NScrollView className="p-4">
+    <NSafeAreaView className="relative h-full bg-white">
+      <CommonHeader isBack={true} title={initHeaderTitle} />
+      <NScrollView className="p-4 bg-white">
         <AddSection
+          title="아이콘"
+          isNotMb={true}
           component={
-            media.uri ? (
-              <NView>
-                <SvgButton
-                  containerClassName="py-2 pl-2 items-end"
-                  svg={eSvg.delete}
-                  onPress={onPressDelete}
-                  size={20}
-                />
-                {media.type === 'image' ? (
-                  <ImageButton
-                    imageClassName="w-full rounded-lg h-80"
-                    uri={media.uri}
-                    onPress={onPressImage}
-                  />
-                ) : (
-                  <VideoSection uri={media.uri} />
-                )}
-              </NView>
-            ) : (
-              <UploadButton
-                isMediaLoading={isMediaLoading}
-                onPress={onPressUploadButton}
-              />
-            )
+            <IconSection selectedIcon={icon} onPressIcon={onPressIcon} />
           }
         />
         <AddSection
@@ -209,12 +168,13 @@ const Notification = ({navigation, route}) => {
               {initTypeList.map(info => (
                 <SelectButton
                   key={info.id}
-                  type={notificationType}
+                  numberType={numberType}
                   id={info.id.toString()}
                   name={info.name}
-                  roundedType="md"
+                  rounded="rounded-md"
                   selectedId={seletedTypeId}
                   isGap={info.isGap}
+                  padding="p-4"
                   onPress={onPressNotificationType}
                 />
               ))}
@@ -224,13 +184,25 @@ const Notification = ({navigation, route}) => {
         {seletedTypeId === Default.toString() && (
           <AddSection
             title="날짜"
-            component={<DisplayButton text="2023년 11월 13일 (월)" />}
+            component={
+              <DisplayButton
+                text={moment(selectedDateString).format(
+                  t('YYYY년 MM월 Do일 (dd)'),
+                )}
+                onPress={onPressDateButton}
+              />
+            }
           />
         )}
         {notificationType === Interval.toString() && (
           <AddSection
             title="간격"
-            component={<DisplayButton text="지금부터 1일마다" />}
+            component={
+              <DisplayButton
+                text="지금부터 1일마다"
+                onPress={onPressIntervalButton}
+              />
+            }
           />
         )}
         {seletedTypeId === EveryWeek.toString() && (
@@ -242,11 +214,12 @@ const Notification = ({navigation, route}) => {
                   <SelectButton
                     key={objKey}
                     id={objKey}
-                    type={notificationType}
+                    numberType="odd"
                     name={t(objKey)}
-                    roundedType="full"
+                    rounded="rounded-full"
                     selectedId={selectedDays[idx]}
                     isGap={idx !== 0 && idx % 2 !== 0}
+                    padding="p-4"
                     onPress={onPressDay}
                   />
                 ))}
@@ -259,12 +232,20 @@ const Notification = ({navigation, route}) => {
           .includes(seletedTypeId) && (
           <AddSection
             title="시각"
-            component={<DisplayButton text="오전 8시 30분" />}
+            component={
+              <DisplayButton
+                text={format(
+                  t(`${selectedTimeInfo.ampm} {}시 {}분`),
+                  selectedTimeInfo.hour,
+                  selectedTimeInfo.minute,
+                )}
+                onPress={onPressTimeButton}
+              />
+            }
           />
         )}
-        <NView className="h-12" />
       </NScrollView>
-      <NView className="fixed bottom-0 p-4">
+      <NView className="sticky bottom-0 p-4">
         <TextButton
           viewClassName="flex-row justify-center items-center h-7 mb-4"
           textClassName="text-blue-500 text-base"
@@ -274,29 +255,34 @@ const Notification = ({navigation, route}) => {
         <DefaultButton
           name="완료"
           isEnabled={true}
-          onPress={onPressCompleted}
+          height={60}
+          onPress={onPressNotificationCompleted}
         />
       </NView>
+
       <BottomSheetModalContainer
-        bottomSheetModalRef={ref}
-        snapPoint={20}
+        title="날짜 선택"
+        bottomSheetModalRef={dateRef}
+        snapPoint={60}
         component={
-          <NView className="flex-row items-center justify-center h-full">
-            <SvgTextButton
-              text="사진 갤러리"
-              svg={<GallerySvg width={30} height={30} />}
-              onPress={() => onPressAddMedia('Gallery')}
-            />
-            <NView className="w-2" />
-            <SvgTextButton
-              text="카메라 촬영"
-              svg={<CameraSvg width={30} height={30} />}
-              onPress={() => onPressAddMedia('Camera')}
-            />
-          </NView>
+          <CalendarSection
+            initialDate={selectedDateString}
+            onPress={onPressSeletedDateButton}
+          />
         }
       />
-    </NView>
+      <BottomSheetModalContainer
+        title="시간 설정"
+        bottomSheetModalRef={timeRef}
+        snapPoint={53}
+        component={
+          <TimeSection
+            timeInfo={selectedTimeInfo}
+            onPress={onPressTimeCompleted}
+          />
+        }
+      />
+    </NSafeAreaView>
   );
 };
 
