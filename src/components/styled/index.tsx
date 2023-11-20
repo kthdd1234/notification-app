@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {styled} from 'nativewind';
 import Video from 'react-native-video';
+import FastImage from 'react-native-fast-image';
 
 const NView = styled(View);
 const NText = styled(Text);
@@ -18,6 +19,7 @@ const NTextInput = styled(TextInput);
 const NScrollView = styled(ScrollView);
 const NImage = styled(Image);
 const NVideo = styled(Video);
+const NFastImage = styled(FastImage);
 
 export {
   NView,
@@ -28,4 +30,5 @@ export {
   NScrollView,
   NImage,
   NVideo,
+  NFastImage,
 };

@@ -11,7 +11,7 @@ import {useRef, useState} from 'react';
 import {
   eKoDays,
   eIntervalTypes,
-  eNotificationTypes,
+  eTriggerTypes,
   eTimestampTypes,
 } from '../types/enum';
 import SelectButton from '../components/button/SelectButton';
@@ -19,7 +19,7 @@ import DefaultButton from '../components/button/DefaultButton';
 import DisplayButton from '../components/button/DisplayButton';
 import AddSection from '../components/section/AddSection';
 import TextButton from '../components/button/TextButton';
-import {days, intervalTypes, timestampTypes} from '../utils/constants';
+import {days, intervalTypes, timestampTypes, uid} from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
 import CommonHeader from '../components/header/CommonHeader';
@@ -27,49 +27,68 @@ import moment from 'moment';
 import CalendarSection from '../components/section/CalendarSection';
 import TimeSection, {IParamsTime} from '../components/section/TimeSection';
 import format from 'string-format';
-import {displayNotification} from '../utils/notifiee';
+import {displayNotification, setTriggerNotification} from '../utils/notifiee';
 import IconSection from '../components/section/IconSection';
 import ImageList from '../../assets/images';
+import IntervalSection, {nameInfo} from '../components/section/IntervalSection';
+import {useQuery, useRealm} from '@realm/react';
+import {Notification} from '../schema/Notification';
+import {
+  TimestampTrigger,
+  IntervalTrigger,
+  TriggerType,
+  RepeatFrequency,
+  TimeUnit,
+} from '@notifee/react-native';
+import {dateTimeFormatter} from '../utils/moment';
+import {languageCode} from '../utils/i18n/i18n.config';
 
-const {Timestamp, Interval} = eNotificationTypes;
+const {Timestamp, Interval} = eTriggerTypes;
 const {Default, EveryDay, EveryWeek} = eTimestampTypes;
-const {Day} = eIntervalTypes;
+const {Day, Hour, Minute, Second} = eIntervalTypes;
 
-const Notification = ({navigation, route}) => {
+const NotificationScreen = ({navigation, route}) => {
   /** useTranslation */
   const {t} = useTranslation();
 
   /** route.params */
-  const {notificationType} = route.params;
+  const {triggerType} = route.params;
 
   /** init */
-  const initTypeId = {
+  const initTriggerState = {
     [Timestamp]: Default.toString(),
     [Interval]: Day.toString(),
-  }[notificationType];
-  const initTypeList = {[Timestamp]: timestampTypes, [Interval]: intervalTypes}[
-    notificationType
-  ];
+  }[triggerType];
+  const initTriggerType = {
+    [Timestamp]: timestampTypes,
+    [Interval]: intervalTypes,
+  }[triggerType];
   const initHeaderTitle = {[Timestamp]: '알림', [Interval]: '간격 알림'}[
-    notificationType
+    triggerType
   ];
-  const numberType = {[Timestamp]: 'odd', [Interval]: 'even'}[notificationType];
+  const numberType = {[Timestamp]: 'odd', [Interval]: 'even'}[triggerType];
 
   /** useState */
   const [icon, setIcon] = useState(0);
   const [textState, setTextState] = useState('');
-  const [seletedTypeId, setSeletedTypeId] = useState(initTypeId);
-  const [selectedDays, setSeletedDays] = useState(['', '', '', '', '', '', '']);
-  const [selectedDateString, setSelectedDateString] = useState('');
-  const [selectedTimeInfo, setSelectedTimeInfo] = useState({
+  const [triggerState, setTriggerState] = useState(initTriggerState);
+  const [daysState, setDaysState] = useState(['', '', '', '', '', '', '']);
+  const [dateState, setDateState] = useState('');
+  const [timeState, setTimeState] = useState({
     ampm: '',
     hour: '',
     minute: '',
   });
+  const [intervalState, setIntervalState] = useState(1);
 
   /** useRef */
   const dateRef = useRef<BottomSheetModal>(null);
   const timeRef = useRef<BottomSheetModal>(null);
+  const intervalRef = useRef<BottomSheetModal>(null);
+
+  /** useRealm */
+  const realm = useRealm();
+  const notificationRealm = useQuery(Notification);
 
   useEffect(() => {
     const nowDateString = moment(Date.now()).format('YYYY-MM-DD');
@@ -79,32 +98,36 @@ const Notification = ({navigation, route}) => {
       .split(',');
     const initAmpm = {AM: '오전', PM: '오후'}[ampm]!;
 
-    setSelectedDateString(nowDateString);
-    setSelectedTimeInfo({ampm: initAmpm, hour: `${hour}`, minute: '00'});
+    setDateState(nowDateString);
+    setTimeState({ampm: initAmpm, hour: `${hour}`, minute: '00'});
   }, []);
 
   const onChangeText = (text: string) => {
     setTextState(text);
   };
 
-  const onPressNotificationType = (id: string) => {
-    setSeletedTypeId(id);
+  const onPressIcon = (newIcon: number) => {
+    setIcon(newIcon);
+  };
+
+  const onPressTriggerButton = (id: string) => {
+    setTriggerState(id);
   };
 
   const onPressDay = (day: string) => {
-    selectedDays.includes(day)
-      ? (selectedDays[eKoDays[day]] = '')
-      : (selectedDays[eKoDays[day]] = day);
+    daysState.includes(day)
+      ? (daysState[eKoDays[day]] = '')
+      : (daysState[eKoDays[day]] = day);
 
-    setSeletedDays([...selectedDays]);
+    setDaysState([...daysState]);
   };
 
   const onPressDateButton = () => {
     dateRef.current?.present();
   };
 
-  const onPressSeletedDateButton = (value: string) => {
-    setSelectedDateString(value);
+  const onPressDateDone = (value: string) => {
+    setDateState(value);
     dateRef.current?.close();
   };
 
@@ -112,15 +135,21 @@ const Notification = ({navigation, route}) => {
     timeRef.current?.present();
   };
 
-  const onPressIcon = (newIcon: number) => {
-    setIcon(newIcon);
+  const onPressTimeDone = ({ampm, hour, minute}: IParamsTime) => {
+    timeRef.current?.close();
+    setTimeState({ampm, hour, minute});
   };
 
   const onPressIntervalButton = () => {
-    //
+    intervalRef.current?.present();
   };
 
-  const onPressNotificationTest = async () => {
+  const onPressIntervalDone = (newValue: number) => {
+    intervalRef.current?.close();
+    setIntervalState(newValue);
+  };
+
+  const onPressTest = async () => {
     displayNotification({
       title: t('앱 이름'),
       body: textState,
@@ -128,14 +157,131 @@ const Notification = ({navigation, route}) => {
     });
   };
 
-  const onPressTimeCompleted = ({ampm, hour, minute}: IParamsTime) => {
-    timeRef.current?.close();
-    setSelectedTimeInfo({ampm, hour, minute});
+  const onPressDone = async () => {
+    const now = new Date(Date.now());
+
+    let notifiIds: {
+      id: string;
+      dateTime: Date;
+      type: string;
+      interval?: number;
+    }[] = [];
+    let trigger: TimestampTrigger | IntervalTrigger;
+
+    const {ampm, hour, minute} = timeState;
+    const momentDate = moment(dateState);
+
+    const nowTime = now.getTime();
+    let dateTime = dateTimeFormatter({
+      year: momentDate.format('YYYY'),
+      month: momentDate.format('MM'),
+      day: momentDate.format('DD'),
+      ampm,
+      hour,
+      minute,
+    });
+
+    if (triggerType === Timestamp.toString()) {
+      const {NONE, DAILY, WEEKLY} = RepeatFrequency;
+      const repeatFrequency = {
+        [Default]: NONE,
+        [EveryDay]: DAILY,
+        [EveryWeek]: WEEKLY,
+      }[triggerState];
+
+      if (nowTime > new Date(dateTime).getTime()) {
+        dateTime = moment(dateTime).add(1, 'd').format();
+      }
+
+      const timestamp = new Date(dateTime).getTime();
+
+      trigger = {
+        type: TriggerType.TIMESTAMP,
+        repeatFrequency: repeatFrequency,
+        timestamp: timestamp,
+        alarmManager: {
+          allowWhileIdle: true,
+        },
+      };
+    } else {
+      const {DAYS, HOURS, MINUTES, SECONDS} = TimeUnit;
+      const timeUnit = {
+        [Day]: DAYS,
+        [Hour]: HOURS,
+        [Minute]: MINUTES,
+        [Second]: SECONDS,
+      }[triggerState];
+
+      trigger = {
+        type: TriggerType.INTERVAL,
+        interval: intervalState,
+        timeUnit: timeUnit,
+      };
+    }
+
+    if (triggerState === EveryWeek.toString()) {
+      const nextWeekDay = moment(dateTime).add(1, 'weeks');
+      const dateList = daysState
+        .filter(state => !!state)
+        .map(state => moment(nextWeekDay).day(eKoDays[state]).toDate());
+
+      const ids = dateList.map(async date => {
+        const id = await setTriggerNotification({
+          title: t('앱 이름'),
+          body: textState,
+          image: ImageList[icon].url,
+          trigger: trigger,
+        });
+
+        return {id: id, dateTime: moment(date).toDate(), type: triggerState};
+      });
+
+      notifiIds = await Promise.all(ids);
+    } else {
+      const id = await setTriggerNotification({
+        title: t('앱 이름'),
+        body: textState,
+        image: ImageList[icon].url,
+        trigger: trigger,
+      });
+
+      notifiIds.push({
+        id: id,
+        dateTime:
+          triggerState === Interval.toString()
+            ? now
+            : moment(dateTime).toDate(),
+        type: triggerState,
+        interval: intervalState,
+      });
+    }
+
+    realm.write(() => {
+      realm.create('User', {
+        _id: uid(0),
+        language: languageCode,
+        isDarkMode: false,
+      });
+      realm.create('Notification', {
+        _id: uid(1),
+        icon: icon,
+        body: textState,
+        trigger: triggerType,
+        notifiIds: notifiIds,
+        isChecked: false,
+      });
+    });
+
+    navigation.pop();
   };
 
-  const onPressNotificationCompleted = () => {
-    //
-  };
+  const isTextState = textState !== '';
+  const isEveryWeeks =
+    EveryWeek.toString() === triggerState
+      ? daysState.filter(state => !!state).length !== 0
+      : true;
+  const isEnabledDone = isTextState && isEveryWeeks;
+  const handlerDone = isEnabledDone ? onPressDone : () => null;
 
   return (
     <NSafeAreaView className="relative h-full bg-white">
@@ -165,47 +311,49 @@ const Notification = ({navigation, route}) => {
           title="유형"
           component={
             <NView className="flex-row justify-between">
-              {initTypeList.map(info => (
+              {initTriggerType.map(info => (
                 <SelectButton
                   key={info.id}
                   numberType={numberType}
                   id={info.id.toString()}
                   name={info.name}
                   rounded="rounded-md"
-                  selectedId={seletedTypeId}
+                  selectedId={triggerState}
                   isGap={info.isGap}
                   padding="p-4"
-                  onPress={onPressNotificationType}
+                  onPress={onPressTriggerButton}
                 />
               ))}
             </NView>
           }
         />
-        {seletedTypeId === Default.toString() && (
+        {triggerState === Default.toString() && (
           <AddSection
             title="날짜"
             component={
               <DisplayButton
-                text={moment(selectedDateString).format(
-                  t('YYYY년 MM월 Do일 (dd)'),
-                )}
+                text={moment(dateState).format(t('YYYY년 MM월 Do일 (dd)'))}
                 onPress={onPressDateButton}
               />
             }
           />
         )}
-        {notificationType === Interval.toString() && (
+        {triggerType === Interval.toString() && (
           <AddSection
             title="간격"
             component={
               <DisplayButton
-                text="지금부터 1일마다"
+                text={
+                  t('지금부터') +
+                  ` ${intervalState}` +
+                  t(`${nameInfo[triggerState]}마다`)
+                }
                 onPress={onPressIntervalButton}
               />
             }
           />
         )}
-        {seletedTypeId === EveryWeek.toString() && (
+        {triggerState === EveryWeek.toString() && (
           <AddSection
             title="요일"
             component={
@@ -217,7 +365,7 @@ const Notification = ({navigation, route}) => {
                     numberType="odd"
                     name={t(objKey)}
                     rounded="rounded-full"
-                    selectedId={selectedDays[idx]}
+                    selectedId={daysState[idx]}
                     isGap={idx !== 0 && idx % 2 !== 0}
                     padding="p-4"
                     onPress={onPressDay}
@@ -227,17 +375,15 @@ const Notification = ({navigation, route}) => {
             }
           />
         )}
-        {[Default, EveryDay, EveryWeek, Day]
-          .map(arg => arg.toString())
-          .includes(seletedTypeId) && (
+        {triggerType === Timestamp.toString() && (
           <AddSection
             title="시각"
             component={
               <DisplayButton
                 text={format(
-                  t(`${selectedTimeInfo.ampm} {}시 {}분`),
-                  selectedTimeInfo.hour,
-                  selectedTimeInfo.minute,
+                  t(`${timeState.ampm} {}시 {}분`),
+                  timeState.hour,
+                  timeState.minute,
                 )}
                 onPress={onPressTimeButton}
               />
@@ -250,13 +396,13 @@ const Notification = ({navigation, route}) => {
           viewClassName="flex-row justify-center items-center h-7 mb-4"
           textClassName="text-blue-500 text-base"
           text="알림 테스트"
-          onPress={onPressNotificationTest}
+          onPress={onPressTest}
         />
         <DefaultButton
           name="완료"
-          isEnabled={true}
+          isEnabled={isEnabledDone}
           height={60}
-          onPress={onPressNotificationCompleted}
+          onPress={handlerDone}
         />
       </NView>
 
@@ -265,10 +411,7 @@ const Notification = ({navigation, route}) => {
         bottomSheetModalRef={dateRef}
         snapPoint={60}
         component={
-          <CalendarSection
-            initialDate={selectedDateString}
-            onPress={onPressSeletedDateButton}
-          />
+          <CalendarSection initialDate={dateState} onPress={onPressDateDone} />
         }
       />
       <BottomSheetModalContainer
@@ -276,9 +419,18 @@ const Notification = ({navigation, route}) => {
         bottomSheetModalRef={timeRef}
         snapPoint={53}
         component={
-          <TimeSection
-            timeInfo={selectedTimeInfo}
-            onPress={onPressTimeCompleted}
+          <TimeSection timeInfo={timeState} onPress={onPressTimeDone} />
+        }
+      />
+      <BottomSheetModalContainer
+        title="간격 설정"
+        bottomSheetModalRef={intervalRef}
+        snapPoint={25}
+        component={
+          <IntervalSection
+            type={triggerState}
+            interval={intervalState}
+            onPress={onPressIntervalDone}
           />
         }
       />
@@ -286,4 +438,4 @@ const Notification = ({navigation, route}) => {
   );
 };
 
-export default Notification;
+export default NotificationScreen;

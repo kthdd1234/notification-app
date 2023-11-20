@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ImageList from '../../../assets/images';
-import {NImage, NTouchableOpacity} from '../styled';
+import {NImage, NTouchableOpacity, NView} from '../styled';
 import IconView from '../view/IconView';
+import {ActivityIndicator} from 'react-native';
 
 interface IProps {
   /** */
@@ -10,6 +11,33 @@ interface IProps {
   onPressIcon: (icon: number) => void;
 }
 
+const ImageIcon = ({url}) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onLoadStart = () => {
+    setIsLoading(true);
+  };
+
+  const onLoadEnd = () => {
+    setIsLoading(false);
+  };
+
+  return (
+    <NView>
+      <NImage
+        className={`w-10 h-10 ${isLoading && 'hidden'}`}
+        source={url}
+        onLoadStart={onLoadStart}
+        onLoadEnd={onLoadEnd}
+      />
+      {isLoading && (
+        <ActivityIndicator size="small" color="#4F95F1" animating={isLoading} />
+      )}
+    </NView>
+  );
+};
+
+// scrollIntoView 작업 필요!
 const IconSection = ({selectedIcon, onPressIcon}: IProps) => {
   return (
     <IconView
@@ -17,12 +45,10 @@ const IconSection = ({selectedIcon, onPressIcon}: IProps) => {
       renderItem={({url, key}) => (
         <NTouchableOpacity
           className={`${
-            selectedIcon === key
-              ? 'border border-solid border-blue-500 bg-blue-100'
-              : 'bg-gray-50'
+            selectedIcon === key ? ' bg-blue-500' : 'bg-gray-100'
           } items-center justify-center w-16 h-16  rounded-full`}
           onPress={() => onPressIcon(key)}>
-          <NImage className="w-10 h-10" source={url} />
+          <ImageIcon url={url} />
         </NTouchableOpacity>
       )}
     />

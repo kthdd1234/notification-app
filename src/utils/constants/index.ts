@@ -4,6 +4,10 @@ import {eKoDays, eIntervalTypes, eTimestampTypes} from '../../types/enum';
 const {Default, EveryDay, EveryWeek} = eTimestampTypes;
 const {Day, Hour, Minute, Second} = eIntervalTypes;
 
+const uid = (num: number) => {
+  return Date.now().toString() + num;
+};
+
 // Helper
 const StringIsNumber = value => isNaN(Number(value));
 
@@ -173,4 +177,5 @@ export {
   mediaErrorCode,
   calendarLocales,
   timeSetting,
+  uid,
 };

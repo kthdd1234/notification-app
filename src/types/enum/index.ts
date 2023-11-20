@@ -1,4 +1,4 @@
-export enum eNotificationTypes {
+export enum eTriggerTypes {
   /** */
   None,
   /** */

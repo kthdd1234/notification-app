@@ -6,11 +6,11 @@ import TimerSvg from '../../assets/svgs/timer.svg';
 import {FloatingAction} from 'react-native-floating-action';
 import Tag from '../components/tag';
 import {useTranslation} from 'react-i18next';
-import {eNotificationTypes, eSvg} from '../types/enum';
+import {eTriggerTypes, eSvg} from '../types/enum';
 import CommonHeader from '../components/header/CommonHeader';
 
-/** eNotificationTypes */
-const {Timestamp, Interval} = eNotificationTypes;
+/** eTriggerTypes */
+const {Timestamp, Interval} = eTriggerTypes;
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -18,7 +18,7 @@ const HomeScreen = ({navigation}) => {
 
   const onPressFloatingAction = name => {
     navigation.navigate('NotificationScreen', {
-      notificationType: name,
+      triggerType: name,
     });
   };
 
@@ -26,9 +26,9 @@ const HomeScreen = ({navigation}) => {
     //
   };
 
-  const onPressTask = () => {
-    navigation.navigate('TaskScreen');
-  };
+  // const onPressTask = () => {
+  //   navigation.navigate('TaskScreen');
+  // };
 
   const onPressSetting = () => {
     navigation.navigate('SettingScreen');
@@ -57,7 +57,7 @@ const HomeScreen = ({navigation}) => {
 
   const headerActions = [
     {id: eSvg.calendar, onPress: onPressCalendar},
-    {id: eSvg.task, onPress: onPressTask},
+    // {id: eSvg.task, onPress: onPressTask},
     {id: eSvg.setting, onPress: onPressSetting},
   ];
 

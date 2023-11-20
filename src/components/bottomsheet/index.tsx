@@ -5,8 +5,10 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
+  BottomSheetFooter,
 } from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
+import DefaultButton from '../button/DefaultButton';
 
 interface IProps {
   /** */
@@ -44,13 +46,31 @@ const BottomSheetModalContainer = ({
   /** useMemo */
   const snapPoints = useMemo(() => [`${snapPoint}%`], []);
 
+  // const renderFooter = useCallback(
+  //   props => (
+  //     <BottomSheetFooter {...props} bottomInset={24}>
+  //       <NView className="px-4 mb-2">
+  //         <DefaultButton
+  //           name="선택 완료"
+  //           isEnabled={true}
+  //           height={50}
+  //           onPress={() => null}
+  //         />
+  //       </NView>
+  //     </BottomSheetFooter>
+  //   ),
+  //   [],
+  // );
+
   return (
     <BottomSheetModalProvider>
       <BottomSheetModal
         ref={bottomSheetModalRef}
         backdropComponent={renderBackdrop}
         index={0}
-        snapPoints={snapPoints}>
+        snapPoints={snapPoints}
+        // footerComponent={renderFooter}
+      >
         {title && (
           <NText className="mt-3 font-bold text-center">{t(title!)}</NText>
         )}
