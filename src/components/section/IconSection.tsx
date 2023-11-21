@@ -3,15 +3,16 @@ import ImageList from '../../../assets/images';
 import {NImage, NTouchableOpacity, NView} from '../styled';
 import IconView from '../view/IconView';
 import {ActivityIndicator} from 'react-native';
+import {imageUrl} from '../../utils/constants';
 
 interface IProps {
   /** */
-  selectedIcon: number;
+  selectedIcon: string;
   /** */
-  onPressIcon: (icon: number) => void;
+  onPressIcon: (icon: string) => void;
 }
 
-const ImageIcon = ({url}) => {
+const ImageIcon = ({name}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onLoadStart = () => {
@@ -26,7 +27,7 @@ const ImageIcon = ({url}) => {
     <NView>
       <NImage
         className={`w-10 h-10 ${isLoading && 'hidden'}`}
-        source={url}
+        source={{uri: imageUrl(name)}}
         onLoadStart={onLoadStart}
         onLoadEnd={onLoadEnd}
       />
@@ -42,13 +43,13 @@ const IconSection = ({selectedIcon, onPressIcon}: IProps) => {
   return (
     <IconView
       data={ImageList}
-      renderItem={({url, key}) => (
+      renderItem={({name}) => (
         <NTouchableOpacity
           className={`${
-            selectedIcon === key ? ' bg-blue-500' : 'bg-gray-100'
+            selectedIcon === name ? ' bg-blue-500' : 'bg-gray-100'
           } items-center justify-center w-16 h-16  rounded-full`}
-          onPress={() => onPressIcon(key)}>
-          <ImageIcon url={url} />
+          onPress={() => onPressIcon(name)}>
+          <ImageIcon name={name} />
         </NTouchableOpacity>
       )}
     />

@@ -9,7 +9,7 @@ export interface IMomentFormatter {
   minute: string;
 }
 
-const dateTimeFormatter = ({
+const setDateTime = ({
   year,
   month,
   day,
@@ -23,9 +23,26 @@ const dateTimeFormatter = ({
   };
 
   const formatString = `${year}-${month}-${day} ${hour}:${minute} ${ampmInfo[ampm]}`;
-  const result = moment(formatString, 'YYYY-MM-DD hh:mm a').format();
+  const result = moment(formatString, 'YYYY-MM-DD hh:mm a').toDate();
 
   return result;
 };
 
-export {dateTimeFormatter};
+// const getTimestamp = ({dateState, ampm, hour, minute}) => {
+//   const momentDate = moment(dateState);
+
+//   let dateTime = dateTimeFormatter({
+//     year: momentDate.format('YYYY'),
+//     month: momentDate.format('MM'),
+//     day: momentDate.format('DD'),
+//     ampm,
+//     hour,
+//     minute,
+//   });
+//   const newDate = new Date(dateTime);
+//   const timestamp = newDate.getTime();
+
+//   return timestamp;
+// };
+
+export {setDateTime};

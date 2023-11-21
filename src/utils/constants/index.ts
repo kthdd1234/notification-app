@@ -1,11 +1,11 @@
 import {CameraOptions, ImageLibraryOptions} from 'react-native-image-picker';
 import {eKoDays, eIntervalTypes, eTimestampTypes} from '../../types/enum';
 
-const {Default, EveryDay, EveryWeek} = eTimestampTypes;
-const {Day, Hour, Minute, Second} = eIntervalTypes;
+const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
+const {Day, Hour, Minute} = eIntervalTypes;
 
 const uid = (num: number) => {
-  return Date.now().toString() + num;
+  return Date.now() + num;
 };
 
 // Helper
@@ -105,10 +105,10 @@ const timestampTypes = [
     id: Default,
     name: '기본 알림',
   },
-  {id: EveryDay, name: '매일 알림', isGap: true},
+  {id: EveryWeek, name: '매주 알림', isGap: true},
   {
-    id: EveryWeek,
-    name: '매주 알림',
+    id: EveryMonth,
+    name: '매달 알림',
   },
 ];
 
@@ -122,11 +122,6 @@ const intervalTypes = [
   {
     id: Minute,
     name: '분',
-    isGap: true,
-  },
-  {
-    id: Second,
-    name: '초',
   },
 ];
 
@@ -167,6 +162,10 @@ const timeSetting = [
   },
 ];
 
+const imageUrl = (name: string) => {
+  return `https://firebasestorage.googleapis.com/v0/b/notification-app-32f99.appspot.com/o/${name}.png?alt=media&token=851e4f81-97e9-4857-b7a6-27b35ac374a2`;
+};
+
 export {
   StringIsNumber,
   days,
@@ -177,5 +176,6 @@ export {
   mediaErrorCode,
   calendarLocales,
   timeSetting,
+  imageUrl,
   uid,
 };

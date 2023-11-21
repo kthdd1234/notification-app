@@ -8,6 +8,8 @@ import Tag from '../components/tag';
 import {useTranslation} from 'react-i18next';
 import {eTriggerTypes, eSvg} from '../types/enum';
 import CommonHeader from '../components/header/CommonHeader';
+import {useQuery, useRealm} from '@realm/react';
+import {Item} from '../schema/Notification';
 
 /** eTriggerTypes */
 const {Timestamp, Interval} = eTriggerTypes;
@@ -15,6 +17,12 @@ const {Timestamp, Interval} = eTriggerTypes;
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
   const {t} = useTranslation();
+
+  /** useRealm */
+  const realm = useRealm();
+  const item = useQuery(Item);
+
+  // console.log(item[0]);
 
   const onPressFloatingAction = name => {
     navigation.navigate('NotificationScreen', {
@@ -25,10 +33,6 @@ const HomeScreen = ({navigation}) => {
   const onPressCalendar = () => {
     //
   };
-
-  // const onPressTask = () => {
-  //   navigation.navigate('TaskScreen');
-  // };
 
   const onPressSetting = () => {
     navigation.navigate('SettingScreen');
@@ -72,6 +76,7 @@ const HomeScreen = ({navigation}) => {
             <Tag color="blue" text={t('알림 예정') + ' ' + '0'} />
           </NView>
         </NView>
+        <NView></NView>
       </NScrollView>
       <NView className="absolute left-0 right-0 m-auto top-1/2">
         <NView className="flex-col items-center justify-center bottom-5">

@@ -6,6 +6,7 @@ import notifee, {
   IntervalTrigger,
   TimestampTrigger,
 } from '@notifee/react-native';
+import {uid} from '../constants';
 
 const requestPermissionNotification = async () => {
   const result = await notifee.requestPermission();
@@ -91,32 +92,36 @@ const setTriggerNotification = async ({
   image: any;
   trigger: TimestampTrigger | IntervalTrigger;
 }) => {
-  const channelId = await notifee.createChannel({
-    id: 'Channel',
-    name: 'Channel',
-  });
+  try {
+    const channelId = await notifee.createChannel({
+      id: uid(0),
+      name: 'Channel',
+    });
 
-  const notificationId = await notifee.createTriggerNotification(
-    {
-      title: title,
-      body: body,
-      android: {
-        channelId: channelId,
-        style: {
-          type: AndroidStyle.BIGPICTURE,
-          picture: image,
+    const notificationId = await notifee.createTriggerNotification(
+      {
+        title: title,
+        body: body,
+        android: {
+          channelId: channelId,
+          style: {
+            type: AndroidStyle.BIGPICTURE,
+            picture: image,
+          },
+        },
+        ios: {
+          categoryId: 'Notification',
+          attachments: [{url: image}],
         },
       },
-      ios: {
-        categoryId: 'Notification',
-        attachments: [{url: image}],
-      },
-    },
-    trigger,
-  );
+      trigger,
+    );
 
-  await getTriggerNotificationIds();
-  return notificationId;
+    await getTriggerNotificationIds();
+    return notificationId;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getTriggerNotificationIds = async () => {

@@ -11,9 +11,9 @@ export enum eTimestampTypes {
   /** */
   Default = 'Default',
   /** */
-  EveryDay = 'EveryDay',
-  /** */
   EveryWeek = 'EveryWeek',
+  /** */
+  EveryMonth = 'EveryMonth',
 }
 
 export enum eIntervalTypes {
@@ -23,8 +23,6 @@ export enum eIntervalTypes {
   Hour = 'Hour',
   /** */
   Minute = 'Minute',
-  /** */
-  Second = 'Second',
 }
 
 export enum eKoDays {

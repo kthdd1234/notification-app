@@ -14,7 +14,7 @@ interface IProps {
   onPress: (interval: number) => void;
 }
 
-export const nameInfo = {Day: '일', Hour: '시간', Minute: '분', Second: '초'};
+export const nameInfo = {Day: '일', Hour: '시간', Minute: '분'};
 
 const IntervalSection = ({type, interval, onPress}: IProps) => {
   /** useTranslation */
@@ -25,6 +25,8 @@ const IntervalSection = ({type, interval, onPress}: IProps) => {
   const onChangeText = (text: string) => {
     setNewValue(Number(text));
   };
+
+  const isEnabled = newValue > 0;
 
   return (
     <NView className="p-4">
@@ -48,14 +50,13 @@ const IntervalSection = ({type, interval, onPress}: IProps) => {
           {t(`${nameInfo[type]}마다`)}
         </NText>
       </NView>
-      <NView>
-        <DefaultButton
-          name="완료"
-          isEnabled={newValue !== 0}
-          height={50}
-          onPress={() => (newValue !== 0 ? onPress(newValue) : null)}
-        />
-      </NView>
+
+      <DefaultButton
+        name="완료"
+        isEnabled={isEnabled}
+        height={50}
+        onPress={isEnabled ? () => onPress(newValue) : () => null}
+      />
     </NView>
   );
 };

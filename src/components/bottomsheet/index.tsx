@@ -5,10 +5,8 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
-  BottomSheetFooter,
 } from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
-import DefaultButton from '../button/DefaultButton';
 
 interface IProps {
   /** */
