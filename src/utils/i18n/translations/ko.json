@@ -16,6 +16,8 @@
   "+ 버튼을 눌러 알림을 추가해보세요": "+ 버튼을 눌러 알림을 추가해보세요",
   "YYYY년 MM월": "YYYY년 MM월",
   "YYYY년 MM월 Do일 (dd)": "YYYY년 MM월 Do일 (dd)",
+  "YYYY년 MM월 Do일 (dd) A HH:mm": "YYYY년 MM월 Do일 (dd) A HH:mm",
+  "A HH:mm": "A HH:mm",
   "오전 {}시 {}분": "오전 {}시 {}분",
   "오후 {}시 {}분": "오후 {}시 {}분"
 }

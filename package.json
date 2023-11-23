@@ -51,6 +51,7 @@
     "recoil": "^0.7.7",
     "rn-fetch-blob": "^0.12.0",
     "string-format": "^2.0.0",
+    "toggle-switch-react-native": "^3.3.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

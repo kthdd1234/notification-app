@@ -2,6 +2,7 @@ import {useTranslation} from 'react-i18next';
 import SvgButton from '../button/SvgButton';
 import {NText, NView} from '../styled';
 import {eSvg} from '../../types/enum';
+import React from 'react';
 
 interface IProps {
   /** */
@@ -12,7 +13,7 @@ interface IProps {
   onPressAction?: (action: string) => void;
 }
 
-const Title = ({title, action, onPressAction}: IProps) => {
+const NotiTitle = ({title, action, onPressAction}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
@@ -30,4 +31,4 @@ const Title = ({title, action, onPressAction}: IProps) => {
   );
 };
 
-export default Title;
+export default NotiTitle;

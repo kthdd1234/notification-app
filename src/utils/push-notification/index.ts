@@ -19,10 +19,14 @@ interface IParamsLocalNotification {
 interface IParamsLocalNotificationSchedule extends IParamsLocalNotification {
   date: Date;
   repeatType: RepeatType;
+  number?: number;
 }
 
 const localNotification = (params: IParamsLocalNotification) => {
-  PushNotification.localNotification(params);
+  PushNotification.localNotification({
+    ...params,
+    channelId: 'notification-app',
+  });
 };
 
 const localNotificationSchedule = (

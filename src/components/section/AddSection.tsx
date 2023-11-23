@@ -1,7 +1,7 @@
 import {useTranslation} from 'react-i18next';
 import {NView} from '../styled';
-import Title from '../text/Title';
 import React from 'react';
+import NotiTitle from '../text/NotiTitle';
 
 interface IProps {
   /** */
@@ -18,7 +18,7 @@ const AddSection = ({title, isNotMb, component}: IProps) => {
 
   return (
     <NView className={`${isNotMb === true ? '' : 'mb-6'}`}>
-      {title && <Title title={t(title!)} />}
+      {title && <NotiTitle title={t(title!)} />}
       {component}
     </NView>
   );

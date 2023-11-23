@@ -23,7 +23,7 @@ const {Navigator, Screen} = createNativeStackNavigator();
 /** style */
 const style = {flex: 1};
 
-const {monthNames, monthNamesShort, dayNames, dayNamesShort, today} =
+const {monthNames, monthNamesShort, dayNames, dayNamesShort, today, meridiem} =
   calendarLocales[languageCode];
 
 LocaleConfig.locales[languageCode] = {
@@ -43,6 +43,7 @@ moment.locale(languageCode, {
   weekdaysShort: dayNamesShort,
   weekdaysMin: dayNamesShort,
   weekdaysParseExact: true,
+  meridiem: meridiem,
 });
 
 const App = () => {

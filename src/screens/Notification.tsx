@@ -8,12 +8,7 @@ import {
 } from '../components/styled';
 import {useTranslation} from 'react-i18next';
 import {useRef, useState} from 'react';
-import {
-  eKoDays,
-  eIntervalTypes,
-  eTriggerTypes,
-  eTimestampTypes,
-} from '../types/enum';
+import {eKoDays, eTimestampTypes} from '../types/enum';
 import SelectButton from '../components/button/SelectButton';
 import DefaultButton from '../components/button/DefaultButton';
 import DisplayButton from '../components/button/DisplayButton';
@@ -21,8 +16,8 @@ import AddSection from '../components/section/AddSection';
 import TextButton from '../components/button/TextButton';
 import {
   days,
+  formatString,
   imageUrl,
-  intervalTypes,
   timestampTypes,
   uid,
 } from '../utils/constants';
@@ -34,46 +29,42 @@ import CalendarSection from '../components/section/CalendarSection';
 import TimeSection, {IParamsTime} from '../components/section/TimeSection';
 import format from 'string-format';
 import IconSection from '../components/section/IconSection';
-import IntervalSection, {nameInfo} from '../components/section/IntervalSection';
 import {useRealm} from '@realm/react';
-import {languageCode} from '../utils/i18n/i18n.config';
 import {
-  RepeatType,
   cancelAllLocalNotifications,
   localNotification,
   localNotificationSchedule,
 } from '../utils/push-notification';
 import {setDateTime} from '../utils/moment';
 
-const {Timestamp, Interval} = eTriggerTypes;
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
-const {Day, Hour, Minute} = eIntervalTypes;
+const [_default, _everyWeek, _everyMonth] = [
+  Default.toString(),
+  EveryWeek.toString(),
+  EveryMonth.toString(),
+];
 
 const NotificationScreen = ({navigation, route}) => {
   /** useTranslation */
   const {t} = useTranslation();
 
   /** route.params */
-  const {triggerType} = route.params;
+  const {itemId} = route.params;
 
   /** init */
-  const initTriggerState = {
-    [Timestamp]: Default.toString(),
-    [Interval]: Day.toString(),
-  }[triggerType];
-  const initTriggerType = {
-    [Timestamp]: timestampTypes,
-    [Interval]: intervalTypes,
-  }[triggerType];
-  const initHeaderTitle = {[Timestamp]: '알림', [Interval]: '간격 알림'}[
-    triggerType
-  ];
-  const numberType = {[Timestamp]: 'odd', [Interval]: 'even'}[triggerType];
+  const momentNow = moment(Date.now());
+  const initDateState = momentNow.format('YYYY-MM-DD');
+  const [initAmpm, initHour] = momentNow
+    .add(1, 'hour')
+    .format('A,h')
+    .split(',');
+
+  console.log(itemId);
 
   /** useState */
   const [icon, setIcon] = useState('bell');
   const [textState, setTextState] = useState('');
-  const [triggerState, setTriggerState] = useState(initTriggerState);
+  const [triggerState, setTriggerState] = useState(_default);
   const [daysState, setDaysState] = useState([
     '',
     '월',
@@ -83,36 +74,28 @@ const NotificationScreen = ({navigation, route}) => {
     '금',
     '',
   ]);
-  const [dateState, setDateState] = useState('');
+  const [dateState, setDateState] = useState(initDateState);
   const [timeState, setTimeState] = useState({
-    ampm: '',
-    hour: '',
-    minute: '',
+    ampm: initAmpm,
+    hour: initHour,
+    minute: '00',
   });
-  const [monthDayState, setMonthDayState] = useState('');
-  const [intervalState, setIntervalState] = useState(1);
+  const [monthDayState, setMonthDayState] = useState(initDateState);
 
   /** useRef */
   const dateRef = useRef<BottomSheetModal>(null);
   const timeRef = useRef<BottomSheetModal>(null);
   const monthDayRef = useRef<BottomSheetModal>(null);
-  const intervalRef = useRef<BottomSheetModal>(null);
 
   /** useRealm */
   const realm = useRealm();
 
+  /** useEffect */
   useEffect(() => {
-    const nowDateString = moment(Date.now()).format('YYYY-MM-DD');
-    const [ampm, hour] = moment(Date.now())
-      .add(1, 'hour')
-      .format('A,h')
-      .split(',');
-    const initAmpm = {AM: '오전', PM: '오후'}[ampm]!;
-
-    setDateState(nowDateString);
-    setMonthDayState(nowDateString);
-    setTimeState({ampm: initAmpm, hour: `${hour}`, minute: '00'});
-  }, []);
+    if (itemId !== null) {
+      //
+    }
+  }, [itemId]);
 
   const onChangeText = (text: string) => {
     setTextState(text);
@@ -152,15 +135,6 @@ const NotificationScreen = ({navigation, route}) => {
     setTimeState({ampm, hour, minute});
   };
 
-  const onPressIntervalButton = () => {
-    intervalRef.current?.present();
-  };
-
-  const onPressIntervalDone = (newValue: number) => {
-    intervalRef.current?.close();
-    setIntervalState(newValue);
-  };
-
   const onPressMonthDayButton = () => {
     monthDayRef.current?.present();
   };
@@ -183,10 +157,12 @@ const NotificationScreen = ({navigation, route}) => {
 
   const onPressDone = async () => {
     const {ampm, hour, minute} = timeState;
-
+    const id = uid(0);
     const date = moment(dateState);
     const now = new Date(Date.now());
     const picture = imageUrl(icon);
+    const notifications: {_id: string; dateTime: Date; interval?: number}[] =
+      [];
 
     let dateTime = setDateTime({
       year: date.format('YYYY'),
@@ -197,17 +173,7 @@ const NotificationScreen = ({navigation, route}) => {
       minute,
     });
 
-    const notifications: {_id: string; dateTime: Date; interval?: number}[] =
-      [];
-    const repeatType = {
-      [Default]: undefined,
-      [EveryWeek]: 'week',
-      [EveryMonth]: 'month',
-      [Day]: 'day',
-      [Hour]: 'hour',
-      [Minute]: 'minute',
-    }[triggerState];
-    const id = uid(0);
+    // cancelAllLocalNotifications();
 
     if (triggerState === Default.toString()) {
       if (now.getTime() > dateTime.getTime()) {
@@ -219,7 +185,7 @@ const NotificationScreen = ({navigation, route}) => {
         title: t('앱 이름'),
         message: textState,
         date: dateTime,
-        repeatType: repeatType,
+        repeatType: undefined,
         picture: picture,
       });
 
@@ -237,61 +203,39 @@ const NotificationScreen = ({navigation, route}) => {
           title: t('앱 이름'),
           message: textState,
           date: newDate,
-          repeatType: repeatType,
+          repeatType: 'week',
           picture: picture,
         });
 
         notifications.push({_id: `${eId}`, dateTime: newDate});
       });
     } else if (triggerState === EveryMonth.toString()) {
-      dateTime.setDate(Number(monthDayState.split('-')[2]));
+      const day = monthDayState.split('-')[2];
+      dateTime.setDate(Number(day));
 
       localNotificationSchedule({
         id: id,
         title: t('앱 이름'),
         message: textState,
         date: dateTime,
-        repeatType: repeatType,
+        repeatType: 'month',
         picture: picture,
       });
 
       notifications.push({_id: `${id}`, dateTime: dateTime});
-    } else {
-      now.setDate(intervalState);
-      now.setHours(intervalState);
-      now.setMinutes(intervalState);
-
-      localNotificationSchedule({
-        id: id,
-        title: t('앱 이름'),
-        message: textState,
-        date: now,
-        repeatType: repeatType,
-        picture: picture,
-      });
-
-      notifications.push({
-        _id: `${id}`,
-        dateTime: new Date(Date.now()),
-        interval: intervalState,
-      });
     }
 
-    // realm.write(() => {
-    //   realm.create('User', {
-    //     _id: uid(0),
-    //     language: languageCode,
-    //     isDarkMode: false,
-    //   });
-    //   realm.create('Notification', {
-    //     _id: uid(1),
-    //     icon: icon,
-    //     body: textState,
-    //     trigger: triggerType,
-    //     notifiIds: notifiIds,
-    //     isChecked: false,
-    //   });
-    // });
+    realm.write(() => {
+      realm.create('Item', {
+        _id: `${uid(0)}`,
+        icon: icon,
+        body: textState,
+        type: 'timestamp',
+        state: triggerState,
+        notifications: notifications,
+        isChecked: false,
+      });
+    });
 
     navigation.pop();
   };
@@ -306,7 +250,7 @@ const NotificationScreen = ({navigation, route}) => {
 
   return (
     <NSafeAreaView className="relative h-full bg-white">
-      <CommonHeader isBack={true} title={initHeaderTitle} />
+      <CommonHeader isBack={true} title={itemId ? '알림 수정' : '알림 추가'} />
       <NScrollView className="p-4 bg-white">
         <AddSection
           title="아이콘"
@@ -333,10 +277,10 @@ const NotificationScreen = ({navigation, route}) => {
           title="유형"
           component={
             <NView className="flex-row justify-between">
-              {initTriggerType.map(info => (
+              {timestampTypes.map(info => (
                 <SelectButton
                   key={info.id}
-                  numberType={numberType}
+                  numberType="odd"
                   id={info.id.toString()}
                   name={info.name}
                   rounded="rounded-md"
@@ -354,27 +298,13 @@ const NotificationScreen = ({navigation, route}) => {
             title="날짜"
             component={
               <DisplayButton
-                text={moment(dateState).format(t('YYYY년 MM월 Do일 (dd)'))}
+                text={moment(dateState).format(t(formatString.date))}
                 onPress={onPressDateButton}
               />
             }
           />
         )}
-        {triggerType === Interval.toString() && (
-          <AddSection
-            title="간격"
-            component={
-              <DisplayButton
-                text={
-                  t('지금부터') +
-                  ` ${intervalState}` +
-                  t(`${nameInfo[triggerState]}마다`)
-                }
-                onPress={onPressIntervalButton}
-              />
-            }
-          />
-        )}
+
         {triggerState === EveryWeek.toString() && (
           <AddSection
             title="요일"
@@ -408,31 +338,29 @@ const NotificationScreen = ({navigation, route}) => {
             }
           />
         )}
-        {triggerType === Timestamp.toString() && (
-          <AddSection
-            title="시각"
-            component={
-              <DisplayButton
-                text={format(
-                  t(`${timeState.ampm} {}시 {}분`),
-                  timeState.hour,
-                  timeState.minute,
-                )}
-                onPress={onPressTimeButton}
-              />
-            }
-          />
-        )}
+        <AddSection
+          title="시각"
+          component={
+            <DisplayButton
+              text={format(
+                t(`${timeState.ampm} {}시 {}분`),
+                timeState.hour,
+                timeState.minute,
+              )}
+              onPress={onPressTimeButton}
+            />
+          }
+        />
       </NScrollView>
       <NView className="sticky bottom-0 p-4">
         <TextButton
           viewClassName="flex-row justify-center items-center h-7 mb-4"
           textClassName="text-blue-500 text-base"
-          text="알림 테스트"
+          text="알림 미리보기"
           onPress={onPressTest}
         />
         <DefaultButton
-          name="완료"
+          name={itemId ? '수정' : '추가'}
           isEnabled={isEnabledDone}
           height={60}
           onPress={handlerDone}
@@ -466,27 +394,30 @@ const NotificationScreen = ({navigation, route}) => {
           <TimeSection timeInfo={timeState} onPress={onPressTimeDone} />
         }
       />
-      <BottomSheetModalContainer
-        title="간격 설정"
-        bottomSheetModalRef={intervalRef}
-        snapPoint={25}
-        component={
-          <IntervalSection
-            type={triggerState}
-            interval={intervalState}
-            onPress={onPressIntervalDone}
-          />
-        }
-      />
     </NSafeAreaView>
   );
 };
 
 export default NotificationScreen;
-// let notifiIds: {
-//   id: string;
-//   dateTime: Date;
-//   type: string;
-//   interval?: number;
-// }[] = [];
 // let trigger: TimestampTrigger | IntervalTrigger;
+//else {
+// now.setDate(intervalState);
+// now.setHours(intervalState);
+// now.setMinutes(15);
+// console.log('repeatType', repeatType);
+// console.log('intervalState', intervalState);
+// console.log('now.getMinutes', now.getMinutes());
+// localNotificationSchedule({
+//   id: id,
+//   title: t('앱 이름'),
+//   message: textState,
+//   date: now,
+//   repeatType: repeatType,
+//   picture: picture,
+// });
+// notifications.push({
+//   _id: `${id}`,
+//   dateTime: new Date(Date.now()),
+//   interval: intervalState,
+// });
+// }

@@ -9,6 +9,8 @@ export enum eTriggerTypes {
 
 export enum eTimestampTypes {
   /** */
+  All = 'All',
+  /** */
   Default = 'Default',
   /** */
   EveryWeek = 'EveryWeek',
@@ -58,4 +60,17 @@ export enum eSvg {
 export enum eIcon {
   /** */
   back = 'back',
+  /** */
+  box = 'box',
+  /** */
+  checkBox = 'checkBox',
+  /** */
+  more = 'more',
+}
+
+export enum eNotiStatus {
+  /** */
+  End = 'End',
+  /** */
+  Future = 'Future',
 }

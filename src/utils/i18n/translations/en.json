@@ -16,6 +16,8 @@
   "+ 버튼을 눌러 알림을 추가해보세요": "+ Press button to add notification",
   "YYYY년 MM월": "MMMM YYYY",
   "YYYY년 MM월 Do일 (dd)": "ddd, MMMM Do, YYYY",
+  "YYYY년 MM월 Do일 (dd) A HH:mm": "ddd, MMMM Do YYYY, HH:mm A",
+  "A HH:mm": "HH:mm A",
   "오전 {}시 {}분": "{}:{} AM",
   "오후 {}시 {}분": "{}:{} PM"
 }

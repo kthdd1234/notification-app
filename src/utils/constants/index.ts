@@ -1,5 +1,10 @@
 import {CameraOptions, ImageLibraryOptions} from 'react-native-image-picker';
-import {eKoDays, eIntervalTypes, eTimestampTypes} from '../../types/enum';
+import {
+  eKoDays,
+  eIntervalTypes,
+  eTimestampTypes,
+  eNotiStatus,
+} from '../../types/enum';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {Day, Hour, Minute} = eIntervalTypes;
@@ -12,6 +17,12 @@ const uid = (num: number) => {
 const StringIsNumber = value => isNaN(Number(value));
 
 const days = Object.keys(eKoDays).filter(StringIsNumber);
+
+const formatString = {
+  date: 'YYYY년 MM월 Do일 (dd)',
+  dateTime: 'YYYY년 MM월 Do일 dddd A h:mm',
+  time: 'A h:mm',
+};
 
 const calendarLocales = {
   ko: {
@@ -55,6 +66,7 @@ const calendarLocales = {
     dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
     today: '오늘',
     LL: 'YYYY년 MM월 Do일 (dd)',
+    meridiem: (hours: number) => (hours < 12 ? '오전' : '오후'),
   },
   en: {
     monthNames: [
@@ -97,20 +109,44 @@ const calendarLocales = {
     dayNamesShort: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
     today: 'Today',
     LL: 'ddd, MMMM Do, YYYY',
+    meridiem: (hours, _, isLowercase) => {
+      if (hours < 12) {
+        return isLowercase ? 'am' : 'AM';
+      } else {
+        return isLowercase ? 'pm' : 'PM';
+      }
+    },
   },
 };
+
+const notiStatusTypes = [
+  {id: eNotiStatus.End, name: '알림 종료'},
+  {id: eNotiStatus.Future, name: '알림 예정'},
+];
 
 const timestampTypes = [
   {
     id: Default,
     name: '기본 알림',
+    color: 'green',
   },
-  {id: EveryWeek, name: '매주 알림', isGap: true},
+  {id: EveryWeek, name: '매주 알림', isGap: true, color: 'purple'},
   {
     id: EveryMonth,
     name: '매달 알림',
+    color: 'orange',
   },
 ];
+
+const notiTimestampTypes = {};
+
+timestampTypes.forEach(({id, name, color}) => {
+  notiTimestampTypes[id] = {name, color};
+});
+
+// const notiTimestampTypes = timestampTypes.map(({id, name, color}) => ({
+//   [id]: {name, color},
+// }));
 
 const intervalTypes = [
   {
@@ -178,4 +214,7 @@ export {
   timeSetting,
   imageUrl,
   uid,
+  formatString,
+  notiStatusTypes,
+  notiTimestampTypes,
 };

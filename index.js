@@ -36,11 +36,9 @@ PushNotification.configure({
 
 PushNotification.createChannel(
   {
-    channelId: 'channel-id',
-    channelName: 'My channel',
+    channelId: 'notification-app',
+    channelName: 'notification-app',
     channelDescription: 'A channel to categorise your notifications',
-    playSound: false,
-    soundName: 'default',
     importance: Importance.HIGH,
     vibrate: true,
   },
