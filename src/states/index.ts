@@ -1,3 +1,9 @@
-// import {atom} from 'recoil';
+import {atom} from 'recoil';
+import {eTimestampTypes} from '../types/enum';
 
-// export {};
+const seletedTagAtom = atom({
+  key: 'seletedTagAtom',
+  default: eTimestampTypes.All.toString(),
+});
+
+export {seletedTagAtom};

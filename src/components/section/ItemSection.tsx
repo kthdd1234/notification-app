@@ -14,24 +14,25 @@ import {Item, Notification} from '../../schema/Notification';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 
-const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
-const [_default, _everyWeek, _everyMonth] = [
+const {All, Default, EveryWeek, EveryMonth} = eTimestampTypes;
+const [_all, _default, _everyWeek, _everyMonth] = [
+  All.toString(),
   Default.toString(),
   EveryWeek.toString(),
   EveryMonth.toString(),
 ];
 
-const NotiSection = () => {
+interface IProps {
+  /** */
+  itemList: Item[];
+}
+
+const NotiSection = ({itemList}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
-  /** useRealm */
-  const itemList = useQuery(Item);
-
   /** useNavigation */
   const {navigate} = useNavigation();
-
-  console.log('??', itemList);
 
   const onPressTypeNoti = () => {
     //

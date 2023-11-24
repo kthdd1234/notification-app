@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Image,
+  FlatList,
 } from 'react-native';
 import {styled} from 'nativewind';
 import Video from 'react-native-video';
@@ -20,6 +21,7 @@ const NScrollView = styled(ScrollView);
 const NImage = styled(Image);
 const NVideo = styled(Video);
 const NFastImage = styled(FastImage);
+const NFlatList = styled(FlatList);
 
 export {
   NView,
@@ -31,4 +33,5 @@ export {
   NImage,
   NVideo,
   NFastImage,
+  NFlatList,
 };

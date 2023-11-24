@@ -3,7 +3,7 @@ import {NText, NTouchableOpacity} from '../styled';
 
 interface IProps {
   /** */
-  color: 'gray' | 'blue' | 'green' | 'red' | 'purple' | 'orange';
+  color: string;
   /** */
   text: string;
   /** */
@@ -16,9 +16,9 @@ const colors = {
   gray: {textColor: 'text-gray-600', bgColor: 'bg-gray-100'},
   blue: {textColor: 'text-blue-600', bgColor: 'bg-blue-50'},
   green: {textColor: 'text-green-600', bgColor: 'bg-green-50'},
-  red: {textColor: 'text-red-400', bgColor: 'bg-red-50'},
-  purple: {textColor: 'text-purple-400', bgColor: 'bg-purple-50'},
-  orange: {textColor: 'text-orange-400', bgColor: 'bg-orange-50'},
+  red: {textColor: 'text-red-600', bgColor: 'bg-red-50'},
+  purple: {textColor: 'text-purple-600', bgColor: 'bg-purple-50'},
+  orange: {textColor: 'text-orange-600', bgColor: 'bg-orange-50'},
 };
 
 const Tag = ({color, text, isNotMl, onPress}: IProps) => {

@@ -7,21 +7,33 @@ import CommonHeader from '../components/header/CommonHeader';
 import {useQuery, useRealm} from '@realm/react';
 import {Item} from '../schema/Notification';
 import {FAB} from '@rneui/base';
-import NotiTitle from '../components/text/ItemTitle';
+import NotiTitle, {_all} from '../components/text/ItemTitle';
 import NotiSection from '../components/section/ItemSection';
 import EmptySection from '../components/section/EmptySection';
 import {languageCode} from '../utils/i18n/i18n.config';
 import {User} from '../schema/User';
 import {uid} from '../utils/constants';
+import {useRecoilValue} from 'recoil';
+import {seletedTagAtom} from '../states';
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
   const {t} = useTranslation();
 
+  /** useRecoilState */
+  const selectedTag = useRecoilValue(seletedTagAtom);
+
   /** useRealm */
   const realm = useRealm();
   const user = useQuery(User);
-  const itemList = useQuery(Item);
+  const itemRealm = useQuery(Item);
+  const itemList = itemRealm.filter(item => {
+    if (selectedTag === _all) {
+      return true;
+    }
+
+    return item.state === selectedTag;
+  });
 
   useEffect(() => {
     if (user.length === 0) {
@@ -58,7 +70,11 @@ const HomeScreen = ({navigation}) => {
     <NSafeAreaView className="relative h-full bg-[#F9F9FC]">
       <CommonHeader actions={headerActions} />
       <NotiTitle />
-      {itemList.length > 0 ? <NotiSection /> : <EmptySection />}
+      {itemList.length > 0 ? (
+        <NotiSection itemList={itemList} />
+      ) : (
+        <EmptySection />
+      )}
       <FAB
         placement="right"
         icon={{name: 'add', color: 'white'}}
@@ -73,6 +89,15 @@ const HomeScreen = ({navigation}) => {
 };
 
 export default HomeScreen;
+/*
+ *  ------
+ * | 더보기 |
+ *  ------
+ * - 알림 복제
+ * - 알림 수정
+ * - 알림 삭제
+ * - 알림 끄기
+ */
 {
   /* <ToggleSwitch
                 isOn={false}

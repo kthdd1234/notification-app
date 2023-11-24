@@ -16,7 +16,7 @@ const uid = (num: number) => {
 // Helper
 const StringIsNumber = value => isNaN(Number(value));
 
-const days = Object.keys(eKoDays).filter(StringIsNumber);
+const filterDays = Object.keys(eKoDays).filter(StringIsNumber);
 
 const formatString = {
   date: 'YYYY년 MM월 Do일 (dd)',
@@ -204,7 +204,7 @@ const imageUrl = (name: string) => {
 
 export {
   StringIsNumber,
-  days,
+  filterDays,
   timestampTypes,
   intervalTypes,
   imageLibraryOptions,

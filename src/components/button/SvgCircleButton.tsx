@@ -34,7 +34,7 @@ const SvgCircleButton = ({
     <NTouchableOpacity
       className={`${
         selectedIcon === name ? selectedColor : 'bg-gray-100'
-      } items-center justify-center w-16 h-16  rounded-full`}
+      } items-center justify-center w-16 h-16  rounded-full mb-4 mr-2`}
       onPress={() => onPressIcon(name)}>
       <NImage
         className={`w-10 h-10 ${isLoading && 'hidden'}`}

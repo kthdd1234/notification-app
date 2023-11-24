@@ -52,6 +52,6 @@ const ImageList = [
   'e-mail-1',
   'cigarette',
   'clapper-board',
-].map((name, key) => ({name, key}));
+];
 
 export default ImageList;

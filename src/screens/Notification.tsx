@@ -15,7 +15,7 @@ import DisplayButton from '../components/button/DisplayButton';
 import AddSection from '../components/section/AddSection';
 import TextButton from '../components/button/TextButton';
 import {
-  days,
+  filterDays,
   formatString,
   imageUrl,
   timestampTypes,
@@ -28,14 +28,19 @@ import moment from 'moment';
 import CalendarSection from '../components/section/CalendarSection';
 import TimeSection, {IParamsTime} from '../components/section/TimeSection';
 import format from 'string-format';
-import IconSection from '../components/section/IconSection';
-import {useRealm} from '@realm/react';
+import {useRealm, useObject} from '@realm/react';
 import {
   cancelAllLocalNotifications,
+  cancelLocalNotification,
   localNotification,
   localNotificationSchedule,
 } from '../utils/push-notification';
 import {setDateTime} from '../utils/moment';
+import {Item} from '../schema/Notification';
+import ImageList from '../../assets/images';
+import IconView from '../components/view/IconView';
+import {UpdateMode} from 'realm';
+// import {UpdateMode} from 'realm/dist/bundle';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -62,7 +67,7 @@ const NotificationScreen = ({navigation, route}) => {
   console.log(itemId);
 
   /** useState */
-  const [icon, setIcon] = useState('bell');
+  const [iconState, setIconState] = useState('bell');
   const [textState, setTextState] = useState('');
   const [triggerState, setTriggerState] = useState(_default);
   const [daysState, setDaysState] = useState([
@@ -81,6 +86,7 @@ const NotificationScreen = ({navigation, route}) => {
     minute: '00',
   });
   const [monthDayState, setMonthDayState] = useState(initDateState);
+  const [initialScrollIndex, setInitialScrollIndex] = useState(-1);
 
   /** useRef */
   const dateRef = useRef<BottomSheetModal>(null);
@@ -89,11 +95,39 @@ const NotificationScreen = ({navigation, route}) => {
 
   /** useRealm */
   const realm = useRealm();
+  const itemObj = useObject(Item, itemId || '');
 
   /** useEffect */
   useEffect(() => {
     if (itemId !== null) {
-      //
+      const icon = itemObj?.icon || '';
+      const text = itemObj?.body || '';
+      const state = itemObj?.state || '';
+      const notifications = itemObj?.notifications || [];
+      const dateTime = moment(notifications[0].dateTime);
+      const [ampm, hour, minute] = dateTime.format('A h mm').split(' ');
+
+      setIconState(icon);
+      setTextState(text);
+      setTriggerState(state);
+      setInitialScrollIndex(ImageList.indexOf(icon));
+      setTimeState({ampm, hour, minute});
+
+      if (state === _everyWeek) {
+        const initDays = ['', '', '', '', '', '', ''];
+
+        notifications.forEach(obj => {
+          const day = moment(obj.dateTime).day();
+          initDays[day] = eKoDays[day];
+        });
+
+        setDaysState([...initDays]);
+      } else {
+        const dateString = dateTime.format('YYYY-MM-DD');
+
+        setDateState(dateString);
+        setMonthDayState(dateString);
+      }
     }
   }, [itemId]);
 
@@ -102,7 +136,7 @@ const NotificationScreen = ({navigation, route}) => {
   };
 
   const onPressIcon = (newIcon: string) => {
-    setIcon(newIcon);
+    setIconState(newIcon);
   };
 
   const onPressTriggerButton = (id: string) => {
@@ -149,7 +183,7 @@ const NotificationScreen = ({navigation, route}) => {
       id: Date.now(),
       title: t('앱 이름'),
       message: textState,
-      picture: imageUrl(icon),
+      picture: imageUrl(iconState),
     });
 
     cancelAllLocalNotifications();
@@ -157,12 +191,12 @@ const NotificationScreen = ({navigation, route}) => {
 
   const onPressDone = async () => {
     const {ampm, hour, minute} = timeState;
-    const id = uid(0);
     const date = moment(dateState);
     const now = new Date(Date.now());
-    const picture = imageUrl(icon);
+    const picture = imageUrl(iconState);
     const notifications: {_id: string; dateTime: Date; interval?: number}[] =
       [];
+    const notifiId = itemId ? Number(itemObj!.notifications[0]._id) : uid(0);
 
     let dateTime = setDateTime({
       year: date.format('YYYY'),
@@ -175,13 +209,13 @@ const NotificationScreen = ({navigation, route}) => {
 
     // cancelAllLocalNotifications();
 
-    if (triggerState === Default.toString()) {
+    if (triggerState === _default) {
       if (now.getTime() > dateTime.getTime()) {
         dateTime = moment(dateTime).add(1, 'd').toDate();
       }
 
       localNotificationSchedule({
-        id: id,
+        id: notifiId,
         title: t('앱 이름'),
         message: textState,
         date: dateTime,
@@ -189,32 +223,43 @@ const NotificationScreen = ({navigation, route}) => {
         picture: picture,
       });
 
-      notifications.push({_id: `${id}`, dateTime: dateTime});
-    } else if (triggerState === EveryWeek.toString()) {
-      const dateList = daysState
+      notifications.push({_id: `${notifiId}`, dateTime: dateTime});
+    } else if (triggerState === _everyWeek) {
+      const dateTimeList = daysState
         .filter(state => !!state)
         .map(state => moment(dateTime).day(eKoDays[state]).toDate());
 
-      dateList.forEach((newDate, key) => {
-        const eId = uid(key);
+      const createEveryWeekNoti = (list: Date[]) => {
+        list.forEach((newDate, key) => {
+          const eId = uid(key);
 
-        localNotificationSchedule({
-          id: eId,
-          title: t('앱 이름'),
-          message: textState,
-          date: newDate,
-          repeatType: 'week',
-          picture: picture,
+          localNotificationSchedule({
+            id: uid(key),
+            title: t('앱 이름'),
+            message: textState,
+            date: newDate,
+            repeatType: 'week',
+            picture: picture,
+          });
+
+          notifications.push({_id: `${eId}`, dateTime: newDate});
         });
+      };
 
-        notifications.push({_id: `${eId}`, dateTime: newDate});
-      });
-    } else if (triggerState === EveryMonth.toString()) {
+      if (itemId === null) {
+        createEveryWeekNoti(dateTimeList);
+      } else {
+        const beforeNotiList = itemObj?.notifications || [];
+
+        beforeNotiList.forEach(noti => cancelLocalNotification(noti._id));
+        createEveryWeekNoti(dateTimeList);
+      }
+    } else if (triggerState === _everyMonth) {
       const day = monthDayState.split('-')[2];
       dateTime.setDate(Number(day));
 
       localNotificationSchedule({
-        id: id,
+        id: notifiId,
         title: t('앱 이름'),
         message: textState,
         date: dateTime,
@@ -222,19 +267,25 @@ const NotificationScreen = ({navigation, route}) => {
         picture: picture,
       });
 
-      notifications.push({_id: `${id}`, dateTime: dateTime});
+      notifications.push({_id: `${notifiId}`, dateTime: dateTime});
     }
 
     realm.write(() => {
-      realm.create('Item', {
-        _id: `${uid(0)}`,
-        icon: icon,
-        body: textState,
-        type: 'timestamp',
-        state: triggerState,
-        notifications: notifications,
-        isChecked: false,
-      });
+      const modified = itemId === null ? UpdateMode.Never : UpdateMode.Modified;
+
+      realm.create(
+        'Item',
+        {
+          _id: `${itemId || uid(0)}`,
+          icon: iconState,
+          body: textState,
+          type: 'timestamp',
+          state: triggerState,
+          notifications: notifications,
+          isChecked: false,
+        },
+        modified,
+      );
     });
 
     navigation.pop();
@@ -250,13 +301,17 @@ const NotificationScreen = ({navigation, route}) => {
 
   return (
     <NSafeAreaView className="relative h-full bg-white">
-      <CommonHeader isBack={true} title={itemId ? '알림 수정' : '알림 추가'} />
+      <CommonHeader isBack={true} title={itemId ? '알림 편집' : '알림 추가'} />
       <NScrollView className="p-4 bg-white">
         <AddSection
           title="아이콘"
           isNotMb={true}
           component={
-            <IconSection selectedIcon={icon} onPressIcon={onPressIcon} />
+            <IconView
+              initialScrollIndex={initialScrollIndex}
+              seletedIcon={iconState}
+              onPress={onPressIcon}
+            />
           }
         />
         <AddSection
@@ -310,12 +365,12 @@ const NotificationScreen = ({navigation, route}) => {
             title="요일"
             component={
               <NView className="flex-row justify-between">
-                {days.map((objKey, idx) => (
+                {filterDays.map((day, idx) => (
                   <SelectButton
-                    key={objKey}
-                    id={objKey}
+                    key={day}
+                    id={day}
                     numberType="odd"
-                    name={t(objKey)}
+                    name={day}
                     rounded="rounded-full"
                     selectedId={daysState[idx]}
                     isGap={idx !== 0 && idx % 2 !== 0}
@@ -360,7 +415,7 @@ const NotificationScreen = ({navigation, route}) => {
           onPress={onPressTest}
         />
         <DefaultButton
-          name={itemId ? '수정' : '추가'}
+          name={itemId ? '편집' : '추가'}
           isEnabled={isEnabledDone}
           height={60}
           onPress={handlerDone}
