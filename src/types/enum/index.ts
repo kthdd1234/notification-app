@@ -74,3 +74,16 @@ export enum eNotiStatus {
   /** */
   Future = 'Future',
 }
+
+export enum eMoreTypes {
+  /** */
+  copy,
+  /** */
+  edit,
+  /** */
+  remove,
+  /** */
+  enabled,
+  /** */
+  disEnabled,
+}

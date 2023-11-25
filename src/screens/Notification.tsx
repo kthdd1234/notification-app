@@ -12,7 +12,7 @@ import {eKoDays, eTimestampTypes} from '../types/enum';
 import SelectButton from '../components/button/SelectButton';
 import DefaultButton from '../components/button/DefaultButton';
 import DisplayButton from '../components/button/DisplayButton';
-import AddSection from '../components/section/AddSection';
+import AddSection from '../components/section/TitleSection';
 import TextButton from '../components/button/TextButton';
 import {
   filterDays,
@@ -25,7 +25,7 @@ import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
 import CommonHeader from '../components/header/CommonHeader';
 import moment from 'moment';
-import CalendarSection from '../components/section/CalendarSection';
+import CalendarSection from '../components/section/MonthSection';
 import TimeSection, {IParamsTime} from '../components/section/TimeSection';
 import format from 'string-format';
 import {useRealm, useObject} from '@realm/react';

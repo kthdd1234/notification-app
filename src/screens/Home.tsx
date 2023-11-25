@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {NSafeAreaView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
 import {eSvg} from '../types/enum';
@@ -15,13 +15,21 @@ import {User} from '../schema/User';
 import {uid} from '../utils/constants';
 import {useRecoilValue} from 'recoil';
 import {seletedTagAtom} from '../states';
+import BottomSheetModalContainer from '../components/bottomsheet';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import MoreSection from '../components/section/MoreSection';
+import CalendarSection from '../components/section/CalendarSection';
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
   const {t} = useTranslation();
 
-  /** useRecoilState */
+  /** useRecoilValue */
   const selectedTag = useRecoilValue(seletedTagAtom);
+
+  /** useRef */
+  const moreRef = useRef<BottomSheetModal>(null);
+  const calendarRef = useRef<BottomSheetModal>(null);
 
   /** useRealm */
   const realm = useRealm();
@@ -54,7 +62,12 @@ const HomeScreen = ({navigation}) => {
   };
 
   const onPressCalendar = () => {
-    //
+    calendarRef.current?.present();
+  };
+
+  const onPressMore = (id: string) => {
+    console.log(id);
+    moreRef.current?.present();
   };
 
   const onPressSetting = () => {
@@ -71,7 +84,7 @@ const HomeScreen = ({navigation}) => {
       <CommonHeader actions={headerActions} />
       <NotiTitle />
       {itemList.length > 0 ? (
-        <NotiSection itemList={itemList} />
+        <NotiSection itemList={itemList} onPressMore={onPressMore} />
       ) : (
         <EmptySection />
       )}
@@ -84,26 +97,28 @@ const HomeScreen = ({navigation}) => {
         size="large"
         onPress={onPressFloatingAction}
       />
+      <BottomSheetModalContainer
+        title="더보기"
+        bottomSheetModalRef={moreRef}
+        component={<MoreSection />}
+        snapPoint={40}
+      />
+      <BottomSheetModalContainer
+        title="캘린더"
+        bottomSheetModalRef={calendarRef}
+        component={<CalendarSection />}
+        snapPoint={70}
+      />
     </NSafeAreaView>
   );
 };
 
 export default HomeScreen;
-/*
- *  ------
- * | 더보기 |
- *  ------
- * - 알림 복제
- * - 알림 수정
- * - 알림 삭제
- * - 알림 끄기
- */
-{
-  /* <ToggleSwitch
-                isOn={false}
-                onColor="blue"
-                offColor="gray"
-                size="medium"
-                onToggle={isOn => console.log('changed to : ', isOn)}
-              /> */
-}
+
+/* <ToggleSwitch
+    isOn={false}
+    onColor="blue"
+    offColor="gray"
+    size="medium"
+    onToggle={isOn => console.log('changed to : ', isOn)}
+    /> */

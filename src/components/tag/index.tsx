@@ -9,7 +9,7 @@ interface IProps {
   /** */
   isNotMl?: boolean;
   /** */
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 const colors = {

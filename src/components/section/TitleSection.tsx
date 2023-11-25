@@ -12,7 +12,7 @@ interface IProps {
   isNotMb?: boolean;
 }
 
-const AddSection = ({title, isNotMb, component}: IProps) => {
+const TitleSection = ({title, isNotMb, component}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
@@ -24,4 +24,4 @@ const AddSection = ({title, isNotMb, component}: IProps) => {
   );
 };
 
-export default AddSection;
+export default TitleSection;

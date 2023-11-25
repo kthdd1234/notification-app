@@ -25,26 +25,16 @@ const [_all, _default, _everyWeek, _everyMonth] = [
 interface IProps {
   /** */
   itemList: Item[];
+  /** */
+  onPressMore: (itemId: string) => void;
 }
 
-const NotiSection = ({itemList}: IProps) => {
+const NotiSection = ({itemList, onPressMore}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
   /** useNavigation */
   const {navigate} = useNavigation();
-
-  const onPressTypeNoti = () => {
-    //
-  };
-
-  const onPressHistoryNoti = () => {
-    //
-  };
-
-  const onPressMoreNoti = () => {
-    //
-  };
 
   const onPressItem = (itemId: string) => {
     const arr = ['NotificationScreen', {itemId}] as never;
@@ -96,23 +86,18 @@ const NotiSection = ({itemList}: IProps) => {
                 color={t(notiTimestampTypes[state].color)}
                 text={t(notiTimestampTypes[state].name)}
                 isNotMl={true}
-                onPress={onPressTypeNoti}
               />
-              <Tag
-                color="blue"
-                text={t('알림 예정')}
-                onPress={onPressHistoryNoti}
-              />
+              <Tag color="blue" text={t('알림 예정')} />
             </NView>
           </NView>
-          <NView className="flex-grow-0">
-            <IconButton
-              icon={eIcon.more}
-              size={17}
-              color="black"
-              onPress={onPressMoreNoti}
-            />
-          </NView>
+          <NView className="w-10 h-full" />
+          <IconButton
+            containerClassName="absolute right-0 p-4"
+            icon={eIcon.more}
+            size={18}
+            color="gray"
+            onPress={() => onPressMore(_id)}
+          />
         </NTouchableOpacity>
       ))}
     </NScrollView>
