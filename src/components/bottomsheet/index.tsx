@@ -17,12 +17,15 @@ interface IProps {
   component: JSX.Element;
   /** */
   snapPoint: number;
+  /** */
+  isDetached?: boolean;
 }
 
 const BottomSheetModalContainer = ({
   title,
   bottomSheetModalRef,
   snapPoint,
+  isDetached,
   component,
 }: IProps) => {
   /** useTranslation */
@@ -60,13 +63,18 @@ const BottomSheetModalContainer = ({
   //   [],
   // );
 
+  const style = {marginHorizontal: isDetached ? 24 : 0};
+
   return (
     <BottomSheetModalProvider>
       <BottomSheetModal
+        style={style}
         ref={bottomSheetModalRef}
         backdropComponent={renderBackdrop}
         index={0}
         snapPoints={snapPoints}
+        detached={isDetached}
+        bottomInset={isDetached ? 48 : 0}
         // footerComponent={renderFooter}
       >
         {title && (

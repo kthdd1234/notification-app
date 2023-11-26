@@ -65,8 +65,8 @@ const HomeScreen = ({navigation}) => {
     calendarRef.current?.present();
   };
 
-  const onPressMore = (id: string) => {
-    console.log(id);
+  const onPressMore = ({id, name}: {id: string; name: string}) => {
+    console.log(id, name);
     moreRef.current?.present();
   };
 
@@ -98,10 +98,11 @@ const HomeScreen = ({navigation}) => {
         onPress={onPressFloatingAction}
       />
       <BottomSheetModalContainer
-        title="더보기"
+        title="name"
         bottomSheetModalRef={moreRef}
         component={<MoreSection />}
-        snapPoint={40}
+        isDetached={true}
+        snapPoint={45}
       />
       <BottomSheetModalContainer
         title="캘린더"

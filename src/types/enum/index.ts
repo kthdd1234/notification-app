@@ -77,13 +77,13 @@ export enum eNotiStatus {
 
 export enum eMoreTypes {
   /** */
-  copy,
+  Copy,
   /** */
-  edit,
+  Edit,
   /** */
-  remove,
+  Remove,
   /** */
-  enabled,
+  Enabled,
   /** */
-  disEnabled,
+  DisEnabled,
 }

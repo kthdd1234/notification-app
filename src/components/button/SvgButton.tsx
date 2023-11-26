@@ -19,12 +19,14 @@ interface IProps {
 }
 
 const SvgButton = ({size, svg, containerClassName, onPress}: IProps) => {
+  const props = {width: size, height: size};
+
   const svgs = {
-    calendar: <Calendar width={size} height={size} />,
-    task: <Task width={size} height={size} />,
-    setting: <Setting width={size} height={size} />,
-    warning: <Warning width={size} height={size} />,
-    delete: <Delete width={size} height={size} />,
+    calendar: <Calendar {...props} />,
+    task: <Task {...props} />,
+    setting: <Setting {...props} />,
+    warning: <Warning {...props} />,
+    delete: <Delete {...props} />,
   };
 
   return (

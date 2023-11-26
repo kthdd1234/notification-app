@@ -59,10 +59,11 @@ var HomeScreen = function (_a) {
         var _a;
         (_a = calendarRef.current) === null || _a === void 0 ? void 0 : _a.present();
     };
-    var onPressMore = function (id) {
-        var _a;
-        console.log(id);
-        (_a = moreRef.current) === null || _a === void 0 ? void 0 : _a.present();
+    var onPressMore = function (_a) {
+        var _b;
+        var id = _a.id, name = _a.name;
+        console.log(id, name);
+        (_b = moreRef.current) === null || _b === void 0 ? void 0 : _b.present();
     };
     var onPressSetting = function () {
         navigation.navigate('SettingScreen');
@@ -76,7 +77,7 @@ var HomeScreen = function (_a) {
         react_1["default"].createElement(ItemTitle_1["default"], null),
         itemList.length > 0 ? (react_1["default"].createElement(ItemSection_1["default"], { itemList: itemList, onPressMore: onPressMore })) : (react_1["default"].createElement(EmptySection_1["default"], null)),
         react_1["default"].createElement(base_1.FAB, { placement: "right", icon: { name: 'add', color: 'white' }, buttonStyle: { backgroundColor: '#4F95F1' }, titleStyle: { fontWeight: 'bold' }, title: t('알림 추가'), size: "large", onPress: onPressFloatingAction }),
-        react_1["default"].createElement(bottomsheet_1["default"], { title: "\uB354\uBCF4\uAE30", bottomSheetModalRef: moreRef, component: react_1["default"].createElement(MoreSection_1["default"], null), snapPoint: 40 }),
+        react_1["default"].createElement(bottomsheet_1["default"], { title: "name", bottomSheetModalRef: moreRef, component: react_1["default"].createElement(MoreSection_1["default"], null), isDetached: true, snapPoint: 45 }),
         react_1["default"].createElement(bottomsheet_1["default"], { title: "\uCE98\uB9B0\uB354", bottomSheetModalRef: calendarRef, component: react_1["default"].createElement(CalendarSection_1["default"], null), snapPoint: 70 })));
 };
 exports["default"] = HomeScreen;

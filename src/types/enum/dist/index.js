@@ -81,13 +81,13 @@ var eNotiStatus;
 var eMoreTypes;
 (function (eMoreTypes) {
     /** */
-    eMoreTypes[eMoreTypes["copy"] = 0] = "copy";
+    eMoreTypes[eMoreTypes["Copy"] = 0] = "Copy";
     /** */
-    eMoreTypes[eMoreTypes["edit"] = 1] = "edit";
+    eMoreTypes[eMoreTypes["Edit"] = 1] = "Edit";
     /** */
-    eMoreTypes[eMoreTypes["remove"] = 2] = "remove";
+    eMoreTypes[eMoreTypes["Remove"] = 2] = "Remove";
     /** */
-    eMoreTypes[eMoreTypes["enabled"] = 3] = "enabled";
+    eMoreTypes[eMoreTypes["Enabled"] = 3] = "Enabled";
     /** */
-    eMoreTypes[eMoreTypes["disEnabled"] = 4] = "disEnabled";
+    eMoreTypes[eMoreTypes["DisEnabled"] = 4] = "DisEnabled";
 })(eMoreTypes = exports.eMoreTypes || (exports.eMoreTypes = {}));
