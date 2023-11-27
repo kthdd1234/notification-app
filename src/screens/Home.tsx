@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {NSafeAreaView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
 import {eSvg} from '../types/enum';
 import CommonHeader from '../components/header/CommonHeader';
 import {useQuery, useRealm} from '@realm/react';
-import {Item} from '../schema/Notification';
+import {Item} from '../schema/Item';
 import {FAB} from '@rneui/base';
 import NotiTitle, {_all} from '../components/text/ItemTitle';
-import NotiSection from '../components/section/ItemSection';
+import NotiSection, {IParamsMore} from '../components/section/ItemSection';
 import EmptySection from '../components/section/EmptySection';
 import {languageCode} from '../utils/i18n/i18n.config';
 import {User} from '../schema/User';
-import {uid} from '../utils/constants';
 import {useRecoilValue} from 'recoil';
 import {seletedTagAtom} from '../states';
 import BottomSheetModalContainer from '../components/bottomsheet';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import MoreSection from '../components/section/MoreSection';
 import CalendarSection from '../components/section/CalendarSection';
+import {cancelAllLocalNotifications} from '../utils/push-notification';
+import uuid from 'react-native-uuid';
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -34,7 +35,9 @@ const HomeScreen = ({navigation}) => {
   /** useRealm */
   const realm = useRealm();
   const user = useQuery(User);
-  const itemRealm = useQuery(Item);
+  const itemRealm = useQuery(Item, property => {
+    return property.sorted('order', true);
+  });
   const itemList = itemRealm.filter(item => {
     if (selectedTag === _all) {
       return true;
@@ -43,16 +46,25 @@ const HomeScreen = ({navigation}) => {
     return item.state === selectedTag;
   });
 
+  /** useState */
+  const [selectedMore, setSeletedMore] = useState<IParamsMore>({
+    itemId: '',
+    name: '',
+  });
+
   useEffect(() => {
     if (user.length === 0) {
       realm.write(() => {
         realm.create('User', {
-          _id: uid(0).toString(),
+          _id: uuid.v4(),
           language: languageCode,
           isDarkMode: false,
         });
       });
     }
+
+    cancelAllLocalNotifications();
+    realm.write(() => realm.deleteAll());
   }, []);
 
   const onPressFloatingAction = () => {
@@ -65,8 +77,8 @@ const HomeScreen = ({navigation}) => {
     calendarRef.current?.present();
   };
 
-  const onPressMore = ({id, name}: {id: string; name: string}) => {
-    console.log(id, name);
+  const onPressMore = (params: IParamsMore) => {
+    setSeletedMore(params);
     moreRef.current?.present();
   };
 
@@ -98,9 +110,11 @@ const HomeScreen = ({navigation}) => {
         onPress={onPressFloatingAction}
       />
       <BottomSheetModalContainer
-        title="name"
+        title={selectedMore.name}
         bottomSheetModalRef={moreRef}
-        component={<MoreSection />}
+        component={
+          <MoreSection itemId={selectedMore.itemId} moreRef={moreRef} />
+        }
         isDetached={true}
         snapPoint={45}
       />

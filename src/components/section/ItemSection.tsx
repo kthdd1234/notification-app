@@ -10,7 +10,7 @@ import {
 import IconButton from '../button/IconButton';
 import Tag from '../tag';
 import {useQuery} from '@realm/react';
-import {Item, Notification} from '../../schema/Notification';
+import {Item, Notification} from '../../schema/Item';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 
@@ -26,7 +26,14 @@ interface IProps {
   /** */
   itemList: Item[];
   /** */
-  onPressMore: (itemId: string) => void;
+  onPressMore: ({itemId, name}: IParamsMore) => void;
+}
+
+export interface IParamsMore {
+  /** */
+  itemId: string;
+  /** */
+  name: string;
 }
 
 const NotiSection = ({itemList, onPressMore}: IProps) => {
@@ -96,7 +103,7 @@ const NotiSection = ({itemList, onPressMore}: IProps) => {
             icon={eIcon.more}
             size={18}
             color="gray"
-            onPress={() => onPressMore(_id)}
+            onPress={() => onPressMore({itemId: _id, name: body})}
           />
         </NTouchableOpacity>
       ))}

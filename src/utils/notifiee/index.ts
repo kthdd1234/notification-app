@@ -2,16 +2,10 @@
 import notifee, {
   AndroidNotificationSetting,
   AndroidStyle,
-  AuthorizationStatus,
   IntervalTrigger,
   TimestampTrigger,
 } from '@notifee/react-native';
 import {uid} from '../constants';
-
-const requestPermissionNotification = async () => {
-  const result = await notifee.requestPermission();
-  return result.authorizationStatus >= AuthorizationStatus.AUTHORIZED;
-};
 
 const setNotificationCategories = async ({
   memo,
@@ -94,7 +88,7 @@ const setTriggerNotification = async ({
 }) => {
   try {
     const channelId = await notifee.createChannel({
-      id: uid(0),
+      id: uid('n'),
       name: 'Channel',
     });
 
@@ -143,7 +137,6 @@ const cancelAllNotification = async () => {
 };
 
 export {
-  requestPermissionNotification,
   setNotificationCategories,
   setAndroid12Notification,
   displayNotification,

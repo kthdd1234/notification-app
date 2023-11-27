@@ -9,8 +9,15 @@ import {
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {Day, Hour, Minute} = eIntervalTypes;
 
-const uid = (num: number) => {
-  return Date.now() + num;
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const nId = (num: number) => {
+  const value = new Date(Date.now()).getTime() + num;
+  return value;
 };
 
 // Helper
@@ -213,7 +220,7 @@ export {
   calendarLocales,
   timeSetting,
   imageUrl,
-  uid,
+  nId,
   formatString,
   notiStatusTypes,
   notiTimestampTypes,

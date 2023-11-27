@@ -15,7 +15,8 @@ import {calendarLocales} from './src/utils/constants';
 import {LocaleConfig} from 'react-native-calendars';
 import moment from 'moment';
 import './src/utils/i18n/i18n.config';
-import {requestPermissionNotification} from './src/utils/notifiee';
+import PushNotification from 'react-native-push-notification';
+import {AlertNotificationRoot} from 'react-native-alert-notification';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
@@ -77,34 +78,37 @@ const App = () => {
 
   useEffect(() => {
     const req = async () => {
-      await requestPermissionNotification();
+      await PushNotification.requestPermissions(['alert', 'badge', 'sound']);
     };
+
     req();
   }, []);
 
   return (
     <RealmProvider {...realmConfig}>
-      <RecoilRoot>
-        <GestureHandlerRootView style={style}>
-          <NavigationContainer>
-            <Navigator initialRouteName="HomeScreen">
-              {screens.map(({name, headerShown, component}) => (
-                <Screen
-                  key={name}
-                  name={name}
-                  component={component}
-                  options={{
-                    headerShown: headerShown,
-                    headerShadowVisible: false,
-                    headerBackTitleVisible: false,
-                    animation: name === 'PhotoScreen' ? 'fade' : 'default',
-                  }}
-                />
-              ))}
-            </Navigator>
-          </NavigationContainer>
-        </GestureHandlerRootView>
-      </RecoilRoot>
+      <AlertNotificationRoot>
+        <RecoilRoot>
+          <GestureHandlerRootView style={style}>
+            <NavigationContainer>
+              <Navigator initialRouteName="HomeScreen">
+                {screens.map(({name, headerShown, component}) => (
+                  <Screen
+                    key={name}
+                    name={name}
+                    component={component}
+                    options={{
+                      headerShown: headerShown,
+                      headerShadowVisible: false,
+                      headerBackTitleVisible: false,
+                      animation: name === 'PhotoScreen' ? 'fade' : 'default',
+                    }}
+                  />
+                ))}
+              </Navigator>
+            </NavigationContainer>
+          </GestureHandlerRootView>
+        </RecoilRoot>
+      </AlertNotificationRoot>
     </RealmProvider>
   );
 };

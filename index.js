@@ -7,7 +7,10 @@ import App from './App';
 import {name as appName} from './app.json';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification, {Importance} from 'react-native-push-notification';
+import Realm from 'realm';
 import 'moment-timezone';
+
+Realm.flags.THROW_ON_GLOBAL_REALM = true;
 
 PushNotification.configure({
   onRegister: function (token) {

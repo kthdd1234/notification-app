@@ -42,7 +42,8 @@ var BottomSheetModalContainer = function (_a) {
     var style = { marginHorizontal: isDetached ? 24 : 0 };
     return (react_1["default"].createElement(bottom_sheet_1.BottomSheetModalProvider, null,
         react_1["default"].createElement(bottom_sheet_1.BottomSheetModal, { style: style, ref: bottomSheetModalRef, backdropComponent: renderBackdrop, index: 0, snapPoints: snapPoints, detached: isDetached, bottomInset: isDetached ? 48 : 0 },
-            title && (react_1["default"].createElement(styled_1.NText, { className: "mt-3 font-bold text-center" }, t(title))),
+            title && (react_1["default"].createElement(styled_1.NView, { className: "flex-row items-center justify-center" },
+                react_1["default"].createElement(styled_1.NText, { className: "mt-3 font-bold" }, t(title)))),
             react_1["default"].createElement(styled_1.NView, { className: "mt-3" }, component))));
 };
 exports["default"] = BottomSheetModalContainer;

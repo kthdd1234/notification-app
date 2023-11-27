@@ -78,7 +78,9 @@ const BottomSheetModalContainer = ({
         // footerComponent={renderFooter}
       >
         {title && (
-          <NText className="mt-3 font-bold text-center">{t(title!)}</NText>
+          <NView className="flex-row items-center justify-center">
+            <NText className="mt-3 font-bold">{t(title!)}</NText>
+          </NView>
         )}
         <NView className="mt-3">{component}</NView>
       </BottomSheetModal>

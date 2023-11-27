@@ -64,11 +64,14 @@ var string_format_1 = require("string-format");
 var react_3 = require("@realm/react");
 var push_notification_1 = require("../utils/push-notification");
 var moment_2 = require("../utils/moment");
-var Notification_1 = require("../schema/Notification");
+var Item_1 = require("../schema/Item");
 var images_1 = require("../../assets/images");
 var IconView_1 = require("../components/view/IconView");
 var realm_1 = require("realm");
-// import {UpdateMode} from 'realm/dist/bundle';
+var react_native_alert_notification_1 = require("react-native-alert-notification");
+var react_native_1 = require("react-native");
+// import {randomUUID} from 'crypto';
+var react_native_uuid_1 = require("react-native-uuid");
 var Default = enum_1.eTimestampTypes.Default, EveryWeek = enum_1.eTimestampTypes.EveryWeek, EveryMonth = enum_1.eTimestampTypes.EveryMonth;
 var _a = [
     Default.toString(),
@@ -116,7 +119,7 @@ var NotificationScreen = function (_a) {
     var monthDayRef = react_2.useRef(null);
     /** useRealm */
     var realm = react_3.useRealm();
-    var itemObj = react_3.useObject(Notification_1.Item, itemId || '');
+    var itemObj = react_3.useObject(Item_1.Item, itemId || '');
     /** useEffect */
     react_1.useEffect(function () {
         if (itemId !== null) {
@@ -159,6 +162,7 @@ var NotificationScreen = function (_a) {
         daysState.includes(day)
             ? (daysState[enum_1.eKoDays[day]] = '')
             : (daysState[enum_1.eKoDays[day]] = day);
+        console.log(__spreadArrays(daysState));
         setDaysState(__spreadArrays(daysState));
     };
     var onPressDateButton = function () {
@@ -190,103 +194,87 @@ var NotificationScreen = function (_a) {
         (_a = monthDayRef.current) === null || _a === void 0 ? void 0 : _a.close();
     };
     var onPressTest = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var permission;
         return __generator(this, function (_a) {
-            push_notification_1.localNotification({
-                id: Date.now(),
-                title: t('앱 이름'),
-                message: textState,
-                picture: constants_1.imageUrl(iconState)
-            });
-            push_notification_1.cancelAllLocalNotifications();
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, push_notification_1.checkPermissions()];
+                case 1:
+                    permission = _a.sent();
+                    console.log(permission);
+                    if (permission === false) {
+                        return [2 /*return*/, showNotificationDialog()];
+                    }
+                    push_notification_1.localNotification({
+                        id: Date.now(),
+                        title: t('앱 이름'),
+                        message: textState,
+                        picture: constants_1.imageUrl(iconState)
+                    });
+                    return [2 /*return*/];
+            }
         });
     }); };
+    var showNotificationDialog = function () {
+        react_native_alert_notification_1.Dialog.show({
+            type: react_native_alert_notification_1.ALERT_TYPE.WARNING,
+            title: t('알림 접근 권한이 없어요.'),
+            textBody: t('설정으로 이동하여 알림 허용을 해주세요.'),
+            button: t('이동'),
+            onPressButton: function () { return react_native_1.Linking.openSettings(); }
+        });
+    };
     var onPressDone = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var ampm, hour, minute, date, now, picture, notifications, notifiId, dateTime, dateTimeList, createEveryWeekNoti, beforeNotiList, day;
+        var ampm, hour, minute, date, picture, permission, dateTime, notifications;
         return __generator(this, function (_a) {
-            ampm = timeState.ampm, hour = timeState.hour, minute = timeState.minute;
-            date = moment_1["default"](dateState);
-            now = new Date(Date.now());
-            picture = constants_1.imageUrl(iconState);
-            notifications = [];
-            notifiId = itemId ? Number(itemObj.notifications[0]._id) : constants_1.uid(0);
-            dateTime = moment_2.setDateTime({
-                year: date.format('YYYY'),
-                month: date.format('MM'),
-                day: date.format('DD'),
-                ampm: ampm,
-                hour: hour,
-                minute: minute
-            });
-            // cancelAllLocalNotifications();
-            if (triggerState === _default) {
-                if (now.getTime() > dateTime.getTime()) {
-                    dateTime = moment_1["default"](dateTime).add(1, 'd').toDate();
-                }
-                push_notification_1.localNotificationSchedule({
-                    id: notifiId,
-                    title: t('앱 이름'),
-                    message: textState,
-                    date: dateTime,
-                    repeatType: undefined,
-                    picture: picture
-                });
-                notifications.push({ _id: "" + notifiId, dateTime: dateTime });
-            }
-            else if (triggerState === _everyWeek) {
-                dateTimeList = daysState
-                    .filter(function (state) { return !!state; })
-                    .map(function (state) { return moment_1["default"](dateTime).day(enum_1.eKoDays[state]).toDate(); });
-                createEveryWeekNoti = function (list) {
-                    list.forEach(function (newDate, key) {
-                        var eId = constants_1.uid(key);
-                        push_notification_1.localNotificationSchedule({
-                            id: constants_1.uid(key),
-                            title: t('앱 이름'),
-                            message: textState,
-                            date: newDate,
-                            repeatType: 'week',
-                            picture: picture
-                        });
-                        notifications.push({ _id: "" + eId, dateTime: newDate });
+            switch (_a.label) {
+                case 0:
+                    ampm = timeState.ampm, hour = timeState.hour, minute = timeState.minute;
+                    date = moment_1["default"](dateState);
+                    picture = constants_1.imageUrl(iconState);
+                    return [4 /*yield*/, push_notification_1.checkPermissions()];
+                case 1:
+                    permission = _a.sent();
+                    if (permission === false) {
+                        return [2 /*return*/, showNotificationDialog()];
+                    }
+                    dateTime = moment_2.setDateTime({
+                        year: date.format('YYYY'),
+                        month: date.format('MM'),
+                        day: date.format('DD'),
+                        ampm: ampm,
+                        hour: hour,
+                        minute: minute
                     });
-                };
-                if (itemId === null) {
-                    createEveryWeekNoti(dateTimeList);
-                }
-                else {
-                    beforeNotiList = (itemObj === null || itemObj === void 0 ? void 0 : itemObj.notifications) || [];
-                    beforeNotiList.forEach(function (noti) { return push_notification_1.cancelLocalNotification(noti._id); });
-                    createEveryWeekNoti(dateTimeList);
-                }
+                    notifications = push_notification_1.setPushNotification({
+                        appName: t('앱 이름'),
+                        itemId: itemId,
+                        itemObj: itemObj,
+                        picture: picture,
+                        dateTime: dateTime,
+                        triggerState: triggerState,
+                        textState: textState,
+                        daysState: daysState,
+                        monthDayState: monthDayState
+                    });
+                    realm.write(function () {
+                        var _a;
+                        var modified = itemId === null ? realm_1.UpdateMode.Never : realm_1.UpdateMode.Modified;
+                        var order = (_a = itemObj === null || itemObj === void 0 ? void 0 : itemObj.order) !== null && _a !== void 0 ? _a : 0;
+                        realm.create('Item', {
+                            _id: itemId || react_native_uuid_1["default"].v4(),
+                            isNotify: true,
+                            icon: iconState,
+                            body: textState,
+                            type: 'timestamp',
+                            state: triggerState,
+                            notifications: notifications,
+                            isChecked: false,
+                            order: itemId ? order : constants_1.nId(0)
+                        }, modified);
+                    });
+                    navigation.pop();
+                    return [2 /*return*/];
             }
-            else if (triggerState === _everyMonth) {
-                day = monthDayState.split('-')[2];
-                dateTime.setDate(Number(day));
-                push_notification_1.localNotificationSchedule({
-                    id: notifiId,
-                    title: t('앱 이름'),
-                    message: textState,
-                    date: dateTime,
-                    repeatType: 'month',
-                    picture: picture
-                });
-                notifications.push({ _id: "" + notifiId, dateTime: dateTime });
-            }
-            realm.write(function () {
-                var modified = itemId === null ? realm_1.UpdateMode.Never : realm_1.UpdateMode.Modified;
-                realm.create('Item', {
-                    _id: "" + (itemId || constants_1.uid(0)),
-                    icon: iconState,
-                    body: textState,
-                    type: 'timestamp',
-                    state: triggerState,
-                    notifications: notifications,
-                    isChecked: false
-                }, modified);
-            });
-            navigation.pop();
-            return [2 /*return*/];
         });
     }); };
     var isTextState = textState !== '';
@@ -307,7 +295,7 @@ var NotificationScreen = function (_a) {
             react_1["default"].createElement(TitleSection_1["default"], { title: "\uC2DC\uAC01", component: react_1["default"].createElement(DisplayButton_1["default"], { text: string_format_1["default"](t(timeState.ampm + " {}\uC2DC {}\uBD84"), timeState.hour, timeState.minute), onPress: onPressTimeButton }) })),
         react_1["default"].createElement(styled_1.NView, { className: "sticky bottom-0 p-4" },
             react_1["default"].createElement(TextButton_1["default"], { viewClassName: "flex-row justify-center items-center h-7 mb-4", textClassName: "text-blue-500 text-base", text: "\uC54C\uB9BC \uBBF8\uB9AC\uBCF4\uAE30", onPress: onPressTest }),
-            react_1["default"].createElement(DefaultButton_1["default"], { name: itemId ? '편집' : '추가', isEnabled: isEnabledDone, height: 60, onPress: handlerDone })),
+            react_1["default"].createElement(DefaultButton_1["default"], { name: itemId ? '완료' : '추가', isEnabled: isEnabledDone, height: 60, onPress: handlerDone })),
         react_1["default"].createElement(bottomsheet_1["default"], { title: "\uB0A0\uC9DC \uC120\uD0DD", bottomSheetModalRef: dateRef, snapPoint: 60, component: react_1["default"].createElement(MonthSection_1["default"], { initialDate: dateState, onPress: onPressDateDone }) }),
         react_1["default"].createElement(bottomsheet_1["default"], { title: "\uB9E4\uB2EC \uBC18\uBCF5\uC77C", bottomSheetModalRef: monthDayRef, snapPoint: 60, component: react_1["default"].createElement(MonthSection_1["default"], { initialDate: monthDayState, onPress: onPressMonthDayDone }) }),
         react_1["default"].createElement(bottomsheet_1["default"], { title: "\uC2DC\uAC04 \uC124\uC815", bottomSheetModalRef: timeRef, snapPoint: 53, component: react_1["default"].createElement(TimeSection_1["default"], { timeInfo: timeState, onPress: onPressTimeDone }) })));

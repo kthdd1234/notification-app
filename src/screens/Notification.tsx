@@ -19,7 +19,7 @@ import {
   formatString,
   imageUrl,
   timestampTypes,
-  uid,
+  nId,
 } from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
@@ -30,17 +30,19 @@ import TimeSection, {IParamsTime} from '../components/section/TimeSection';
 import format from 'string-format';
 import {useRealm, useObject} from '@realm/react';
 import {
-  cancelAllLocalNotifications,
-  cancelLocalNotification,
+  checkPermissions,
   localNotification,
-  localNotificationSchedule,
+  setPushNotification,
 } from '../utils/push-notification';
 import {setDateTime} from '../utils/moment';
-import {Item} from '../schema/Notification';
+import {Item} from '../schema/Item';
 import ImageList from '../../assets/images';
 import IconView from '../components/view/IconView';
 import {UpdateMode} from 'realm';
-// import {UpdateMode} from 'realm/dist/bundle';
+import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
+import {Linking} from 'react-native';
+// import {randomUUID} from 'crypto';
+import uuid from 'react-native-uuid';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -148,6 +150,8 @@ const NotificationScreen = ({navigation, route}) => {
       ? (daysState[eKoDays[day]] = '')
       : (daysState[eKoDays[day]] = day);
 
+    console.log([...daysState]);
+
     setDaysState([...daysState]);
   };
 
@@ -179,24 +183,41 @@ const NotificationScreen = ({navigation, route}) => {
   };
 
   const onPressTest = async () => {
+    const permission = await checkPermissions();
+
+    console.log(permission);
+
+    if (permission === false) {
+      return showNotificationDialog();
+    }
+
     localNotification({
       id: Date.now(),
       title: t('앱 이름'),
       message: textState,
       picture: imageUrl(iconState),
     });
+  };
 
-    cancelAllLocalNotifications();
+  const showNotificationDialog = () => {
+    Dialog.show({
+      type: ALERT_TYPE.WARNING,
+      title: t('알림 접근 권한이 없어요.'),
+      textBody: t('설정으로 이동하여 알림 허용을 해주세요.'),
+      button: t('이동'),
+      onPressButton: () => Linking.openSettings(),
+    });
   };
 
   const onPressDone = async () => {
     const {ampm, hour, minute} = timeState;
     const date = moment(dateState);
-    const now = new Date(Date.now());
     const picture = imageUrl(iconState);
-    const notifications: {_id: string; dateTime: Date; interval?: number}[] =
-      [];
-    const notifiId = itemId ? Number(itemObj!.notifications[0]._id) : uid(0);
+    const permission = await checkPermissions();
+
+    if (permission === false) {
+      return showNotificationDialog();
+    }
 
     let dateTime = setDateTime({
       year: date.format('YYYY'),
@@ -207,82 +228,34 @@ const NotificationScreen = ({navigation, route}) => {
       minute,
     });
 
-    // cancelAllLocalNotifications();
-
-    if (triggerState === _default) {
-      if (now.getTime() > dateTime.getTime()) {
-        dateTime = moment(dateTime).add(1, 'd').toDate();
-      }
-
-      localNotificationSchedule({
-        id: notifiId,
-        title: t('앱 이름'),
-        message: textState,
-        date: dateTime,
-        repeatType: undefined,
-        picture: picture,
-      });
-
-      notifications.push({_id: `${notifiId}`, dateTime: dateTime});
-    } else if (triggerState === _everyWeek) {
-      const dateTimeList = daysState
-        .filter(state => !!state)
-        .map(state => moment(dateTime).day(eKoDays[state]).toDate());
-
-      const createEveryWeekNoti = (list: Date[]) => {
-        list.forEach((newDate, key) => {
-          const eId = uid(key);
-
-          localNotificationSchedule({
-            id: uid(key),
-            title: t('앱 이름'),
-            message: textState,
-            date: newDate,
-            repeatType: 'week',
-            picture: picture,
-          });
-
-          notifications.push({_id: `${eId}`, dateTime: newDate});
-        });
-      };
-
-      if (itemId === null) {
-        createEveryWeekNoti(dateTimeList);
-      } else {
-        const beforeNotiList = itemObj?.notifications || [];
-
-        beforeNotiList.forEach(noti => cancelLocalNotification(noti._id));
-        createEveryWeekNoti(dateTimeList);
-      }
-    } else if (triggerState === _everyMonth) {
-      const day = monthDayState.split('-')[2];
-      dateTime.setDate(Number(day));
-
-      localNotificationSchedule({
-        id: notifiId,
-        title: t('앱 이름'),
-        message: textState,
-        date: dateTime,
-        repeatType: 'month',
-        picture: picture,
-      });
-
-      notifications.push({_id: `${notifiId}`, dateTime: dateTime});
-    }
+    const notifications = setPushNotification({
+      appName: t('앱 이름'),
+      itemId,
+      itemObj,
+      picture,
+      dateTime,
+      triggerState,
+      textState,
+      daysState,
+      monthDayState,
+    });
 
     realm.write(() => {
       const modified = itemId === null ? UpdateMode.Never : UpdateMode.Modified;
+      const order = itemObj?.order ?? 0;
 
       realm.create(
         'Item',
         {
-          _id: `${itemId || uid(0)}`,
+          _id: itemId || uuid.v4(),
+          isNotify: true,
           icon: iconState,
           body: textState,
           type: 'timestamp',
           state: triggerState,
           notifications: notifications,
           isChecked: false,
+          order: itemId ? order : nId(0),
         },
         modified,
       );
@@ -415,7 +388,7 @@ const NotificationScreen = ({navigation, route}) => {
           onPress={onPressTest}
         />
         <DefaultButton
-          name={itemId ? '편집' : '추가'}
+          name={itemId ? '완료' : '추가'}
           isEnabled={isEnabledDone}
           height={60}
           onPress={handlerDone}
