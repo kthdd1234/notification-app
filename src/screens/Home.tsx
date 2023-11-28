@@ -1,6 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useRef, useState} from 'react';
-import {NSafeAreaView} from '../components/styled';
+import {NSafeAreaView, NView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
 import {eSvg} from '../types/enum';
 import CommonHeader from '../components/header/CommonHeader';
@@ -8,7 +9,6 @@ import {useQuery, useRealm} from '@realm/react';
 import {Item} from '../schema/Item';
 import {FAB} from '@rneui/base';
 import NotiTitle, {_all} from '../components/text/ItemTitle';
-import NotiSection, {IParamsMore} from '../components/section/ItemSection';
 import EmptySection from '../components/section/EmptySection';
 import {languageCode} from '../utils/i18n/i18n.config';
 import {User} from '../schema/User';
@@ -20,6 +20,9 @@ import MoreSection from '../components/section/MoreSection';
 import CalendarSection from '../components/section/CalendarSection';
 import {cancelAllLocalNotifications} from '../utils/push-notification';
 import uuid from 'react-native-uuid';
+import {FlatList} from 'react-native';
+import ItemView from '../components/view/ItemView';
+import {IParamsMore} from '../types/interface';
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -63,8 +66,8 @@ const HomeScreen = ({navigation}) => {
       });
     }
 
-    cancelAllLocalNotifications();
-    realm.write(() => realm.deleteAll());
+    // cancelAllLocalNotifications();
+    // realm.write(() => realm.deleteAll());
   }, []);
 
   const onPressFloatingAction = () => {
@@ -87,7 +90,7 @@ const HomeScreen = ({navigation}) => {
   };
 
   const headerActions = [
-    {id: eSvg.calendar, onPress: onPressCalendar},
+    // {id: eSvg.calendar, onPress: onPressCalendar},
     {id: eSvg.setting, onPress: onPressSetting},
   ];
 
@@ -96,7 +99,16 @@ const HomeScreen = ({navigation}) => {
       <CommonHeader actions={headerActions} />
       <NotiTitle />
       {itemList.length > 0 ? (
-        <NotiSection itemList={itemList} onPressMore={onPressMore} />
+        <NView className="bg-[#F9F9FC] h-full pb-40">
+          <FlatList
+            style={{padding: 16}}
+            data={itemList}
+            keyExtractor={item => item._id}
+            renderItem={({item}) => (
+              <ItemView item={item} onPressMore={onPressMore} />
+            )}
+          />
+        </NView>
       ) : (
         <EmptySection />
       )}

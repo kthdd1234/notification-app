@@ -162,7 +162,6 @@ var NotificationScreen = function (_a) {
         daysState.includes(day)
             ? (daysState[enum_1.eKoDays[day]] = '')
             : (daysState[enum_1.eKoDays[day]] = day);
-        console.log(__spreadArrays(daysState));
         setDaysState(__spreadArrays(daysState));
     };
     var onPressDateButton = function () {
@@ -224,13 +223,12 @@ var NotificationScreen = function (_a) {
         });
     };
     var onPressDone = function () { return __awaiter(void 0, void 0, void 0, function () {
-        var ampm, hour, minute, date, picture, permission, dateTime, notifications;
+        var ampm, hour, minute, date, permission, dateTime, notifications;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     ampm = timeState.ampm, hour = timeState.hour, minute = timeState.minute;
                     date = moment_1["default"](dateState);
-                    picture = constants_1.imageUrl(iconState);
                     return [4 /*yield*/, push_notification_1.checkPermissions()];
                 case 1:
                     permission = _a.sent();
@@ -247,9 +245,9 @@ var NotificationScreen = function (_a) {
                     });
                     notifications = push_notification_1.setPushNotification({
                         appName: t('앱 이름'),
+                        icon: iconState,
                         itemId: itemId,
                         itemObj: itemObj,
-                        picture: picture,
                         dateTime: dateTime,
                         triggerState: triggerState,
                         textState: textState,

@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.setPushNotification = exports.checkPermissions = exports.cancelAllLocalNotifications = exports.cancelLocalNotification = exports.localNotificationSchedule = exports.localNotification = void 0;
+exports.getScheduledLocalNotifications = exports.setPushNotification = exports.checkPermissions = exports.cancelAllLocalNotifications = exports.cancelLocalNotification = exports.localNotificationSchedule = exports.localNotification = void 0;
 /* eslint-disable no-new */
 var react_native_push_notification_1 = require("react-native-push-notification");
 var enum_1 = require("../../types/enum");
@@ -83,8 +83,25 @@ var localNotificationSchedule = function (params) {
     react_native_push_notification_1["default"].localNotificationSchedule(params);
 };
 exports.localNotificationSchedule = localNotificationSchedule;
+var getScheduledLocalNotifications = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                result = new Promise(function (resolve) {
+                    react_native_push_notification_1["default"].getScheduledLocalNotifications(function (notifications) {
+                        return resolve(notifications);
+                    });
+                });
+                return [4 /*yield*/, result];
+            case 1: return [2 /*return*/, (_a.sent())];
+        }
+    });
+}); };
+exports.getScheduledLocalNotifications = getScheduledLocalNotifications;
 var cancelLocalNotification = function (id) {
     react_native_push_notification_1["default"].cancelLocalNotification(id);
+    react_native_push_notification_1["default"].removeDeliveredNotifications([id]);
 };
 exports.cancelLocalNotification = cancelLocalNotification;
 var cancelAllLocalNotifications = function () {
@@ -92,21 +109,30 @@ var cancelAllLocalNotifications = function () {
 };
 exports.cancelAllLocalNotifications = cancelAllLocalNotifications;
 var setPushNotification = function (_a) {
-    var itemId = _a.itemId, triggerState = _a.triggerState, itemObj = _a.itemObj, dateTime = _a.dateTime, appName = _a.appName, textState = _a.textState, daysState = _a.daysState, picture = _a.picture, monthDayState = _a.monthDayState;
+    var itemId = _a.itemId, icon = _a.icon, triggerState = _a.triggerState, itemObj = _a.itemObj, dateTime = _a.dateTime, appName = _a.appName, textState = _a.textState, daysState = _a.daysState, monthDayState = _a.monthDayState;
     var notifications = [];
     var notifiId = itemId ? Number(itemObj.notifications[0]._id) : constants_1.nId(0);
     var now = new Date(Date.now());
+    var imgUrl = constants_1.imageUrl(icon);
     if (triggerState === _default) {
         if (now.getTime() > dateTime.getTime()) {
             dateTime = moment_1["default"](dateTime).add(1, 'd').toDate();
         }
+        console.log({
+            id: notifiId,
+            title: appName,
+            message: textState,
+            date: dateTime,
+            repeatType: undefined,
+            picture: imgUrl
+        });
         localNotificationSchedule({
             id: notifiId,
             title: appName,
             message: textState,
             date: dateTime,
             repeatType: undefined,
-            picture: picture
+            picture: imgUrl
         });
         notifications.push({ _id: "" + notifiId, dateTime: dateTime });
     }
@@ -123,7 +149,7 @@ var setPushNotification = function (_a) {
                     message: textState,
                     date: newDate,
                     repeatType: 'week',
-                    picture: picture
+                    picture: imgUrl
                 });
                 notifications.push({ _id: "" + id, dateTime: newDate });
             });
@@ -146,7 +172,7 @@ var setPushNotification = function (_a) {
             message: textState,
             date: dateTime,
             repeatType: 'month',
-            picture: picture
+            picture: imgUrl
         });
         notifications.push({ _id: "" + notifiId, dateTime: dateTime });
     }

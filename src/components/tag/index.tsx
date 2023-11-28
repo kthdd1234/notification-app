@@ -1,5 +1,6 @@
 import React from 'react';
 import {NText, NTouchableOpacity} from '../styled';
+import {ActivityIndicator} from 'react-native';
 
 interface IProps {
   /** */
@@ -8,6 +9,8 @@ interface IProps {
   text: string;
   /** */
   isNotMl?: boolean;
+  /** */
+  isLoading?: boolean;
   /** */
   onPress?: () => void;
 }
@@ -21,16 +24,20 @@ const colors = {
   orange: {textColor: 'text-orange-600', bgColor: 'bg-orange-50'},
 };
 
-const Tag = ({color, text, isNotMl, onPress}: IProps) => {
+const Tag = ({color, text, isNotMl, isLoading, onPress}: IProps) => {
   return (
     <NTouchableOpacity
       className={`${colors[color].bgColor} ${
         isNotMl ? '' : 'ml-2'
       }  p-2 rounded-md`}
       onPress={onPress}>
-      <NText className={`${colors[color].textColor} text-xs font-semibold`}>
-        {text}
-      </NText>
+      {isLoading ? (
+        <ActivityIndicator size="small" color="blue" />
+      ) : (
+        <NText className={`${colors[color].textColor} text-xs font-semibold`}>
+          {text}
+        </NText>
+      )}
     </NTouchableOpacity>
   );
 };

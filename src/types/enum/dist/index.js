@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.eMoreTypes = exports.eNotiStatus = exports.eIcon = exports.eSvg = exports.eKoDays = exports.eIntervalTypes = exports.eTimestampTypes = exports.eTriggerTypes = void 0;
+exports.eMoreTypes = exports.eNotiStatusTypes = exports.eIcon = exports.eSvg = exports.eKoDays = exports.eIntervalTypes = exports.eTimestampTypes = exports.eTriggerTypes = void 0;
 var eTriggerTypes;
 (function (eTriggerTypes) {
     /** */
@@ -71,13 +71,17 @@ var eIcon;
     /** */
     eIcon["more"] = "more";
 })(eIcon = exports.eIcon || (exports.eIcon = {}));
-var eNotiStatus;
-(function (eNotiStatus) {
+var eNotiStatusTypes;
+(function (eNotiStatusTypes) {
     /** */
-    eNotiStatus["End"] = "End";
+    eNotiStatusTypes["None"] = "None";
     /** */
-    eNotiStatus["Future"] = "Future";
-})(eNotiStatus = exports.eNotiStatus || (exports.eNotiStatus = {}));
+    eNotiStatusTypes["End"] = "End";
+    /** */
+    eNotiStatusTypes["Future"] = "Future";
+    /** */
+    eNotiStatusTypes["Off"] = "Off";
+})(eNotiStatusTypes = exports.eNotiStatusTypes || (exports.eNotiStatusTypes = {}));
 var eMoreTypes;
 (function (eMoreTypes) {
     /** */

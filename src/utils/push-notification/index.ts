@@ -1,8 +1,10 @@
 /* eslint-disable no-new */
-import PushNotification from 'react-native-push-notification';
+import PushNotification, {
+  PushNotificationScheduledLocalObject,
+} from 'react-native-push-notification';
 import {eKoDays, eTimestampTypes} from '../../types/enum';
 import moment from 'moment';
-import {nId} from '../constants';
+import {imageUrl, nId} from '../constants';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -33,6 +35,12 @@ interface IParamsLocalNotificationSchedule extends IParamsLocalNotification {
   number?: number;
 }
 
+export interface IParamsNotification {
+  _id: string;
+  dateTime: Date;
+  interval?: number;
+}
+
 const checkPermissions = async () => {
   const result = new Promise(resolve => {
     PushNotification.checkPermissions(permissions =>
@@ -56,8 +64,19 @@ const localNotificationSchedule = (
   PushNotification.localNotificationSchedule(params);
 };
 
+const getScheduledLocalNotifications = async () => {
+  const result = new Promise(resolve => {
+    PushNotification.getScheduledLocalNotifications(notifications =>
+      resolve(notifications),
+    );
+  });
+
+  return (await result) as PushNotificationScheduledLocalObject[];
+};
+
 const cancelLocalNotification = (id: string) => {
   PushNotification.cancelLocalNotification(id);
+  PushNotification.removeDeliveredNotifications([id]);
 };
 
 const cancelAllLocalNotifications = () => {
@@ -66,23 +85,33 @@ const cancelAllLocalNotifications = () => {
 
 const setPushNotification = ({
   itemId,
+  icon,
   triggerState,
   itemObj,
   dateTime,
   appName,
   textState,
   daysState,
-  picture,
   monthDayState,
 }) => {
-  const notifications: {_id: string; dateTime: Date; interval?: number}[] = [];
+  const notifications: IParamsNotification[] = [];
   const notifiId = itemId ? Number(itemObj!.notifications[0]._id) : nId(0);
   const now = new Date(Date.now());
+  const imgUrl = imageUrl(icon);
 
   if (triggerState === _default) {
     if (now.getTime() > dateTime.getTime()) {
       dateTime = moment(dateTime).add(1, 'd').toDate();
     }
+
+    console.log({
+      id: notifiId,
+      title: appName,
+      message: textState,
+      date: dateTime,
+      repeatType: undefined,
+      picture: imgUrl,
+    });
 
     localNotificationSchedule({
       id: notifiId,
@@ -90,7 +119,7 @@ const setPushNotification = ({
       message: textState,
       date: dateTime,
       repeatType: undefined,
-      picture: picture,
+      picture: imgUrl,
     });
 
     notifications.push({_id: `${notifiId}`, dateTime: dateTime});
@@ -109,7 +138,7 @@ const setPushNotification = ({
           message: textState,
           date: newDate,
           repeatType: 'week',
-          picture: picture,
+          picture: imgUrl,
         });
 
         notifications.push({_id: `${id}`, dateTime: newDate});
@@ -134,7 +163,7 @@ const setPushNotification = ({
       message: textState,
       date: dateTime,
       repeatType: 'month',
-      picture: picture,
+      picture: imgUrl,
     });
 
     notifications.push({_id: `${notifiId}`, dateTime: dateTime});
@@ -150,4 +179,5 @@ export {
   cancelAllLocalNotifications,
   checkPermissions,
   setPushNotification,
+  getScheduledLocalNotifications,
 };

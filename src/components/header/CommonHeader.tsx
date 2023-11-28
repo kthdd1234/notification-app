@@ -37,6 +37,7 @@ const CommonHeader = ({title, isBack, actions, color}: IProps) => {
       ) : (
         <NView />
       )}
+
       {title ? (
         <NText className="text-lg font-bold">{t(title!)}</NText>
       ) : (

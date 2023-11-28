@@ -150,8 +150,6 @@ const NotificationScreen = ({navigation, route}) => {
       ? (daysState[eKoDays[day]] = '')
       : (daysState[eKoDays[day]] = day);
 
-    console.log([...daysState]);
-
     setDaysState([...daysState]);
   };
 
@@ -212,7 +210,7 @@ const NotificationScreen = ({navigation, route}) => {
   const onPressDone = async () => {
     const {ampm, hour, minute} = timeState;
     const date = moment(dateState);
-    const picture = imageUrl(iconState);
+    // const picture = imageUrl(iconState);
     const permission = await checkPermissions();
 
     if (permission === false) {
@@ -230,9 +228,9 @@ const NotificationScreen = ({navigation, route}) => {
 
     const notifications = setPushNotification({
       appName: t('앱 이름'),
+      icon: iconState,
       itemId,
       itemObj,
-      picture,
       dateTime,
       triggerState,
       textState,

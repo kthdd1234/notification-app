@@ -5,17 +5,21 @@ import CopySvg from '../../../assets/svgs/copy.svg';
 import EditSvg from '../../../assets/svgs/edit-notification.svg';
 import TrashSvg from '../../../assets/svgs/trash.svg';
 import DisEnabledSvg from '../../../assets/svgs/disable-bell-notification.svg';
-// import EnabledSvg from '../../../assets/svgs/able-notification.svg';
+import EnabledSvg from '../../../assets/svgs/able-notification.svg';
 import {useTranslation} from 'react-i18next';
 import DefaultButton from '../button/DefaultButton';
 import {BottomSheetModalMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {useNavigation} from '@react-navigation/native';
 import {useObject, useRealm} from '@realm/react';
 import {Item} from '../../schema/Item';
-import {uid} from '../../utils/constants';
-import {setPushNotification} from '../../utils/push-notification';
+import {
+  cancelLocalNotification,
+  setPushNotification,
+} from '../../utils/push-notification';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
+import {nId} from '../../utils/constants';
+import {eTimestampTypes} from '../../types/enum';
 
 const {Copy, Edit, Remove, Enabled, DisEnabled} = eMoreTypes;
 const [_copy, _edit, _remove, _enabled, _disEnabled] = [
@@ -47,46 +51,43 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   /** useNavigation */
   const {navigate} = useNavigation();
 
+  /** itemObject */
+  const icon = itemObject?.icon || 'bell';
+  const body = itemObject?.body || '';
+  const state = itemObject?.state || 'Default';
+  const notifications = itemObject?.notifications || [];
+  const order = itemObject?.order || nId(0);
+  const isNotify = itemObject?.isNotify as boolean;
+
+  const days = notifications.map(noti => eKoDays[moment(noti.dateTime).day()]);
+  const monthDay = notifications[0]
+    ? moment(notifications[0].dateTime).format('YYYY-MM-DD')
+    : '';
+
   const onPressCopy = () => {
-    const item = itemObject || {
-      _id: 0,
-      isNotify: false,
-      notifications: [],
-      order: 0,
-    };
-    const isNotify = item.isNotify;
-    const daysState = item.notifications.map(
-      noti => eKoDays[moment(noti.dateTime).day()],
-    );
-    const monthDayState = moment(item.notifications[0].dateTime).format(
-      'YYYY-MM-DD',
-    );
-    const _uid = uid('n');
-    const _id = uuid.v4();
-
-    console.log('_id:', _uid);
-    console.log('daysState:', daysState);
-    console.log('monthDayState:', monthDayState);
-
-    if (isNotify) {
-      setPushNotification({
-        appName: t('앱 이름'),
-        itemId: _uid,
-        itemObj: item,
-        picture: item.icon,
-        dateTime: item.notifications[0].dateTime,
-        triggerState: item.state,
-        textState: item.body,
-        daysState: daysState,
-        monthDayState: monthDayState,
-      });
-    }
+    const newNotifications = setPushNotification({
+      appName: t('앱 이름'),
+      itemId: null,
+      itemObj: itemObject,
+      icon: icon,
+      textState: body,
+      dateTime: notifications[0].dateTime,
+      triggerState: state,
+      daysState: days,
+      monthDayState: monthDay,
+    });
 
     realm.write(() => {
       realm.create('Item', {
-        ...item,
-        _id: _id,
-        order: item.order,
+        _id: uuid.v4(),
+        isNotify: true,
+        icon: icon,
+        body: body,
+        type: 'timestamp',
+        state: state,
+        notifications: newNotifications,
+        isChecked: false,
+        order: order,
       });
     });
 
@@ -100,12 +101,44 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
     setTimeout(onPreeClose, 1000);
   };
 
-  const onPressRemove = () => {
-    //
+  const onCancelNotification = () => {
+    if (state === eTimestampTypes.EveryWeek) {
+      notifications.forEach(noti => cancelLocalNotification(noti._id));
+    } else {
+      cancelLocalNotification(notifications[0]._id);
+    }
   };
 
-  const onPressOnOff = () => {
-    //
+  const onPressRemove = () => {
+    onCancelNotification();
+
+    realm.write(() => realm.delete(itemObject));
+    onPreeClose();
+  };
+
+  const onPressOff = () => {
+    realm.write(() => (itemObject!.isNotify = false));
+
+    onCancelNotification();
+    onPreeClose();
+  };
+
+  const onPressOn = () => {
+    realm.write(() => (itemObject!.isNotify = true));
+
+    setPushNotification({
+      appName: t('앱 이름'),
+      itemId: itemId,
+      itemObj: itemObject,
+      icon: icon,
+      textState: body,
+      dateTime: notifications[0].dateTime,
+      triggerState: state,
+      daysState: days,
+      monthDayState: monthDay,
+    });
+
+    onPreeClose();
   };
 
   const onPreeClose = () => {
@@ -122,7 +155,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
     {
       id: _edit,
       svg: <EditSvg {...props} />,
-      name: '알림 수정',
+      name: '알림 편집',
       onPress: onPressEdit,
     },
     {
@@ -132,10 +165,10 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
       onPress: onPressRemove,
     },
     {
-      id: _disEnabled,
-      svg: <DisEnabledSvg {...props} />,
-      name: '알림 끄기',
-      onPress: onPressOnOff,
+      id: isNotify ? _disEnabled : _enabled,
+      svg: isNotify ? <DisEnabledSvg {...props} /> : <EnabledSvg {...props} />,
+      name: isNotify ? '알림 끄기' : '알림 켜기',
+      onPress: isNotify ? onPressOff : onPressOn,
     },
   ];
 
@@ -165,6 +198,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
 };
 
 export default MoreSection;
+
 /*
  *  ------
  * | 더보기 |

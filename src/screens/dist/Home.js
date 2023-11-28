@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 var react_1 = require("react");
 var styled_1 = require("../components/styled");
@@ -10,7 +11,6 @@ var react_2 = require("@realm/react");
 var Item_1 = require("../schema/Item");
 var base_1 = require("@rneui/base");
 var ItemTitle_1 = require("../components/text/ItemTitle");
-var ItemSection_1 = require("../components/section/ItemSection");
 var EmptySection_1 = require("../components/section/EmptySection");
 var i18n_config_1 = require("../utils/i18n/i18n.config");
 var User_1 = require("../schema/User");
@@ -19,8 +19,9 @@ var states_1 = require("../states");
 var bottomsheet_1 = require("../components/bottomsheet");
 var MoreSection_1 = require("../components/section/MoreSection");
 var CalendarSection_1 = require("../components/section/CalendarSection");
-var push_notification_1 = require("../utils/push-notification");
 var react_native_uuid_1 = require("react-native-uuid");
+var react_native_1 = require("react-native");
+var ItemView_1 = require("../components/view/ItemView");
 var HomeScreen = function (_a) {
     var navigation = _a.navigation;
     /** useTranslation */
@@ -57,8 +58,8 @@ var HomeScreen = function (_a) {
                 });
             });
         }
-        push_notification_1.cancelAllLocalNotifications();
-        realm.write(function () { return realm.deleteAll(); });
+        // cancelAllLocalNotifications();
+        // realm.write(() => realm.deleteAll());
     }, []);
     var onPressFloatingAction = function () {
         navigation.navigate('NotificationScreen', {
@@ -78,13 +79,17 @@ var HomeScreen = function (_a) {
         navigation.navigate('SettingScreen');
     };
     var headerActions = [
-        { id: enum_1.eSvg.calendar, onPress: onPressCalendar },
+        // {id: eSvg.calendar, onPress: onPressCalendar},
         { id: enum_1.eSvg.setting, onPress: onPressSetting },
     ];
     return (react_1["default"].createElement(styled_1.NSafeAreaView, { className: "relative h-full bg-[#F9F9FC]" },
         react_1["default"].createElement(CommonHeader_1["default"], { actions: headerActions }),
         react_1["default"].createElement(ItemTitle_1["default"], null),
-        itemList.length > 0 ? (react_1["default"].createElement(ItemSection_1["default"], { itemList: itemList, onPressMore: onPressMore })) : (react_1["default"].createElement(EmptySection_1["default"], null)),
+        itemList.length > 0 ? (react_1["default"].createElement(styled_1.NView, { className: "bg-[#F9F9FC] h-full pb-40" },
+            react_1["default"].createElement(react_native_1.FlatList, { style: { padding: 16 }, data: itemList, keyExtractor: function (item) { return item._id; }, renderItem: function (_a) {
+                    var item = _a.item;
+                    return (react_1["default"].createElement(ItemView_1["default"], { item: item, onPressMore: onPressMore }));
+                } }))) : (react_1["default"].createElement(EmptySection_1["default"], null)),
         react_1["default"].createElement(base_1.FAB, { placement: "right", icon: { name: 'add', color: 'white' }, buttonStyle: { backgroundColor: '#4F95F1' }, titleStyle: { fontWeight: 'bold' }, title: t('알림 추가'), size: "large", onPress: onPressFloatingAction }),
         react_1["default"].createElement(bottomsheet_1["default"], { title: selectedMore.name, bottomSheetModalRef: moreRef, component: react_1["default"].createElement(MoreSection_1["default"], { itemId: selectedMore.itemId, moreRef: moreRef }), isDetached: true, snapPoint: 45 }),
         react_1["default"].createElement(bottomsheet_1["default"], { title: "\uCE98\uB9B0\uB354", bottomSheetModalRef: calendarRef, component: react_1["default"].createElement(CalendarSection_1["default"], null), snapPoint: 70 })));

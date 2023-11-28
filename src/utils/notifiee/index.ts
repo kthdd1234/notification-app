@@ -5,7 +5,6 @@ import notifee, {
   IntervalTrigger,
   TimestampTrigger,
 } from '@notifee/react-native';
-import {uid} from '../constants';
 
 const setNotificationCategories = async ({
   memo,
@@ -88,7 +87,7 @@ const setTriggerNotification = async ({
 }) => {
   try {
     const channelId = await notifee.createChannel({
-      id: uid('n'),
+      id: '123',
       name: 'Channel',
     });
 
@@ -126,10 +125,8 @@ const getTriggerNotificationIds = async () => {
 };
 
 const cancelNotification = async (notificationId: string) => {
-  console.log('notificationId:', notificationId);
-
-  await notifee.cancelNotification(notificationId);
   await getTriggerNotificationIds();
+  await notifee.cancelNotification(notificationId);
 };
 
 const cancelAllNotification = async () => {

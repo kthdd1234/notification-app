@@ -25,14 +25,14 @@ var Item = /** @class */ (function (_super) {
         primaryKey: '_id',
         properties: {
             _id: 'string',
-            isNotify: { type: 'bool', "default": false },
+            isNotify: 'bool',
             icon: 'string',
             body: 'string',
             type: 'string',
             state: 'string',
             notifications: 'Notification[]',
             order: 'int',
-            isChecked: { type: 'bool', "default": false },
+            isChecked: 'bool',
             media: 'string?',
             sound: 'string?',
             memo: 'string?'

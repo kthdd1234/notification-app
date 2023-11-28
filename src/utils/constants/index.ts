@@ -3,7 +3,7 @@ import {
   eKoDays,
   eIntervalTypes,
   eTimestampTypes,
-  eNotiStatus,
+  eNotiStatusTypes,
 } from '../../types/enum';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
@@ -126,11 +126,6 @@ const calendarLocales = {
   },
 };
 
-const notiStatusTypes = [
-  {id: eNotiStatus.End, name: '알림 종료'},
-  {id: eNotiStatus.Future, name: '알림 예정'},
-];
-
 const timestampTypes = [
   {
     id: Default,
@@ -145,15 +140,22 @@ const timestampTypes = [
   },
 ];
 
+const statusTypes = [
+  {id: eNotiStatusTypes.End, name: '알림 종료', color: 'grey'},
+  {id: eNotiStatusTypes.Future, name: '알림 예정', color: 'blue'},
+  {id: eNotiStatusTypes.Off, name: '알림 끔', color: 'grey'},
+];
+
 const notiTimestampTypes = {};
+const notiStatusTypes = {};
 
 timestampTypes.forEach(({id, name, color}) => {
   notiTimestampTypes[id] = {name, color};
 });
 
-// const notiTimestampTypes = timestampTypes.map(({id, name, color}) => ({
-//   [id]: {name, color},
-// }));
+statusTypes.forEach(({id, name, color}) => {
+  notiStatusTypes[id] = {name, color};
+});
 
 const intervalTypes = [
   {
@@ -211,6 +213,8 @@ const imageUrl = (name: string) => {
 
 export {
   StringIsNumber,
+  imageUrl,
+  nId,
   filterDays,
   timestampTypes,
   intervalTypes,
@@ -219,8 +223,6 @@ export {
   mediaErrorCode,
   calendarLocales,
   timeSetting,
-  imageUrl,
-  nId,
   formatString,
   notiStatusTypes,
   notiTimestampTypes,

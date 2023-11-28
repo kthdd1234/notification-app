@@ -18,16 +18,17 @@ var copy_svg_1 = require("../../../assets/svgs/copy.svg");
 var edit_notification_svg_1 = require("../../../assets/svgs/edit-notification.svg");
 var trash_svg_1 = require("../../../assets/svgs/trash.svg");
 var disable_bell_notification_svg_1 = require("../../../assets/svgs/disable-bell-notification.svg");
-// import EnabledSvg from '../../../assets/svgs/able-notification.svg';
+var able_notification_svg_1 = require("../../../assets/svgs/able-notification.svg");
 var react_i18next_1 = require("react-i18next");
 var DefaultButton_1 = require("../button/DefaultButton");
 var native_1 = require("@react-navigation/native");
 var react_2 = require("@realm/react");
 var Item_1 = require("../../schema/Item");
-var constants_1 = require("../../utils/constants");
 var push_notification_1 = require("../../utils/push-notification");
 var moment_1 = require("moment");
 var react_native_uuid_1 = require("react-native-uuid");
+var constants_1 = require("../../utils/constants");
+var enum_2 = require("../../types/enum");
 var Copy = enum_1.eMoreTypes.Copy, Edit = enum_1.eMoreTypes.Edit, Remove = enum_1.eMoreTypes.Remove, Enabled = enum_1.eMoreTypes.Enabled, DisEnabled = enum_1.eMoreTypes.DisEnabled;
 var _a = [
     Copy,
@@ -47,36 +48,41 @@ var MoreSection = function (_a) {
     var t = react_i18next_1.useTranslation().t;
     /** useNavigation */
     var navigate = native_1.useNavigation().navigate;
+    /** itemObject */
+    var icon = (itemObject === null || itemObject === void 0 ? void 0 : itemObject.icon) || 'bell';
+    var body = (itemObject === null || itemObject === void 0 ? void 0 : itemObject.body) || '';
+    var state = (itemObject === null || itemObject === void 0 ? void 0 : itemObject.state) || 'Default';
+    var notifications = (itemObject === null || itemObject === void 0 ? void 0 : itemObject.notifications) || [];
+    var order = (itemObject === null || itemObject === void 0 ? void 0 : itemObject.order) || constants_1.nId(0);
+    var isNotify = itemObject === null || itemObject === void 0 ? void 0 : itemObject.isNotify;
+    var days = notifications.map(function (noti) { return enum_1.eKoDays[moment_1["default"](noti.dateTime).day()]; });
+    var monthDay = notifications[0]
+        ? moment_1["default"](notifications[0].dateTime).format('YYYY-MM-DD')
+        : '';
     var onPressCopy = function () {
-        var item = itemObject || {
-            _id: 0,
-            isNotify: false,
-            notifications: [],
-            order: 0
-        };
-        var isNotify = item.isNotify;
-        var daysState = item.notifications.map(function (noti) { return enum_1.eKoDays[moment_1["default"](noti.dateTime).day()]; });
-        var monthDayState = moment_1["default"](item.notifications[0].dateTime).format('YYYY-MM-DD');
-        var _uid = constants_1.uid('n');
-        var _id = react_native_uuid_1["default"].v4();
-        console.log('_id:', _uid);
-        console.log('daysState:', daysState);
-        console.log('monthDayState:', monthDayState);
-        if (isNotify) {
-            push_notification_1.setPushNotification({
-                appName: t('앱 이름'),
-                itemId: _uid,
-                itemObj: item,
-                picture: item.icon,
-                dateTime: item.notifications[0].dateTime,
-                triggerState: item.state,
-                textState: item.body,
-                daysState: daysState,
-                monthDayState: monthDayState
-            });
-        }
+        var newNotifications = push_notification_1.setPushNotification({
+            appName: t('앱 이름'),
+            itemId: null,
+            itemObj: itemObject,
+            icon: icon,
+            textState: body,
+            dateTime: notifications[0].dateTime,
+            triggerState: state,
+            daysState: days,
+            monthDayState: monthDay
+        });
         realm.write(function () {
-            realm.create('Item', __assign(__assign({}, item), { _id: _id, order: item.order }));
+            realm.create('Item', {
+                _id: react_native_uuid_1["default"].v4(),
+                isNotify: true,
+                icon: icon,
+                body: body,
+                type: 'timestamp',
+                state: state,
+                notifications: newNotifications,
+                isChecked: false,
+                order: order
+            });
         });
         onPreeClose();
     };
@@ -85,11 +91,38 @@ var MoreSection = function (_a) {
         navigate.apply(void 0, arr);
         setTimeout(onPreeClose, 1000);
     };
-    var onPressRemove = function () {
-        //
+    var onCancelNotification = function () {
+        if (state === enum_2.eTimestampTypes.EveryWeek) {
+            notifications.forEach(function (noti) { return push_notification_1.cancelLocalNotification(noti._id); });
+        }
+        else {
+            push_notification_1.cancelLocalNotification(notifications[0]._id);
+        }
     };
-    var onPressOnOff = function () {
-        //
+    var onPressRemove = function () {
+        onCancelNotification();
+        realm.write(function () { return realm["delete"](itemObject); });
+        onPreeClose();
+    };
+    var onPressOff = function () {
+        realm.write(function () { return (itemObject.isNotify = false); });
+        onCancelNotification();
+        onPreeClose();
+    };
+    var onPressOn = function () {
+        realm.write(function () { return (itemObject.isNotify = true); });
+        push_notification_1.setPushNotification({
+            appName: t('앱 이름'),
+            itemId: itemId,
+            itemObj: itemObject,
+            icon: icon,
+            textState: body,
+            dateTime: notifications[0].dateTime,
+            triggerState: state,
+            daysState: days,
+            monthDayState: monthDay
+        });
+        onPreeClose();
     };
     var onPreeClose = function () {
         var _a;
@@ -105,7 +138,7 @@ var MoreSection = function (_a) {
         {
             id: _edit,
             svg: react_1["default"].createElement(edit_notification_svg_1["default"], __assign({}, props)),
-            name: '알림 수정',
+            name: '알림 편집',
             onPress: onPressEdit
         },
         {
@@ -115,10 +148,10 @@ var MoreSection = function (_a) {
             onPress: onPressRemove
         },
         {
-            id: _disEnabled,
-            svg: react_1["default"].createElement(disable_bell_notification_svg_1["default"], __assign({}, props)),
-            name: '알림 끄기',
-            onPress: onPressOnOff
+            id: isNotify ? _disEnabled : _enabled,
+            svg: isNotify ? react_1["default"].createElement(disable_bell_notification_svg_1["default"], __assign({}, props)) : react_1["default"].createElement(able_notification_svg_1["default"], __assign({}, props)),
+            name: isNotify ? '알림 끄기' : '알림 켜기',
+            onPress: isNotify ? onPressOff : onPressOn
         },
     ];
     return (react_1["default"].createElement(styled_1.NView, { className: "px-6 py-3" },

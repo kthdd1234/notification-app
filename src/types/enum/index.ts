@@ -68,11 +68,15 @@ export enum eIcon {
   more = 'more',
 }
 
-export enum eNotiStatus {
+export enum eNotiStatusTypes {
+  /** */
+  None = 'None',
   /** */
   End = 'End',
   /** */
   Future = 'Future',
+  /** */
+  Off = 'Off',
 }
 
 export enum eMoreTypes {
