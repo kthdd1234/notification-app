@@ -29,6 +29,7 @@ var moment_1 = require("moment");
 var react_native_uuid_1 = require("react-native-uuid");
 var constants_1 = require("../../utils/constants");
 var enum_2 = require("../../types/enum");
+var SvgBlockButton_1 = require("../button/SvgBlockButton");
 var Copy = enum_1.eMoreTypes.Copy, Edit = enum_1.eMoreTypes.Edit, Remove = enum_1.eMoreTypes.Remove, Enabled = enum_1.eMoreTypes.Enabled, DisEnabled = enum_1.eMoreTypes.DisEnabled;
 var _a = [
     Copy,
@@ -155,9 +156,10 @@ var MoreSection = function (_a) {
         },
     ];
     return (react_1["default"].createElement(styled_1.NView, { className: "px-6 py-3" },
-        react_1["default"].createElement(styled_1.NView, { className: "mb-2" }, moreItems.map(function (item) { return (react_1["default"].createElement(styled_1.NTouchableOpacity, { key: item.id, className: "flex-row items-center mb-5", onPress: item.onPress },
-            react_1["default"].createElement(styled_1.NView, { className: "p-2 mr-3 bg-gray-100 rounded-lg" }, item.svg),
-            react_1["default"].createElement(styled_1.NText, { className: "text-base text-gray-700" }, t(item.name)))); })),
+        react_1["default"].createElement(styled_1.NView, { className: "mb-2" }, moreItems.map(function (_a) {
+            var id = _a.id, svg = _a.svg, name = _a.name, onPress = _a.onPress;
+            return (react_1["default"].createElement(SvgBlockButton_1["default"], { key: id, id: id, svg: svg, name: name, svgBgColor: "bg-gray-100", onPress: onPress }));
+        })),
         react_1["default"].createElement(DefaultButton_1["default"], { name: t('닫기'), isEnabled: true, height: 48, onPress: onPreeClose })));
 };
 exports["default"] = MoreSection;

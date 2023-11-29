@@ -4,7 +4,7 @@ import {Realm} from '@realm/react';
 export class User extends Realm.Object<User> {
   _id!: string;
   language!: string;
-  isDarkMode!: boolean;
+  thema!: string;
 
   static schema: ObjectSchema = {
     name: 'User',
@@ -12,7 +12,7 @@ export class User extends Realm.Object<User> {
     properties: {
       _id: 'string',
       language: 'string',
-      isDarkMode: {type: 'bool', default: false},
+      thema: 'string',
     },
   };
 }

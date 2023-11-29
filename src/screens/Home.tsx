@@ -3,7 +3,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {NSafeAreaView, NView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
-import {eSvg} from '../types/enum';
+import {eLanguageTypes, eSvg, eThemaTypes} from '../types/enum';
 import CommonHeader from '../components/header/CommonHeader';
 import {useQuery, useRealm} from '@realm/react';
 import {Item} from '../schema/Item';
@@ -23,6 +23,8 @@ import uuid from 'react-native-uuid';
 import {FlatList} from 'react-native';
 import ItemView from '../components/view/ItemView';
 import {IParamsMore} from '../types/interface';
+
+const {ko, en} = eLanguageTypes;
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -60,8 +62,8 @@ const HomeScreen = ({navigation}) => {
       realm.write(() => {
         realm.create('User', {
           _id: uuid.v4(),
-          language: languageCode,
-          isDarkMode: false,
+          language: languageCode === ko ? ko : en,
+          thema: eThemaTypes.White,
         });
       });
     }
@@ -76,9 +78,9 @@ const HomeScreen = ({navigation}) => {
     });
   };
 
-  const onPressCalendar = () => {
-    calendarRef.current?.present();
-  };
+  // const onPressCalendar = () => {
+  //   calendarRef.current?.present();
+  // };
 
   const onPressMore = (params: IParamsMore) => {
     setSeletedMore(params);

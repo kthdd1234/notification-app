@@ -23,6 +23,7 @@ import {IParamsMore} from '../../types/interface';
 import SwipeableItem from 'react-native-swipeable-item';
 import TrashSvg from '../../../assets/svgs/trash.svg';
 import {useObject, useRealm} from '@realm/react';
+import {cancelLocalNotification} from '../../utils/push-notification';
 
 const {All, Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {End, Future, Off} = eNotiStatusTypes;
@@ -95,6 +96,12 @@ const ItemView = ({item, onPressMore}: IProps) => {
   };
 
   const onPressDelete = () => {
+    if (state === eTimestampTypes.EveryWeek) {
+      notifications.forEach(noti => cancelLocalNotification(noti._id));
+    } else {
+      cancelLocalNotification(notifications[0]._id);
+    }
+
     realm.write(() => realm.delete(itemObject));
   };
 

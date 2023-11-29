@@ -15,6 +15,7 @@ var Item_1 = require("../../schema/Item");
 var react_native_swipeable_item_1 = require("react-native-swipeable-item");
 var trash_svg_1 = require("../../../assets/svgs/trash.svg");
 var react_2 = require("@realm/react");
+var push_notification_1 = require("../../utils/push-notification");
 var All = enum_1.eTimestampTypes.All, Default = enum_1.eTimestampTypes.Default, EveryWeek = enum_1.eTimestampTypes.EveryWeek, EveryMonth = enum_1.eTimestampTypes.EveryMonth;
 var End = enum_1.eNotiStatusTypes.End, Future = enum_1.eNotiStatusTypes.Future, Off = enum_1.eNotiStatusTypes.Off;
 var _a = [
@@ -70,6 +71,12 @@ var ItemView = function (_a) {
         setStatus(type);
     };
     var onPressDelete = function () {
+        if (state === enum_1.eTimestampTypes.EveryWeek) {
+            notifications.forEach(function (noti) { return push_notification_1.cancelLocalNotification(noti._id); });
+        }
+        else {
+            push_notification_1.cancelLocalNotification(notifications[0]._id);
+        }
         realm.write(function () { return realm["delete"](itemObject); });
     };
     var opacityClassName = status === enum_1.eNotiStatusTypes.Future ? 'opacity-1' : 'opacity-50';

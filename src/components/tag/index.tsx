@@ -22,6 +22,7 @@ const colors = {
   red: {textColor: 'text-red-600', bgColor: 'bg-red-50'},
   purple: {textColor: 'text-purple-600', bgColor: 'bg-purple-50'},
   orange: {textColor: 'text-orange-600', bgColor: 'bg-orange-50'},
+  yellow: {textColor: 'text-yellow-600', bgColor: 'bg-yellow-50'},
 };
 
 const Tag = ({color, text, isNotMl, isLoading, onPress}: IProps) => {
@@ -34,7 +35,7 @@ const Tag = ({color, text, isNotMl, isLoading, onPress}: IProps) => {
       {isLoading ? (
         <ActivityIndicator size="small" color="blue" />
       ) : (
-        <NText className={`${colors[color].textColor} text-xs font-semibold`}>
+        <NText className={`${colors[color].textColor} text-xs font-semibold `}>
           {text}
         </NText>
       )}

@@ -91,3 +91,34 @@ export enum eMoreTypes {
   /** */
   DisEnabled,
 }
+
+export enum eSettingTypes {
+  /** */
+  Language,
+  /** */
+  Thema,
+  /** */
+  Reset,
+  /** */
+  Review,
+  /** */
+  Share,
+  /** */
+  Private,
+  /** */
+  Version,
+}
+
+export enum eLanguageTypes {
+  /** */
+  ko = 'ko',
+  /** */
+  en = 'en',
+}
+
+export enum eThemaTypes {
+  /** */
+  White = 'White',
+  /** */
+  Dark = 'Dark',
+}

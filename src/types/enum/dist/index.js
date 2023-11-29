@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.eMoreTypes = exports.eNotiStatusTypes = exports.eIcon = exports.eSvg = exports.eKoDays = exports.eIntervalTypes = exports.eTimestampTypes = exports.eTriggerTypes = void 0;
+exports.eThemaTypes = exports.eLanguageTypes = exports.eSettingTypes = exports.eMoreTypes = exports.eNotiStatusTypes = exports.eIcon = exports.eSvg = exports.eKoDays = exports.eIntervalTypes = exports.eTimestampTypes = exports.eTriggerTypes = void 0;
 var eTriggerTypes;
 (function (eTriggerTypes) {
     /** */
@@ -95,3 +95,34 @@ var eMoreTypes;
     /** */
     eMoreTypes[eMoreTypes["DisEnabled"] = 4] = "DisEnabled";
 })(eMoreTypes = exports.eMoreTypes || (exports.eMoreTypes = {}));
+var eSettingTypes;
+(function (eSettingTypes) {
+    /** */
+    eSettingTypes[eSettingTypes["Language"] = 0] = "Language";
+    /** */
+    eSettingTypes[eSettingTypes["Thema"] = 1] = "Thema";
+    /** */
+    eSettingTypes[eSettingTypes["Reset"] = 2] = "Reset";
+    /** */
+    eSettingTypes[eSettingTypes["Review"] = 3] = "Review";
+    /** */
+    eSettingTypes[eSettingTypes["Share"] = 4] = "Share";
+    /** */
+    eSettingTypes[eSettingTypes["Private"] = 5] = "Private";
+    /** */
+    eSettingTypes[eSettingTypes["Version"] = 6] = "Version";
+})(eSettingTypes = exports.eSettingTypes || (exports.eSettingTypes = {}));
+var eLanguageTypes;
+(function (eLanguageTypes) {
+    /** */
+    eLanguageTypes["ko"] = "ko";
+    /** */
+    eLanguageTypes["en"] = "en";
+})(eLanguageTypes = exports.eLanguageTypes || (exports.eLanguageTypes = {}));
+var eThemaTypes;
+(function (eThemaTypes) {
+    /** */
+    eThemaTypes["White"] = "White";
+    /** */
+    eThemaTypes["Dark"] = "Dark";
+})(eThemaTypes = exports.eThemaTypes || (exports.eThemaTypes = {}));

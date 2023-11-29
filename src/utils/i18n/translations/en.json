@@ -1,8 +1,8 @@
 {
   "알림": "Notification",
-  "빠른 알림": "Quick Notification",
-  "알림 종료": "End",
-  "알림 예정": "Schedule",
+  "알림 종료": "End Notification",
+  "알림 예정": "Notification scheduled",
+  "알림 끔": "turn off a notification",
   "뒤로": "Back",
   "다음": "Next",
   "오전/오후": "AM/PM",

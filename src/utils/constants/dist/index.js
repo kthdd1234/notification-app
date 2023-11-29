@@ -1,14 +1,14 @@
 "use strict";
 exports.__esModule = true;
-exports.notiTimestampTypes = exports.notiStatusTypes = exports.formatString = exports.timeSetting = exports.calendarLocales = exports.mediaErrorCode = exports.cameraOptions = exports.imageLibraryOptions = exports.intervalTypes = exports.timestampTypes = exports.filterDays = exports.nId = exports.imageUrl = exports.StringIsNumber = void 0;
+exports.themas = exports.langs = exports.notiTimestampTypes = exports.notiStatusTypes = exports.formatString = exports.timeSetting = exports.calendarLocales = exports.mediaErrorCode = exports.cameraOptions = exports.imageLibraryOptions = exports.intervalTypes = exports.timestampTypes = exports.filterDays = exports.nId = exports.imageUrl = exports.StringIsNumber = void 0;
 var enum_1 = require("../../types/enum");
 var Default = enum_1.eTimestampTypes.Default, EveryWeek = enum_1.eTimestampTypes.EveryWeek, EveryMonth = enum_1.eTimestampTypes.EveryMonth;
 var Day = enum_1.eIntervalTypes.Day, Hour = enum_1.eIntervalTypes.Hour, Minute = enum_1.eIntervalTypes.Minute;
-var getRandomInt = function (min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+// const getRandomInt = (min, max) => {
+//   min = Math.ceil(min);
+//   max = Math.floor(max);
+//   return Math.floor(Math.random() * (max - min + 1)) + min;
+// };
 var nId = function (num) {
     var value = new Date(Date.now()).getTime() + num;
     return value;
@@ -205,3 +205,15 @@ var imageUrl = function (name) {
     return "https://firebasestorage.googleapis.com/v0/b/notification-app-32f99.appspot.com/o/" + name + ".png?alt=media&token=851e4f81-97e9-4857-b7a6-27b35ac374a2";
 };
 exports.imageUrl = imageUrl;
+var ko = enum_1.eLanguageTypes.ko, en = enum_1.eLanguageTypes.en;
+var White = enum_1.eThemaTypes.White, Dark = enum_1.eThemaTypes.Dark;
+var langs = [
+    { id: ko.toString(), name: '한국어' },
+    { id: en.toString(), name: 'English' },
+];
+exports.langs = langs;
+var themas = [
+    { id: White.toString(), name: '밝은 테마' },
+    { id: Dark.toString(), name: '어두운 테마' },
+];
+exports.themas = themas;

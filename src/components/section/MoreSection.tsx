@@ -1,5 +1,5 @@
 import React, {RefObject} from 'react';
-import {NText, NTouchableOpacity, NView} from '../styled';
+import {NView} from '../styled';
 import {eKoDays, eMoreTypes} from '../../types/enum';
 import CopySvg from '../../../assets/svgs/copy.svg';
 import EditSvg from '../../../assets/svgs/edit-notification.svg';
@@ -20,6 +20,7 @@ import moment from 'moment';
 import uuid from 'react-native-uuid';
 import {nId} from '../../utils/constants';
 import {eTimestampTypes} from '../../types/enum';
+import SvgBlockButton from '../button/SvgBlockButton';
 
 const {Copy, Edit, Remove, Enabled, DisEnabled} = eMoreTypes;
 const [_copy, _edit, _remove, _enabled, _disEnabled] = [
@@ -175,16 +176,15 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   return (
     <NView className="px-6 py-3">
       <NView className="mb-2">
-        {moreItems.map(item => (
-          <NTouchableOpacity
-            key={item.id}
-            className="flex-row items-center mb-5"
-            onPress={item.onPress}>
-            <NView className="p-2 mr-3 bg-gray-100 rounded-lg">
-              {item.svg}
-            </NView>
-            <NText className="text-base text-gray-700">{t(item.name)}</NText>
-          </NTouchableOpacity>
+        {moreItems.map(({id, svg, name, onPress}) => (
+          <SvgBlockButton
+            key={id}
+            id={id}
+            svg={svg}
+            name={name}
+            svgBgColor="bg-gray-100"
+            onPress={onPress}
+          />
         ))}
       </NView>
       <DefaultButton

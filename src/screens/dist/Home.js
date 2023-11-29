@@ -22,6 +22,7 @@ var CalendarSection_1 = require("../components/section/CalendarSection");
 var react_native_uuid_1 = require("react-native-uuid");
 var react_native_1 = require("react-native");
 var ItemView_1 = require("../components/view/ItemView");
+var ko = enum_1.eLanguageTypes.ko, en = enum_1.eLanguageTypes.en;
 var HomeScreen = function (_a) {
     var navigation = _a.navigation;
     /** useTranslation */
@@ -53,8 +54,8 @@ var HomeScreen = function (_a) {
             realm.write(function () {
                 realm.create('User', {
                     _id: react_native_uuid_1["default"].v4(),
-                    language: i18n_config_1.languageCode,
-                    isDarkMode: false
+                    language: i18n_config_1.languageCode === ko ? ko : en,
+                    thema: enum_1.eThemaTypes.White
                 });
             });
         }
@@ -66,10 +67,9 @@ var HomeScreen = function (_a) {
             itemId: null
         });
     };
-    var onPressCalendar = function () {
-        var _a;
-        (_a = calendarRef.current) === null || _a === void 0 ? void 0 : _a.present();
-    };
+    // const onPressCalendar = () => {
+    //   calendarRef.current?.present();
+    // };
     var onPressMore = function (params) {
         var _a;
         setSeletedMore(params);

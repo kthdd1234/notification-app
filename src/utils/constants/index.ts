@@ -4,16 +4,18 @@ import {
   eIntervalTypes,
   eTimestampTypes,
   eNotiStatusTypes,
+  eLanguageTypes,
+  eThemaTypes,
 } from '../../types/enum';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {Day, Hour, Minute} = eIntervalTypes;
 
-const getRandomInt = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+// const getRandomInt = (min, max) => {
+//   min = Math.ceil(min);
+//   max = Math.floor(max);
+//   return Math.floor(Math.random() * (max - min + 1)) + min;
+// };
 
 const nId = (num: number) => {
   const value = new Date(Date.now()).getTime() + num;
@@ -211,6 +213,19 @@ const imageUrl = (name: string) => {
   return `https://firebasestorage.googleapis.com/v0/b/notification-app-32f99.appspot.com/o/${name}.png?alt=media&token=851e4f81-97e9-4857-b7a6-27b35ac374a2`;
 };
 
+const {ko, en} = eLanguageTypes;
+const {White, Dark} = eThemaTypes;
+
+const langs = [
+  {id: ko.toString(), name: '한국어'},
+  {id: en.toString(), name: 'English'},
+];
+
+const themas = [
+  {id: White.toString(), name: '밝은 테마'},
+  {id: Dark.toString(), name: '어두운 테마'},
+];
+
 export {
   StringIsNumber,
   imageUrl,
@@ -226,4 +241,6 @@ export {
   formatString,
   notiStatusTypes,
   notiTimestampTypes,
+  langs,
+  themas,
 };

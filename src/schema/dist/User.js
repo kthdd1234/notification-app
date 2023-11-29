@@ -26,7 +26,7 @@ var User = /** @class */ (function (_super) {
         properties: {
             _id: 'string',
             language: 'string',
-            isDarkMode: { type: 'bool', "default": false }
+            thema: 'string'
         }
     };
     return User;
