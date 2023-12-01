@@ -2,6 +2,9 @@
 import {useTranslation} from 'react-i18next';
 import {NText, NTouchableOpacity} from '../styled';
 import React from 'react';
+import {useRecoilValue} from 'recoil';
+import {themaAtom} from '../../states';
+import {notSelectColor, textColor} from '../../utils/constants';
 
 interface IProps {
   /** */
@@ -35,8 +38,11 @@ const SelectButton = ({
   /** useTranslation */
   const {t} = useTranslation();
 
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
+
   /** class */
-  const viewClass = id === selectedId ? 'bg-blue-500' : 'bg-gray-100';
+  const viewClass = id === selectedId ? 'bg-blue-500' : notSelectColor(thema);
   const gapClass = {['odd']: isGap && 'mx-2', ['even']: isGap && 'mr-2'}[
     numberType
   ];

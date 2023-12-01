@@ -8,7 +8,9 @@ import {
 import {
   formatString,
   imageUrl,
+  itemBgColor,
   notiTimestampTypes,
+  textColor,
 } from '../../utils/constants';
 // import {setDateTime} from '../../utils/moment';
 import IconButton from '../button/IconButton';
@@ -24,6 +26,8 @@ import SwipeableItem from 'react-native-swipeable-item';
 import TrashSvg from '../../../assets/svgs/trash.svg';
 import {useObject, useRealm} from '@realm/react';
 import {cancelLocalNotification} from '../../utils/push-notification';
+import {themaAtom} from '../../states';
+import {useRecoilValue} from 'recoil';
 
 const {All, Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {End, Future, Off} = eNotiStatusTypes;
@@ -47,14 +51,17 @@ interface IProps {
 }
 
 const ItemView = ({item, onPressMore}: IProps) => {
+  /** item */
+  const {_id, icon, body, state, notifications, isNotify} = item;
+
   /** useTranslation */
   const {t} = useTranslation();
 
   /** useNavigation */
   const {navigate} = useNavigation();
 
-  /** item */
-  const {_id, icon, body, state, notifications, isNotify} = item;
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   /** useState */
   const [status, setStatus] = useState(eNotiStatusTypes.None);
@@ -105,11 +112,26 @@ const ItemView = ({item, onPressMore}: IProps) => {
     realm.write(() => realm.delete(itemObject));
   };
 
+  const opacityThema = thema === 'White' ? 'opacity-50' : 'opacity-30';
+
   const opacityClassName =
-    status === eNotiStatusTypes.Future ? 'opacity-1' : 'opacity-50';
+    status === eNotiStatusTypes.Future ? 'opacity-1' : opacityThema;
 
   const textClassName =
-    status === eNotiStatusTypes.Future ? 'text-black' : 'text-gray-500';
+    status === eNotiStatusTypes.Future ? textColor(thema) : 'text-gray-500';
+
+  const notiTitleClassName =
+    thema === 'White' ? 'text-gray-400' : 'text-gray-300';
+
+  const dateTimeClassName =
+    thema === 'White' ? 'text-gray-500' : 'text-gray-400';
+
+  const style = {
+    elevation: 20,
+    shadowColor: thema === 'White' ? '#F5F6F7' : '#242424',
+    shadowOffset: {width: 10, height: 10},
+    shadowOpacity: 1,
+  };
 
   return (
     <SwipeableItem
@@ -120,23 +142,27 @@ const ItemView = ({item, onPressMore}: IProps) => {
           className="items-end justify-center flex-1 pr-12"
           onPress={onPressDelete}>
           <TrashSvg width={27} height={27} />
-          <NText className="mt-2 font-semibold">{t('삭제')}</NText>
+          <NText className={`mt-2 font-semibold ${textColor(thema)}`}>
+            {t('삭제')}
+          </NText>
         </NTouchableOpacity>
       )}
       snapPointsLeft={[150]}>
       <NTouchableOpacity
         style={style}
-        className={`flex-row p-5 mb-5 bg-white ${opacityClassName} rounded-xl`}
+        className={`flex-row p-5 mb-5 ${itemBgColor(
+          thema,
+        )} ${opacityClassName} rounded-xl`}
         onPress={() => onPressItem(_id)}>
         <NImage className="w-8 h-8 mr-4" source={{uri: imageUrl(icon)}} />
         <NView className="flex-grow w-0">
           <NText className={`mb-3 text-base font-semibold ${textClassName}`}>
             {body}
           </NText>
-          <NText className="mb-1 text-xs text-gray-400">
+          <NText className={`mb-1 text-xs ${notiTitleClassName}`}>
             {t('알림 날짜/시간')}
           </NText>
-          <NText className="mb-3 font-bold text-gray-500">
+          <NText className={`mb-3 font-bold ${dateTimeClassName}`}>
             {setDateTime()}
           </NText>
           <NView className="flex-row">
@@ -163,13 +189,6 @@ const ItemView = ({item, onPressMore}: IProps) => {
       </NTouchableOpacity>
     </SwipeableItem>
   );
-};
-
-const style = {
-  elevation: 20,
-  shadowColor: '#F5F6F7',
-  shadowOffset: {width: 10, height: 10},
-  shadowOpacity: 1,
 };
 
 export default ItemView;

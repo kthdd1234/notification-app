@@ -6559,6 +6559,11 @@ react-native-image-picker@^7.0.2:
   resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.0.2.tgz"
   integrity sha512-2Y+TMzv2l32IikqYpj4WOqkYvv42SXkSvL9zAo0XdhA3Rbe3lc0Oz12KlR6M2bGh8RxXz5lUrs+9mxy/GpcLIg==
 
+react-native-in-app-review@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.npmjs.org/react-native-in-app-review/-/react-native-in-app-review-4.3.3.tgz"
+  integrity sha512-Q9sXBtK8tCBYFPCGmMgeMlkxXC5e6vAyPZK26OC1oOKUuKUd0QORnryk/qbwnuN4fLshHQN8UKlLgyHLGRuK3A==
+
 react-native-localize@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/react-native-localize/-/react-native-localize-3.0.3.tgz"
@@ -6575,6 +6580,11 @@ react-native-push-notification@^8.1.1:
   version "8.1.1"
   resolved "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
   integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
+
+react-native-rate@^1.2.12:
+  version "1.2.12"
+  resolved "https://registry.npmjs.org/react-native-rate/-/react-native-rate-1.2.12.tgz"
+  integrity sha512-A/z3s7Zth08aXcJnru6S4p71NG8acx2w5LhIfItwTJUbQruNJugk8WrN51dLBCSDv8W33kbS5YoUT4M9jOP5gA==
 
 react-native-ratings@^8.1.0:
   version "8.1.0"
@@ -6606,6 +6616,11 @@ react-native-screens@^3.27.0, "react-native-screens@>= 3.0.0":
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-share@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.npmjs.org/react-native-share/-/react-native-share-10.0.1.tgz"
+  integrity sha512-dEn4DTf3/qQnLuwXkZtuFkF3pq7a4LDqmOY+R/kcgeuKIBWheGzCxHXVD7XGm6qhwXXkiD0SOiDUrGjnXa96eg==
+
 react-native-size-matters@^0.4.0:
   version "0.4.2"
   resolved "https://registry.npmjs.org/react-native-size-matters/-/react-native-size-matters-0.4.2.tgz"
@@ -6615,6 +6630,11 @@ react-native-snackbar@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/react-native-snackbar/-/react-native-snackbar-2.6.2.tgz"
   integrity sha512-edAubZJiBowwQUXJV5oXbMqitQ9vw7JzWUCczeTPVo6lRa+FzsUjiCQBHdWBbCw/N8/Q7jgKg4juNXU/bXZdXg==
+
+react-native-store-review@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.npmjs.org/react-native-store-review/-/react-native-store-review-0.4.3.tgz"
+  integrity sha512-RSQ6vx2j4p41GwTqNv2VV7yold62j5qDbGEBAjFi6gkXMrMpxFMg+82FPjbh6012tqv6Ebzwfqw6S4m4d7sddw==
 
 react-native-svg-transformer@^1.1.0:
   version "1.1.0"

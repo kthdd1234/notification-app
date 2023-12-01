@@ -9,7 +9,7 @@ const Photo = ({route}) => {
 
   return (
     <NSafeAreaView className="h-full bg-black">
-      <CommonHeader isBack color="white" />
+      <CommonHeader isBack />
       <NView className="px-5">
         <NImage className="w-full h-full" source={{uri}} />
       </NView>

@@ -16,7 +16,6 @@ import {LocaleConfig} from 'react-native-calendars';
 import moment from 'moment';
 import './src/utils/i18n/i18n.config';
 import PushNotification from 'react-native-push-notification';
-import {AlertNotificationRoot} from 'react-native-alert-notification';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
@@ -86,29 +85,27 @@ const App = () => {
 
   return (
     <RealmProvider {...realmConfig}>
-      <AlertNotificationRoot>
-        <RecoilRoot>
-          <GestureHandlerRootView style={style}>
-            <NavigationContainer>
-              <Navigator initialRouteName="HomeScreen">
-                {screens.map(({name, headerShown, component}) => (
-                  <Screen
-                    key={name}
-                    name={name}
-                    component={component}
-                    options={{
-                      headerShown: headerShown,
-                      headerShadowVisible: false,
-                      headerBackTitleVisible: false,
-                      animation: name === 'PhotoScreen' ? 'fade' : 'default',
-                    }}
-                  />
-                ))}
-              </Navigator>
-            </NavigationContainer>
-          </GestureHandlerRootView>
-        </RecoilRoot>
-      </AlertNotificationRoot>
+      <RecoilRoot>
+        <GestureHandlerRootView style={style}>
+          <NavigationContainer>
+            <Navigator initialRouteName="HomeScreen">
+              {screens.map(({name, headerShown, component}) => (
+                <Screen
+                  key={name}
+                  name={name}
+                  component={component}
+                  options={{
+                    headerShown: headerShown,
+                    headerShadowVisible: false,
+                    headerBackTitleVisible: false,
+                    animation: name === 'PhotoScreen' ? 'fade' : 'default',
+                  }}
+                />
+              ))}
+            </Navigator>
+          </NavigationContainer>
+        </GestureHandlerRootView>
+      </RecoilRoot>
     </RealmProvider>
   );
 };

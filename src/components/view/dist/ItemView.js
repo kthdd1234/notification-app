@@ -16,6 +16,8 @@ var react_native_swipeable_item_1 = require("react-native-swipeable-item");
 var trash_svg_1 = require("../../../assets/svgs/trash.svg");
 var react_2 = require("@realm/react");
 var push_notification_1 = require("../../utils/push-notification");
+var states_1 = require("../../states");
+var recoil_1 = require("recoil");
 var All = enum_1.eTimestampTypes.All, Default = enum_1.eTimestampTypes.Default, EveryWeek = enum_1.eTimestampTypes.EveryWeek, EveryMonth = enum_1.eTimestampTypes.EveryMonth;
 var End = enum_1.eNotiStatusTypes.End, Future = enum_1.eNotiStatusTypes.Future, Off = enum_1.eNotiStatusTypes.Off;
 var _a = [
@@ -31,12 +33,14 @@ var _b = [
 ], _end = _b[0], _future = _b[1], _off = _b[2];
 var ItemView = function (_a) {
     var item = _a.item, onPressMore = _a.onPressMore;
+    /** item */
+    var _id = item._id, icon = item.icon, body = item.body, state = item.state, notifications = item.notifications, isNotify = item.isNotify;
     /** useTranslation */
     var t = react_i18next_1.useTranslation().t;
     /** useNavigation */
     var navigate = native_1.useNavigation().navigate;
-    /** item */
-    var _id = item._id, icon = item.icon, body = item.body, state = item.state, notifications = item.notifications, isNotify = item.isNotify;
+    /** useRecoilValue */
+    var thema = recoil_1.useRecoilValue(states_1.themaAtom);
     /** useState */
     var _b = react_1.useState(enum_1.eNotiStatusTypes.None), status = _b[0], setStatus = _b[1];
     /** Realm */

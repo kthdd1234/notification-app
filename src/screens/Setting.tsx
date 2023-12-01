@@ -8,20 +8,35 @@ import ShareSvg from '../../assets/svgs/share.svg';
 import PrivateSvg from '../../assets/svgs/private.svg';
 import VersionSvg from '../../assets/svgs/version.svg';
 import DarkSvg from '../../assets/svgs/dark.svg';
+import FontSvg from '../../assets/svgs/font.svg';
 import {eLanguageTypes, eSettingTypes, eThemaTypes} from '../types/enum';
 import SvgBlockButton from '../components/button/SvgBlockButton';
 import Tag from '../components/tag';
 import BottomSheetModalContainer from '../components/bottomsheet';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import SelectedSection from '../components/section/SelectedSection';
-import {useQuery, useRealm} from '@realm/react';
+import {useObject, useQuery, useRealm} from '@realm/react';
 import {User} from '../schema/User';
 import {useTranslation} from 'react-i18next';
-import {langs, themas} from '../utils/constants';
+import {anColor, anDetails, bgColor, langs, themas} from '../utils/constants';
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+  Toast,
+} from 'react-native-alert-notification';
+import {cancelAllLocalNotifications} from '../utils/push-notification';
+import {Item} from '../schema/Item';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {themaAtom, userIdAtom} from '../states';
+// import Share from 'react-native-share';
+// import * as StoreReview from 'react-native-store-review';
+import {Linking, Platform} from 'react-native';
 
-const {Language, Thema, Reset, Review, Share, Private, Version} = eSettingTypes;
+const {Language, Thema, Font, Reset, Review, ShareLink, Private, Version} =
+  eSettingTypes;
 const {ko} = eLanguageTypes;
-const {White, Dark} = eThemaTypes;
+const {White} = eThemaTypes;
 
 const size = 30;
 const props = {width: size, height: size};
@@ -30,22 +45,25 @@ const SettingScreen = () => {
   /** useTranslation */
   const {t, i18n} = useTranslation();
 
+  /** useRecoil */
+  const userId = useRecoilValue(userIdAtom);
+  const [thema, setThema] = useRecoilState(themaAtom);
+
   /** realm */
   const realm = useRealm();
-  const user = useQuery(User)[0] || {language: '', thema: ''};
+  const itemList = useQuery(Item);
+  const userObject = useObject(User, userId);
 
   /** useRef */
   const langRef = useRef<BottomSheetModal>(null);
   const themaRef = useRef<BottomSheetModal>(null);
-
-  console.log(user);
 
   const onPressLangModal = (isOpen: boolean) => {
     isOpen ? langRef.current?.present() : langRef.current?.close();
   };
 
   const onPressLangItem = (lang: string) => {
-    realm.write(() => (user.language = lang));
+    realm.write(() => (userObject!.language = lang));
 
     i18n.changeLanguage(lang);
     langRef.current?.close();
@@ -55,27 +73,88 @@ const SettingScreen = () => {
     isOpen ? themaRef.current?.present() : themaRef.current?.close();
   };
 
-  const onPressThemaItem = (thema: string) => {
-    realm.write(() => (user.thema = thema));
+  const onPressThemaItem = (themaItem: string) => {
+    realm.write(() => (userObject!.thema = themaItem));
 
-    //
+    setThema(themaItem);
     themaRef.current?.close();
   };
 
+  const onPressFontModal = (isOpen: boolean) => {
+    Toast.show({
+      type: ALERT_TYPE.WARNING,
+      title: t('기능 준비 중'),
+      textBody: t('현재 준비 중인 기능입니다. 🙌'),
+    });
+  };
+
+  // const onPressFontItem = (fontItem: string) => {
+  //   //
+  // };
+
   const onPressReset = () => {
-    //
+    Dialog.show({
+      type: ALERT_TYPE.DANGER,
+      title: t('알림을 초기화 하시겠습니까?'),
+      textBody: t('저장된 데이터와 예정된 알림이 전부 삭제됩니다.'),
+      button: t('초기화'),
+      onPressButton: () => {
+        cancelAllLocalNotifications();
+        realm.write(() => realm.delete(itemList));
+
+        Dialog.hide();
+      },
+    });
   };
 
   const onPressReview = () => {
-    //
+    // try {
+    //   const APP_STORE_LINK = `itms-apps://apps.apple.com/app/id${1}?action=write-review`;
+    //   const PLAY_STORE_LINK = `market://details?id=${'1'}`;
+    //   const STORE_LINK = Platform.select({
+    //     ios: APP_STORE_LINK,
+    //     android: PLAY_STORE_LINK,
+    //   });
+    //   Linking.openURL(STORE_LINK || '');
+    // } catch (error) {
+    //   Toast.show({
+    //     type: ALERT_TYPE.DANGER,
+    //     title: t('에러 발생'),
+    //     textBody: t('알 수 없는 에러가 발생하였습니다.'),
+    //   });
+    // }
+    Toast.show({
+      type: ALERT_TYPE.WARNING,
+      title: t('기능 준비 중'),
+      textBody: t('현재 준비 중인 기능입니다. 🙌'),
+    });
   };
 
-  const onPressShare = () => {
-    //
+  const onPressShareLink = async () => {
+    // try {
+    //   const responce = await Share.open({url: 'https://www.naver.com/'});
+
+    //   if (responce.success) {
+    //     Toast.show({
+    //       type: ALERT_TYPE.SUCCESS,
+    //       title: t('공유 완료'),
+    //       textBody: '앱 링크 공유를 하였습니다.',
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    Toast.show({
+      type: ALERT_TYPE.WARNING,
+      title: t('기능 준비 중'),
+      textBody: t('현재 준비 중인 기능입니다. 🙌'),
+    });
   };
 
   const onPressPrivate = () => {
-    //
+    const privacyPolicyUrl =
+      'https://www.notion.so/a82c816fe22e49768b6be153bd6da21d';
+    Linking.openURL(privacyPolicyUrl);
   };
 
   const onPressVersion = () => {
@@ -90,7 +169,7 @@ const SettingScreen = () => {
       tag: (
         <Tag
           color="red"
-          text={t(user.language === ko ? '한국어' : 'English')}
+          text={t(userObject!.language === ko ? '한국어' : 'English')}
           onPress={() => onPressLangModal(true)}
         />
       ),
@@ -103,15 +182,28 @@ const SettingScreen = () => {
       tag: (
         <Tag
           color="purple"
-          text={t(user.thema === White ? '밝은 테마' : '어두운 테마')}
+          text={t(userObject!.thema === White ? '밝은 테마' : '어두운 테마')}
           onPress={() => onPressThemaModal(true)}
         />
       ),
       onPress: () => onPressThemaModal(true),
     },
     {
+      id: Font,
+      name: '글꼴 변경',
+      svg: <FontSvg {...props} />,
+      tag: (
+        <Tag
+          color="amber"
+          text={t('기본 서체')}
+          onPress={() => onPressFontModal(true)}
+        />
+      ),
+      onPress: () => onPressFontModal(true),
+    },
+    {
       id: Reset,
-      name: '전체 초기화',
+      name: '알림 초기화',
       svg: <ResetSvg {...props} />,
       onPress: onPressReset,
     },
@@ -122,10 +214,10 @@ const SettingScreen = () => {
       onPress: onPressReview,
     },
     {
-      id: Share,
+      id: ShareLink,
       name: '앱 공유',
       svg: <ShareSvg {...props} />,
-      onPress: onPressShare,
+      onPress: onPressShareLink,
     },
     {
       id: Private,
@@ -143,50 +235,52 @@ const SettingScreen = () => {
   ];
 
   return (
-    <NSafeAreaView className="relative h-full bg-[#F9F9FC]">
-      <CommonHeader isBack={true} title="설정" />
-      <NView className="p-4">
-        {settingInfo.map(({id, svg, name, tag, onPress}) => (
-          <SvgBlockButton
-            key={id}
-            id={id}
-            svg={svg}
-            name={name}
-            svgBgColor=""
-            tag={tag}
-            onPress={onPress}
-          />
-        ))}
-      </NView>
-      <BottomSheetModalContainer
-        title="언어 변경"
-        bottomSheetModalRef={langRef}
-        component={
-          <SelectedSection
-            list={langs}
-            selectedItem={user.language}
-            onPressItem={onPressLangItem}
-            onPressClose={onPressLangModal}
-          />
-        }
-        isDetached={true}
-        snapPoint={30}
-      />
-      <BottomSheetModalContainer
-        title="테마 변경"
-        bottomSheetModalRef={themaRef}
-        component={
-          <SelectedSection
-            list={themas}
-            selectedItem={user.thema}
-            onPressItem={onPressThemaItem}
-            onPressClose={onPressThemaModal}
-          />
-        }
-        isDetached={true}
-        snapPoint={30}
-      />
-    </NSafeAreaView>
+    <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
+      <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>
+        <CommonHeader isBack={true} title="설정" />
+        <NView className="p-4">
+          {settingInfo.map(({id, svg, name, tag, onPress}) => (
+            <SvgBlockButton
+              key={id}
+              id={id}
+              svg={svg}
+              name={name}
+              svgBgColor=""
+              tag={tag}
+              onPress={onPress}
+            />
+          ))}
+        </NView>
+        <BottomSheetModalContainer
+          title="언어 변경"
+          bottomSheetModalRef={langRef}
+          component={
+            <SelectedSection
+              list={langs}
+              selectedItem={userObject!.language}
+              onPressItem={onPressLangItem}
+              onPressClose={onPressLangModal}
+            />
+          }
+          isDetached={true}
+          snapPoint={30}
+        />
+        <BottomSheetModalContainer
+          title="테마 변경"
+          bottomSheetModalRef={themaRef}
+          component={
+            <SelectedSection
+              list={themas}
+              selectedItem={thema}
+              onPressItem={onPressThemaItem}
+              onPressClose={onPressThemaModal}
+            />
+          }
+          isDetached={true}
+          snapPoint={30}
+        />
+      </NSafeAreaView>
+    </AlertNotificationRoot>
   );
 };
 

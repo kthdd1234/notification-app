@@ -5,6 +5,7 @@ export class User extends Realm.Object<User> {
   _id!: string;
   language!: string;
   thema!: string;
+  font!: string;
 
   static schema: ObjectSchema = {
     name: 'User',
@@ -13,6 +14,7 @@ export class User extends Realm.Object<User> {
       _id: 'string',
       language: 'string',
       thema: 'string',
+      font: 'string',
     },
   };
 }

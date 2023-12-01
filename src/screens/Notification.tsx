@@ -20,6 +20,10 @@ import {
   imageUrl,
   timestampTypes,
   nId,
+  anColor,
+  anDetails,
+  bgColor,
+  inputBorderColor,
 } from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
@@ -39,10 +43,16 @@ import {Item} from '../schema/Item';
 import ImageList from '../../assets/images';
 import IconView from '../components/view/IconView';
 import {UpdateMode} from 'realm';
-import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
+import {
+  ALERT_TYPE,
+  AlertNotificationRoot,
+  Dialog,
+} from 'react-native-alert-notification';
 import {Linking} from 'react-native';
 // import {randomUUID} from 'crypto';
 import uuid from 'react-native-uuid';
+import {themaAtom} from '../states';
+import {useRecoilValue} from 'recoil';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -66,8 +76,6 @@ const NotificationScreen = ({navigation, route}) => {
     .format('A,h')
     .split(',');
 
-  console.log(itemId);
-
   /** useState */
   const [iconState, setIconState] = useState('bell');
   const [textState, setTextState] = useState('');
@@ -89,6 +97,9 @@ const NotificationScreen = ({navigation, route}) => {
   });
   const [monthDayState, setMonthDayState] = useState(initDateState);
   const [initialScrollIndex, setInitialScrollIndex] = useState(-1);
+
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   /** useRef */
   const dateRef = useRef<BottomSheetModal>(null);
@@ -183,8 +194,6 @@ const NotificationScreen = ({navigation, route}) => {
   const onPressTest = async () => {
     const permission = await checkPermissions();
 
-    console.log(permission);
-
     if (permission === false) {
       return showNotificationDialog();
     }
@@ -203,7 +212,10 @@ const NotificationScreen = ({navigation, route}) => {
       title: t('알림 접근 권한이 없어요.'),
       textBody: t('설정으로 이동하여 알림 허용을 해주세요.'),
       button: t('이동'),
-      onPressButton: () => Linking.openSettings(),
+      onPressButton: () => {
+        Linking.openSettings();
+        Dialog.hide();
+      },
     });
   };
 
@@ -270,157 +282,170 @@ const NotificationScreen = ({navigation, route}) => {
   const isEnabledDone = isTextState && isEveryWeeks;
   const handlerDone = isEnabledDone ? onPressDone : () => null;
 
+  /** class */
+  const inputTextColor = thema === 'White' ? 'text-black' : 'text-white';
+  const borderColor =
+    textState !== '' ? 'border-blue-400' : inputBorderColor(thema);
+  const placeholderTextColor = thema === 'White' ? 'darkgray' : 'gray';
+
   return (
-    <NSafeAreaView className="relative h-full bg-white">
-      <CommonHeader isBack={true} title={itemId ? '알림 편집' : '알림 추가'} />
-      <NScrollView className="p-4 bg-white">
-        <AddSection
-          title="아이콘"
-          isNotMb={true}
-          component={
-            <IconView
-              initialScrollIndex={initialScrollIndex}
-              seletedIcon={iconState}
-              onPress={onPressIcon}
-            />
-          }
+    <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
+      <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>
+        <CommonHeader
+          isBack={true}
+          title={itemId ? '알림 편집' : '알림 추가'}
         />
-        <AddSection
-          title="내용"
-          component={
-            <NTextInput
-              className={`h-16 px-5 font-semibold py-3 text-lg leading-[0px] border-2 ${
-                textState !== '' ? 'border-blue-400' : 'border-gray-200'
-              } rounded-xl`}
-              autoFocus={true}
-              placeholder={t('ex. 할 일, 약속, 스케줄 등')}
-              value={textState}
-              onChangeText={onChangeText}
-            />
-          }
-        />
-        <AddSection
-          title="유형"
-          component={
-            <NView className="flex-row justify-between">
-              {timestampTypes.map(info => (
-                <SelectButton
-                  key={info.id}
-                  numberType="odd"
-                  id={info.id.toString()}
-                  name={info.name}
-                  rounded="rounded-md"
-                  selectedId={triggerState}
-                  isGap={info.isGap}
-                  padding="p-4"
-                  onPress={onPressTriggerButton}
-                />
-              ))}
-            </NView>
-          }
-        />
-        {triggerState === Default.toString() && (
+        <NScrollView className={`relative p-4 h-full ${bgColor(thema)}`}>
           <AddSection
-            title="날짜"
+            title="아이콘"
+            isNotMb={true}
             component={
-              <DisplayButton
-                text={moment(dateState).format(t(formatString.date))}
-                onPress={onPressDateButton}
+              <IconView
+                initialScrollIndex={initialScrollIndex}
+                seletedIcon={iconState}
+                onPress={onPressIcon}
               />
             }
           />
-        )}
-
-        {triggerState === EveryWeek.toString() && (
           <AddSection
-            title="요일"
+            title="내용"
+            component={
+              <NTextInput
+                className={`h-16 px-5 font-semibold py-3 text-lg leading-[0px] border-2 rounded-xl ${inputTextColor} ${borderColor} `}
+                autoFocus={true}
+                placeholder={t('ex. 할 일, 약속, 스케줄 등')}
+                placeholderTextColor={placeholderTextColor}
+                value={textState}
+                onChangeText={onChangeText}
+              />
+            }
+          />
+          <AddSection
+            title="유형"
             component={
               <NView className="flex-row justify-between">
-                {filterDays.map((day, idx) => (
+                {timestampTypes.map(info => (
                   <SelectButton
-                    key={day}
-                    id={day}
+                    key={info.id}
                     numberType="odd"
-                    name={day}
-                    rounded="rounded-full"
-                    selectedId={daysState[idx]}
-                    isGap={idx !== 0 && idx % 2 !== 0}
+                    id={info.id.toString()}
+                    name={info.name}
+                    rounded="rounded-md"
+                    selectedId={triggerState}
+                    isGap={info.isGap}
                     padding="p-4"
-                    onPress={onPressDay}
+                    onPress={onPressTriggerButton}
                   />
                 ))}
               </NView>
             }
           />
-        )}
-        {triggerState === EveryMonth.toString() && (
+          {triggerState === Default.toString() && (
+            <AddSection
+              title="날짜"
+              component={
+                <DisplayButton
+                  text={moment(dateState).format(t(formatString.date))}
+                  onPress={onPressDateButton}
+                />
+              }
+            />
+          )}
+
+          {triggerState === EveryWeek.toString() && (
+            <AddSection
+              title="요일"
+              component={
+                <NView className="flex-row justify-between">
+                  {filterDays.map((day, idx) => (
+                    <SelectButton
+                      key={day}
+                      id={day}
+                      numberType="odd"
+                      name={day}
+                      rounded="rounded-full"
+                      selectedId={daysState[idx]}
+                      isGap={idx !== 0 && idx % 2 !== 0}
+                      padding="p-4"
+                      onPress={onPressDay}
+                    />
+                  ))}
+                </NView>
+              }
+            />
+          )}
+          {triggerState === EveryMonth.toString() && (
+            <AddSection
+              title="일"
+              component={
+                <DisplayButton
+                  text={`${t('매달')} ${monthDayState.split('-')[2]}${t('일')}`}
+                  onPress={onPressMonthDayButton}
+                />
+              }
+            />
+          )}
           <AddSection
-            title="일"
+            title="시각"
             component={
               <DisplayButton
-                text={`${t('매달')} ${monthDayState.split('-')[2]}${t('일')}`}
-                onPress={onPressMonthDayButton}
+                text={format(
+                  t(`${timeState.ampm} {}시 {}분`),
+                  timeState.hour,
+                  timeState.minute,
+                )}
+                onPress={onPressTimeButton}
               />
             }
           />
-        )}
-        <AddSection
-          title="시각"
+        </NScrollView>
+        <NView className="sticky bottom-0 p-4">
+          <TextButton
+            viewClassName="flex-row justify-center items-center h-7 mb-4"
+            textClassName="text-blue-500 text-base"
+            text="알림 미리보기"
+            onPress={onPressTest}
+          />
+          <DefaultButton
+            name={itemId ? '완료' : '추가'}
+            isEnabled={isEnabledDone}
+            height={60}
+            onPress={handlerDone}
+          />
+        </NView>
+
+        <BottomSheetModalContainer
+          title="날짜 선택"
+          bottomSheetModalRef={dateRef}
+          snapPoint={60}
           component={
-            <DisplayButton
-              text={format(
-                t(`${timeState.ampm} {}시 {}분`),
-                timeState.hour,
-                timeState.minute,
-              )}
-              onPress={onPressTimeButton}
+            <CalendarSection
+              initialDate={dateState}
+              onPress={onPressDateDone}
             />
           }
         />
-      </NScrollView>
-      <NView className="sticky bottom-0 p-4">
-        <TextButton
-          viewClassName="flex-row justify-center items-center h-7 mb-4"
-          textClassName="text-blue-500 text-base"
-          text="알림 미리보기"
-          onPress={onPressTest}
+        <BottomSheetModalContainer
+          title="매달 반복일"
+          bottomSheetModalRef={monthDayRef}
+          snapPoint={60}
+          component={
+            <CalendarSection
+              initialDate={monthDayState}
+              onPress={onPressMonthDayDone}
+            />
+          }
         />
-        <DefaultButton
-          name={itemId ? '완료' : '추가'}
-          isEnabled={isEnabledDone}
-          height={60}
-          onPress={handlerDone}
+        <BottomSheetModalContainer
+          title="시간 설정"
+          bottomSheetModalRef={timeRef}
+          snapPoint={53}
+          component={
+            <TimeSection timeInfo={timeState} onPress={onPressTimeDone} />
+          }
         />
-      </NView>
-
-      <BottomSheetModalContainer
-        title="날짜 선택"
-        bottomSheetModalRef={dateRef}
-        snapPoint={60}
-        component={
-          <CalendarSection initialDate={dateState} onPress={onPressDateDone} />
-        }
-      />
-      <BottomSheetModalContainer
-        title="매달 반복일"
-        bottomSheetModalRef={monthDayRef}
-        snapPoint={60}
-        component={
-          <CalendarSection
-            initialDate={monthDayState}
-            onPress={onPressMonthDayDone}
-          />
-        }
-      />
-      <BottomSheetModalContainer
-        title="시간 설정"
-        bottomSheetModalRef={timeRef}
-        snapPoint={53}
-        component={
-          <TimeSection timeInfo={timeState} onPress={onPressTimeDone} />
-        }
-      />
-    </NSafeAreaView>
+      </NSafeAreaView>
+    </AlertNotificationRoot>
   );
 };
 

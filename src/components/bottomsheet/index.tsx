@@ -1,12 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {Ref, useCallback, useMemo} from 'react';
-import {NText, NView} from '../styled';
+import {NBottomSheetModal, NText, NView} from '../styled';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import {useTranslation} from 'react-i18next';
+import {themaAtom} from '../../states';
+import {useRecoilValue} from 'recoil';
+import {
+  bottomSheetBgColor,
+  handleIndicatorColor,
+  textColor,
+} from '../../utils/constants';
 
 interface IProps {
   /** */
@@ -30,6 +37,9 @@ const BottomSheetModalContainer = ({
 }: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
+
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   /** useCallback */
   const renderBackdrop = useCallback(
@@ -63,12 +73,12 @@ const BottomSheetModalContainer = ({
   //   [],
   // );
 
-  const style = {marginHorizontal: isDetached ? 24 : 0};
-
   return (
     <BottomSheetModalProvider>
-      <BottomSheetModal
-        style={style}
+      <NBottomSheetModal
+        handleIndicatorStyle={{backgroundColor: handleIndicatorColor(thema)}}
+        backgroundStyle={{backgroundColor: bottomSheetBgColor(thema)}}
+        className={`${isDetached && 'mx-6'}`}
         ref={bottomSheetModalRef}
         backdropComponent={renderBackdrop}
         index={0}
@@ -79,11 +89,13 @@ const BottomSheetModalContainer = ({
       >
         {title && (
           <NView className="flex-row items-center justify-center">
-            <NText className="mt-3 font-bold">{t(title!)}</NText>
+            <NText className={`mt-3 font-bold ${textColor(thema)}`}>
+              {t(title!)}
+            </NText>
           </NView>
         )}
         <NView className="mt-3">{component}</NView>
-      </BottomSheetModal>
+      </NBottomSheetModal>
     </BottomSheetModalProvider>
   );
 };

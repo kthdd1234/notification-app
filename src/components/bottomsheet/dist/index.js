@@ -16,10 +16,14 @@ var react_1 = require("react");
 var styled_1 = require("../styled");
 var bottom_sheet_1 = require("@gorhom/bottom-sheet");
 var react_i18next_1 = require("react-i18next");
+var states_1 = require("../../states");
+var recoil_1 = require("recoil");
 var BottomSheetModalContainer = function (_a) {
     var title = _a.title, bottomSheetModalRef = _a.bottomSheetModalRef, snapPoint = _a.snapPoint, isDetached = _a.isDetached, component = _a.component;
     /** useTranslation */
     var t = react_i18next_1.useTranslation().t;
+    /** useRecoilValue */
+    var thema = recoil_1.useRecoilValue(states_1.themaAtom);
     /** useCallback */
     var renderBackdrop = react_1.useCallback(function (props) { return (react_1["default"].createElement(bottom_sheet_1.BottomSheetBackdrop, __assign({}, props, { pressBehavior: "close", appearsOnIndex: 0, disappearsOnIndex: -1 }))); }, []);
     /** useMemo */

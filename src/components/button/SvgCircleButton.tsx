@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {ActivityIndicator} from 'react-native';
-import {imageUrl} from '../../utils/constants';
+import {imageUrl, notSelectColor} from '../../utils/constants';
 import {NImage, NTouchableOpacity} from '../styled';
+import {useRecoilValue} from 'recoil';
+import {themaAtom} from '../../states';
 
 interface IProps {
   /** */
@@ -30,11 +32,15 @@ const SvgCircleButton = ({
     setIsLoading(false);
   };
 
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
+
+  const selectedClass =
+    selectedIcon === name ? selectedColor : notSelectColor(thema);
+
   return (
     <NTouchableOpacity
-      className={`${
-        selectedIcon === name ? selectedColor : 'bg-gray-100'
-      } items-center justify-center w-16 h-16  rounded-full mb-4 mr-2`}
+      className={`${selectedClass} items-center justify-center w-16 h-16  rounded-full mb-4 mr-2`}
       onPress={() => onPressIcon(name)}>
       <NImage
         className={`w-10 h-10 ${isLoading && 'hidden'}`}

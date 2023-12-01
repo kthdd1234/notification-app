@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.themas = exports.langs = exports.notiTimestampTypes = exports.notiStatusTypes = exports.formatString = exports.timeSetting = exports.calendarLocales = exports.mediaErrorCode = exports.cameraOptions = exports.imageLibraryOptions = exports.intervalTypes = exports.timestampTypes = exports.filterDays = exports.nId = exports.imageUrl = exports.StringIsNumber = void 0;
+exports.themaColor = exports.themas = exports.langs = exports.notiTimestampTypes = exports.notiStatusTypes = exports.formatString = exports.timeSetting = exports.calendarLocales = exports.mediaErrorCode = exports.cameraOptions = exports.imageLibraryOptions = exports.intervalTypes = exports.timestampTypes = exports.filterDays = exports.anDetails = exports.inputBorderColor = exports.notSelectColor = exports.anColor = exports.bgColor = exports.textColor = exports.nId = exports.imageUrl = exports.StringIsNumber = void 0;
 var enum_1 = require("../../types/enum");
 var Default = enum_1.eTimestampTypes.Default, EveryWeek = enum_1.eTimestampTypes.EveryWeek, EveryMonth = enum_1.eTimestampTypes.EveryMonth;
 var Day = enum_1.eIntervalTypes.Day, Hour = enum_1.eIntervalTypes.Hour, Minute = enum_1.eIntervalTypes.Minute;
@@ -9,6 +9,21 @@ var Day = enum_1.eIntervalTypes.Day, Hour = enum_1.eIntervalTypes.Hour, Minute =
 //   max = Math.floor(max);
 //   return Math.floor(Math.random() * (max - min + 1)) + min;
 // };
+var themaColor = {
+    White: {
+        bg: 'bg-[#F9F9FC]',
+        text: 'text-gray-700',
+        notSelect: 'bg-gray-100',
+        border: 'border-gray-200'
+    },
+    Dark: {
+        bg: 'bg-[#17171C]',
+        text: 'text-[#E4E4E5]',
+        notSelect: 'bg-[#424242]',
+        border: 'border-[#424242]'
+    }
+};
+exports.themaColor = themaColor;
 var nId = function (num) {
     var value = new Date(Date.now()).getTime() + num;
     return value;
@@ -217,3 +232,40 @@ var themas = [
     { id: Dark.toString(), name: '어두운 테마' },
 ];
 exports.themas = themas;
+var textColor = function (thema) {
+    return thema === White ? themaColor.White.text : themaColor.Dark.text;
+};
+exports.textColor = textColor;
+var bgColor = function (thema) {
+    return thema === White ? themaColor.White.bg : themaColor.Dark.bg;
+};
+exports.bgColor = bgColor;
+var anColor = function (thema) { return (thema === White ? 'light' : 'dark'); };
+exports.anColor = anColor;
+var notSelectColor = function (thema) {
+    return thema === White ? themaColor.White.notSelect : themaColor.Dark.notSelect;
+};
+exports.notSelectColor = notSelectColor;
+var inputBorderColor = function (thema) {
+    return thema === White ? themaColor.White.border : themaColor.Dark.border;
+};
+exports.inputBorderColor = inputBorderColor;
+var anDetails = [
+    {
+        label: 'black',
+        card: 'white',
+        danger: 'red',
+        overlay: '',
+        success: '',
+        warning: 'orange'
+    },
+    {
+        label: 'white',
+        card: '#17171C',
+        danger: 'red',
+        overlay: '',
+        success: '',
+        warning: 'orange'
+    },
+];
+exports.anDetails = anDetails;

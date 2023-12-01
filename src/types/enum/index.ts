@@ -98,11 +98,13 @@ export enum eSettingTypes {
   /** */
   Thema,
   /** */
+  Font,
+  /** */
   Reset,
   /** */
   Review,
   /** */
-  Share,
+  ShareLink,
   /** */
   Private,
   /** */

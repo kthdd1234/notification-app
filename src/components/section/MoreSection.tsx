@@ -18,9 +18,11 @@ import {
 } from '../../utils/push-notification';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import {nId} from '../../utils/constants';
+import {nId, notSelectColor} from '../../utils/constants';
 import {eTimestampTypes} from '../../types/enum';
 import SvgBlockButton from '../button/SvgBlockButton';
+import {useRecoilValue} from 'recoil';
+import {themaAtom} from '../../states';
 
 const {Copy, Edit, Remove, Enabled, DisEnabled} = eMoreTypes;
 const [_copy, _edit, _remove, _enabled, _disEnabled] = [
@@ -51,6 +53,9 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
 
   /** useNavigation */
   const {navigate} = useNavigation();
+
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   /** itemObject */
   const icon = itemObject?.icon || 'bell';
@@ -182,7 +187,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
             id={id}
             svg={svg}
             name={name}
-            svgBgColor="bg-gray-100"
+            svgBgColor={notSelectColor(thema)}
             onPress={onPress}
           />
         ))}

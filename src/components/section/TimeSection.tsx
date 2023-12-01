@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import {NText, NView} from '../styled';
-import {timeSetting} from '../../utils/constants';
+import {textColor, timeSetting} from '../../utils/constants';
 import SelectButton from '../button/SelectButton';
 import {useTranslation} from 'react-i18next';
 import ListView from '../view/ListView';
 import DefaultButton from '../button/DefaultButton';
+import {themaAtom} from '../../states';
+import {useRecoilValue} from 'recoil';
 
 export interface IParamsTime {
   ampm: string;
@@ -22,6 +24,9 @@ interface IProps {
 const TimeSection = ({timeInfo, onPress}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
+
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   /** useState */
   const [ampm, setAmpm] = useState(timeInfo.ampm);
@@ -46,7 +51,9 @@ const TimeSection = ({timeInfo, onPress}: IProps) => {
       <NView className="mb-3">
         {timeSetting.map(({title, colList}) => (
           <NView key={title} className="flex-row items-center mb-3">
-            <NText className="w-16 mb-2">{t(title)}</NText>
+            <NText className={`w-16 mb-2 ${textColor(thema)}`}>
+              {t(title)}
+            </NText>
             <NView className="flex-grow ">
               {colList.map((list, key) => (
                 <ListView

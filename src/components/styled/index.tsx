@@ -11,6 +11,7 @@ import {
 import {styled} from 'nativewind';
 import Video from 'react-native-video';
 import FastImage from 'react-native-fast-image';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
 
 const NView = styled(View);
 const NText = styled(Text);
@@ -22,6 +23,7 @@ const NImage = styled(Image);
 const NVideo = styled(Video);
 const NFastImage = styled(FastImage);
 const NFlatList = styled(FlatList);
+const NBottomSheetModal = styled(BottomSheetModal);
 
 export {
   NView,
@@ -34,4 +36,5 @@ export {
   NVideo,
   NFastImage,
   NFlatList,
+  NBottomSheetModal,
 };

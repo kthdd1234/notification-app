@@ -6,6 +6,9 @@ import {eIcon, eSvg} from '../../types/enum';
 import {useNavigation} from '@react-navigation/native';
 import SvgButton from '../button/SvgButton';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import {textColor} from '../../utils/constants';
+import {themaAtom} from '../../states';
+import {useRecoilValue} from 'recoil';
 
 interface IProps {
   /** */
@@ -14,16 +17,17 @@ interface IProps {
   title?: string;
   /** */
   actions?: {id: eSvg; onPress: () => void}[];
-  /** */
-  color?: 'white' | 'black';
 }
 
-const CommonHeader = ({title, isBack, actions, color}: IProps) => {
+const CommonHeader = ({title, isBack, actions}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
   /** useNavigation */
   const {goBack} = useNavigation();
+
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
 
   return (
     <NView className="sticky top-0 flex-row items-center justify-between p-4">
@@ -32,16 +36,16 @@ const CommonHeader = ({title, isBack, actions, color}: IProps) => {
           icon={eIcon.back}
           size={25}
           onPress={goBack}
-          color={color}
+          color={thema === 'White' ? 'black' : 'white'}
         />
       ) : (
         <NView />
       )}
 
-      {title ? (
-        <NText className="text-lg font-bold">{t(title!)}</NText>
-      ) : (
-        <NView />
+      {title && (
+        <NText className={`text-lg font-bold ${textColor(thema)}`}>
+          {t(title!)}
+        </NText>
       )}
 
       {actions ? (

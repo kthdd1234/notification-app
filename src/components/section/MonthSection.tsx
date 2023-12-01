@@ -4,6 +4,9 @@ import DefaultButton from '../button/DefaultButton';
 import {NView} from '../styled';
 import moment from 'moment';
 import {useTranslation} from 'react-i18next';
+import {useRecoilValue} from 'recoil';
+import {themaAtom} from '../../states';
+import {calendarBgColor, dayTextColor} from '../../utils/constants';
 
 interface IProps {
   /** */
@@ -16,6 +19,9 @@ const MonthSection = ({initialDate, onPress}: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
 
+  /** useRecoilValue */
+  const thema = useRecoilValue(themaAtom);
+
   const [dateString, setDateString] = useState(initialDate);
 
   const onDayPress = (date: DateData) => {
@@ -25,8 +31,14 @@ const MonthSection = ({initialDate, onPress}: IProps) => {
   return (
     <NView>
       <Calendar
+        theme={{
+          calendarBackground: calendarBgColor(thema),
+          dayTextColor: dayTextColor(thema),
+          textDisabledColor: 'gray',
+          monthTextColor: dayTextColor(thema),
+        }}
         monthFormat={t('yyyy년 MM월')}
-        minDate={moment(Date.now()).format('YYYY-MM-DD')}
+        minDate={moment(Date.now()).format('YYYY-MM-D')}
         enableSwipeMonths={true}
         initialDate={initialDate}
         date={dateString}
@@ -42,7 +54,7 @@ const MonthSection = ({initialDate, onPress}: IProps) => {
         }}
         onDayPress={onDayPress}
       />
-      <NView className="px-4 mt-4">
+      <NView className={'p-4'}>
         <DefaultButton
           name="선택 완료"
           isEnabled={true}

@@ -17,6 +17,23 @@ const {Day, Hour, Minute} = eIntervalTypes;
 //   return Math.floor(Math.random() * (max - min + 1)) + min;
 // };
 
+const themaColor = {
+  White: {
+    bg: 'bg-[#F9F9FC]',
+    text: 'text-gray-700',
+    notSelect: 'bg-gray-100',
+    border: 'border-gray-200',
+    itemBg: 'white',
+  },
+  Dark: {
+    bg: 'bg-[#282828]',
+    text: 'text-[#E4E4E5]',
+    notSelect: 'bg-[#424242]',
+    border: 'border-[#424242]',
+    itemBg: '#282828',
+  },
+};
+
 const nId = (num: number) => {
   const value = new Date(Date.now()).getTime() + num;
   return value;
@@ -226,10 +243,79 @@ const themas = [
   {id: Dark.toString(), name: '어두운 테마'},
 ];
 
+const textColor = (thema: string) =>
+  thema === White ? themaColor.White.text : themaColor.Dark.text;
+
+const bgColor = (thema: string) =>
+  thema === White ? themaColor.White.bg : themaColor.Dark.bg;
+
+const anColor = (thema: string) => (thema === White ? 'light' : 'dark');
+
+const notSelectColor = (thema: string) =>
+  thema === White ? themaColor.White.notSelect : themaColor.Dark.notSelect;
+
+const inputBorderColor = (thema: string) =>
+  thema === White ? themaColor.White.border : themaColor.Dark.border;
+
+const bottomSheetBgColor = (thema: string) =>
+  thema === White ? themaColor.White.itemBg : themaColor.Dark.itemBg;
+
+const handleIndicatorColor = (thema: string) =>
+  thema === White ? '#D9D9D9' : '#424242';
+
+const buttonColor = (thema: string) =>
+  thema === White ? 'bg-blue-500' : 'bg-[#424242]';
+
+const buttonDisableColor = (thema: string) =>
+  thema === White ? 'bg-gray-200' : 'bg-[#424242]';
+
+const calendarBgColor = (thema: string) =>
+  thema === White ? themaColor.White.itemBg : themaColor.Dark.itemBg;
+
+const dayTextColor = (thema: string) => (thema === White ? 'black' : 'white');
+
+const tagColor = (thema: string) => (thema === White ? 'gray' : 'black');
+
+const itemBgColor = (thema: string) =>
+  thema === White ? 'bg-[#ffffff]' : 'bg-[#424242]';
+
+const anDetails: any = [
+  {
+    label: 'black',
+    card: 'white',
+    danger: 'red',
+    overlay: '',
+    success: '',
+    warning: 'orange',
+  },
+  {
+    label: 'white',
+    card: '#17171C',
+    danger: 'red',
+    overlay: '',
+    success: '',
+    warning: 'orange',
+  },
+];
+
 export {
   StringIsNumber,
   imageUrl,
   nId,
+  textColor,
+  bgColor,
+  anColor,
+  notSelectColor,
+  inputBorderColor,
+  bottomSheetBgColor,
+  handleIndicatorColor,
+  buttonColor,
+  buttonDisableColor,
+  calendarBgColor,
+  dayTextColor,
+  tagColor,
+  itemBgColor,
+  anDetails,
   filterDays,
   timestampTypes,
   intervalTypes,
@@ -243,4 +329,5 @@ export {
   notiTimestampTypes,
   langs,
   themas,
+  themaColor,
 };

@@ -23,19 +23,21 @@ const colors = {
   purple: {textColor: 'text-purple-600', bgColor: 'bg-purple-50'},
   orange: {textColor: 'text-orange-600', bgColor: 'bg-orange-50'},
   yellow: {textColor: 'text-yellow-600', bgColor: 'bg-yellow-50'},
+  black: {textColor: 'text-white', bgColor: 'bg-[#424242]'},
+  amber: {textColor: 'text-amber-600', bgColor: 'bg-amber-50'},
 };
 
 const Tag = ({color, text, isNotMl, isLoading, onPress}: IProps) => {
+  const mr_2 = isNotMl ? '' : 'ml-2';
+
   return (
     <NTouchableOpacity
-      className={`${colors[color].bgColor} ${
-        isNotMl ? '' : 'ml-2'
-      }  p-2 rounded-md`}
+      className={`${colors[color].bgColor} ${mr_2}  p-2 rounded-md `}
       onPress={onPress}>
       {isLoading ? (
         <ActivityIndicator size="small" color="blue" />
       ) : (
-        <NText className={`${colors[color].textColor} text-xs font-semibold `}>
+        <NText className={`${colors[color].textColor} text-xs font-semibold`}>
           {text}
         </NText>
       )}
