@@ -4,7 +4,7 @@ import {NText, NTouchableOpacity} from '../styled';
 import React from 'react';
 import {useRecoilValue} from 'recoil';
 import {themaAtom} from '../../states';
-import {notSelectColor, textColor} from '../../utils/constants';
+import {notSelectColor} from '../../utils/constants';
 
 interface IProps {
   /** */
@@ -52,7 +52,7 @@ const SelectButton = ({
     <NTouchableOpacity
       className={`${viewClass} ${gapClass} ${rounded} ${padding} items-center flex-grow `}
       onPress={() => onPress(id)}>
-      <NText className={`${textClass} font-bold`}>{t(name)}</NText>
+      <NText className={`${textClass} font-bold `}>{t(name)}</NText>
     </NTouchableOpacity>
   );
 };

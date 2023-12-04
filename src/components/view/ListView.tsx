@@ -12,7 +12,7 @@ const ListView = <T extends any>({data, renderItem}: IProps<T>) => {
     <NView style={styles.container}>
       {data.map((item, index) => {
         return (
-          <NView className="flex-1 ml-2" key={index}>
+          <NView className="flex-1 m-1" key={index}>
             {renderItem(item)}
           </NView>
         );
@@ -24,7 +24,6 @@ const ListView = <T extends any>({data, renderItem}: IProps<T>) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    marginBottom: 8,
   },
 });
 

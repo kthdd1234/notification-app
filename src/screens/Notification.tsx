@@ -24,6 +24,7 @@ import {
   anDetails,
   bgColor,
   inputBorderColor,
+  ampmString,
 } from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
@@ -113,9 +114,9 @@ const NotificationScreen = ({navigation, route}) => {
   /** useEffect */
   useEffect(() => {
     if (itemId !== null) {
-      const icon = itemObj?.icon || '';
+      const icon = itemObj?.icon || 'bell';
       const text = itemObj?.body || '';
-      const state = itemObj?.state || '';
+      const state = itemObj?.state || 'Default';
       const notifications = itemObj?.notifications || [];
       const dateTime = moment(notifications[0].dateTime);
       const [ampm, hour, minute] = dateTime.format('A h mm').split(' ');
@@ -288,10 +289,13 @@ const NotificationScreen = ({navigation, route}) => {
     textState !== '' ? 'border-blue-400' : inputBorderColor(thema);
   const placeholderTextColor = thema === 'White' ? 'darkgray' : 'gray';
 
-  /** */
-  const dateString = moment(dateState).format(t(formatString.date));
+  /** format string */
+  const dateFormat = moment(dateState).format(t(formatString.date));
+  const timeTrans = t(`${timeState.ampm} {}시 {}분`);
+  const timeFormat = format(timeTrans, timeState.hour, timeState.minute);
 
-  console.log('formatString.date:', formatString.date);
+  console.log(timeTrans);
+  console.log(timeFormat);
 
   return (
     <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
@@ -328,7 +332,7 @@ const NotificationScreen = ({navigation, route}) => {
           <AddSection
             title="유형"
             component={
-              <NView className="flex-row justify-between">
+              <NView className="flex-row">
                 {timestampTypes.map(info => (
                   <SelectButton
                     key={info.id}
@@ -349,7 +353,7 @@ const NotificationScreen = ({navigation, route}) => {
             <AddSection
               title="날짜"
               component={
-                <DisplayButton text={dateString} onPress={onPressDateButton} />
+                <DisplayButton text={dateFormat} onPress={onPressDateButton} />
               }
             />
           )}
@@ -358,20 +362,22 @@ const NotificationScreen = ({navigation, route}) => {
             <AddSection
               title="요일"
               component={
-                <NScrollView horizontal={true} className="flex-row">
-                  {filterDays.map((day, idx) => (
-                    <SelectButton
-                      key={day}
-                      id={day}
-                      numberType="odd"
-                      name={day}
-                      rounded="rounded-full"
-                      selectedId={daysState[idx]}
-                      isGap={idx !== 0 && idx % 2 !== 0}
-                      padding="p-4"
-                      onPress={onPressDay}
-                    />
-                  ))}
+                <NScrollView horizontal={true}>
+                  <NView className="flex-row">
+                    {filterDays.map((day, idx) => (
+                      <SelectButton
+                        key={day}
+                        id={day}
+                        numberType="odd"
+                        name={day}
+                        rounded="rounded-full"
+                        selectedId={daysState[idx]}
+                        isGap={idx !== 0 && idx % 2 !== 0}
+                        padding="p-4"
+                        onPress={onPressDay}
+                      />
+                    ))}
+                  </NView>
                 </NScrollView>
               }
             />
@@ -392,14 +398,7 @@ const NotificationScreen = ({navigation, route}) => {
           <AddSection
             title="시각"
             component={
-              <DisplayButton
-                text={format(
-                  t(`${timeState.ampm} {}시 {}분`),
-                  timeState.hour,
-                  timeState.minute,
-                )}
-                onPress={onPressTimeButton}
-              />
+              <DisplayButton text={timeFormat} onPress={onPressTimeButton} />
             }
           />
         </NScrollView>
@@ -421,7 +420,6 @@ const NotificationScreen = ({navigation, route}) => {
         <BottomSheetModalContainer
           title="날짜 선택"
           bottomSheetModalRef={dateRef}
-          snapPoint={60}
           component={
             <CalendarSection
               initialDate={dateState}
@@ -432,7 +430,6 @@ const NotificationScreen = ({navigation, route}) => {
         <BottomSheetModalContainer
           title="매달 반복일"
           bottomSheetModalRef={monthDayRef}
-          snapPoint={60}
           component={
             <CalendarSection
               initialDate={monthDayState}
@@ -443,7 +440,6 @@ const NotificationScreen = ({navigation, route}) => {
         <BottomSheetModalContainer
           title="시간 설정"
           bottomSheetModalRef={timeRef}
-          snapPoint={53}
           component={
             <TimeSection timeInfo={timeState} onPress={onPressTimeDone} />
           }

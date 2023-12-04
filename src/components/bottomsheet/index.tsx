@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {Ref, useCallback, useMemo} from 'react';
+import React, {Ref, useCallback, useMemo, useState} from 'react';
 import {NBottomSheetModal, NText, NView} from '../styled';
 import {
   BottomSheetBackdrop,
@@ -22,21 +22,17 @@ interface IProps {
   title?: string;
   /** */
   component: JSX.Element;
-  /** */
-  snapPoint: number;
-  /** */
-  isDetached?: boolean;
 }
 
 const BottomSheetModalContainer = ({
   title,
   bottomSheetModalRef,
-  snapPoint,
-  isDetached,
   component,
 }: IProps) => {
   /** useTranslation */
   const {t} = useTranslation();
+
+  const [value, setValue] = useState(1);
 
   /** useRecoilValue */
   const thema = useRecoilValue(themaAtom);
@@ -55,46 +51,32 @@ const BottomSheetModalContainer = ({
   );
 
   /** useMemo */
-  const snapPoints = useMemo(() => [`${snapPoint}%`], []);
-
-  // const renderFooter = useCallback(
-  //   props => (
-  //     <BottomSheetFooter {...props} bottomInset={24}>
-  //       <NView className="px-4 mb-2">
-  //         <DefaultButton
-  //           name="선택 완료"
-  //           isEnabled={true}
-  //           height={50}
-  //           onPress={() => null}
-  //         />
-  //       </NView>
-  //     </BottomSheetFooter>
-  //   ),
-  //   [],
-  // );
+  // const snapPoints = useMemo(() => [`${snapPoint}%`], []);
+  const snapPoints = useMemo(() => [value], [value]);
 
   return (
     <BottomSheetModalProvider>
       <NBottomSheetModal
         handleIndicatorStyle={{backgroundColor: handleIndicatorColor(thema)}}
         backgroundStyle={{backgroundColor: bottomSheetBgColor(thema)}}
-        className={`${isDetached && 'mx-6'}`}
+        className="mx-4"
         ref={bottomSheetModalRef}
         backdropComponent={renderBackdrop}
         index={0}
         snapPoints={snapPoints}
-        detached={isDetached}
-        bottomInset={isDetached ? 48 : 0}
-        // footerComponent={renderFooter}
-      >
-        {title && (
-          <NView className="flex-row items-center justify-center">
-            <NText className={`mt-3 font-bold ${textColor(thema)}`}>
-              {t(title!)}
-            </NText>
-          </NView>
-        )}
-        <NView className="mt-3">{component}</NView>
+        detached={true}
+        bottomInset={50}
+        contentHeight={value}>
+        <NView onLayout={event => setValue(event.nativeEvent.layout.height)}>
+          {title && (
+            <NView className="flex-row items-center justify-center">
+              <NText className={`mt-3 font-bold ${textColor(thema)}`}>
+                {t(title!)}
+              </NText>
+            </NView>
+          )}
+          {component}
+        </NView>
       </NBottomSheetModal>
     </BottomSheetModalProvider>
   );

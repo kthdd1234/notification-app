@@ -50,8 +50,8 @@ const TimeSection = ({timeInfo, onPress}: IProps) => {
     <NView className="p-4">
       <NView className="mb-3">
         {timeSetting.map(({title, colList}) => (
-          <NView key={title} className="flex-row items-center mb-3">
-            <NText className={`w-16 mb-2 ${textColor(thema)}`}>
+          <NView key={title} className="mb-3">
+            <NText className={`w-16 m-1 pb-1 ${textColor(thema)}`}>
               {t(title)}
             </NText>
             <NView className="flex-grow ">
@@ -63,7 +63,7 @@ const TimeSection = ({timeInfo, onPress}: IProps) => {
                     <SelectButton
                       id={value}
                       name={t(value)}
-                      numberType="odd"
+                      numberType="even"
                       rounded="rounded-md"
                       padding="p-3"
                       selectedId={timeValue[title]}

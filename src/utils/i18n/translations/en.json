@@ -1,5 +1,5 @@
 {
-  "알림": "Notif",
+  "알림": "Notify",
   "알림 종료": "End",
   "알림 예정": "scheduled",
   "알림 끔": "turn off",
@@ -16,10 +16,12 @@
   "+ 버튼을 눌러 알림을 추가해보세요": "+ Press button to add notification",
   "YYYY년 MM월": "MMMM YYYY",
   "YYYY년 MM월 Do일 (dd)": "ddd, MMMM Do, YYYY",
-  "YYYY년 MM월 Do일 (dd) A HH:mm": "ddd, MMMM Do YYYY, HH:mm A",
-  "A HH:mm": "HH:mm A",
+  "YYYY년 MM월 Do일 dddd A h:mm": "ddd, MMMM Do YYYY, HH:mm A",
+  "A h:mm": "h:mm A",
   "오전 {}시 {}분": "{}:{} AM",
   "오후 {}시 {}분": "{}:{} PM",
+  "AM {}시 {}분": "{}:{} AM",
+  "PM {}시 {}분": "{}:{} PM",
   "전체": "All",
   "기본": "Basic",
   "매주": "Weekly",
@@ -38,7 +40,7 @@
   "아이콘": "Icon",
   "내용": "Content",
   "유형": "Type",
-  "알림 추가": "Add Notif",
+  "알림 추가": "Add Notification",
   "날짜": "Date",
   "시각": "Time",
   "시간 설정": "Time Setting",
@@ -78,5 +80,6 @@
   "저장된 데이터와 예정된 알림이 전부 삭제됩니다.": "All saved data and scheduled notifications will be deleted.",
   "초기화": "Initialize",
   "알림 접근 권한이 없어요.": "You do not have access to notifications.",
-  "설정으로 이동하여 알림 허용을 해주세요.": "You do not have access to notifications."
+  "설정으로 이동하여 알림 허용을 해주세요.": "You do not have access to notifications.",
+  "날짜 선택": "Select Date"
 }

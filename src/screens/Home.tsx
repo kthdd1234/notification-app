@@ -60,58 +60,61 @@ const HomeScreen = ({navigation}) => {
     name: '',
   });
 
-  // useEffect(() => {
-  //   if (itemList.length > 1) {
-  //   }
-  // }, []);
-
   useEffect(() => {
+    const setLocale = (lang: string) => {
+      const {
+        monthNames,
+        monthNamesShort,
+        dayNames,
+        dayNamesShort,
+        today,
+        meridiem,
+      } = calendarLocales[lang];
+
+      LocaleConfig.locales[lang] = {
+        monthNames: monthNames,
+        monthNamesShort: monthNamesShort,
+        dayNames: dayNames,
+        dayNamesShort: dayNamesShort,
+        today: today,
+      };
+      LocaleConfig.defaultLocale = lang;
+
+      moment.locale(lang, {
+        months: monthNames,
+        monthsShort: monthNamesShort,
+        monthsParseExact: true,
+        weekdays: dayNames,
+        weekdaysShort: dayNamesShort,
+        weekdaysMin: dayNamesShort,
+        weekdaysParseExact: true,
+        meridiem: meridiem,
+      });
+    };
+
     const user = userList[0];
 
     if (user === undefined) {
+      const userId = uuid.v4().toString();
+
       realm.write(() => {
         realm.create('User', {
-          _id: uuid.v4(),
+          _id: userId,
           language: languageCode === ko ? ko : en,
           thema: eThemaTypes.White,
           font: 'default',
         });
       });
+
+      setUserId(userId);
+      setLocale(languageCode);
     } else {
       setUserId(user._id);
       setThema(user.thema);
 
       i18n.changeLanguage(user.language);
+      setLocale(user.language);
     }
-
-    const {
-      monthNames,
-      monthNamesShort,
-      dayNames,
-      dayNamesShort,
-      today,
-      meridiem,
-    } = calendarLocales[languageCode];
-
-    LocaleConfig.locales[languageCode] = {
-      monthNames: monthNames,
-      monthNamesShort: monthNamesShort,
-      dayNames: dayNames,
-      dayNamesShort: dayNamesShort,
-      today: today,
-    };
-    LocaleConfig.defaultLocale = languageCode;
-
-    moment.locale(languageCode, {
-      months: monthNames,
-      monthsShort: monthNamesShort,
-      monthsParseExact: true,
-      weekdays: dayNames,
-      weekdaysShort: dayNamesShort,
-      weekdaysMin: dayNamesShort,
-      weekdaysParseExact: true,
-      meridiem: meridiem,
-    });
   }, []);
 
   const onPressFloatingAction = () => {
@@ -164,14 +167,11 @@ const HomeScreen = ({navigation}) => {
         component={
           <MoreSection itemId={selectedMore.itemId} moreRef={moreRef} />
         }
-        isDetached={true}
-        snapPoint={45}
       />
       <BottomSheetModalContainer
         title="캘린더"
         bottomSheetModalRef={calendarRef}
         component={<CalendarSection />}
-        snapPoint={70}
       />
     </NSafeAreaView>
   );

@@ -179,7 +179,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   ];
 
   return (
-    <NView className="px-6 py-3">
+    <NView className="p-6">
       <NView className="mb-2">
         {moreItems.map(({id, svg, name, onPress}) => (
           <SvgBlockButton

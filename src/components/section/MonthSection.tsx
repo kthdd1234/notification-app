@@ -29,7 +29,7 @@ const MonthSection = ({initialDate, onPress}: IProps) => {
   };
 
   return (
-    <NView>
+    <NView className="p-2">
       <Calendar
         theme={{
           calendarBackground: calendarBgColor(thema),

@@ -104,15 +104,6 @@ const setPushNotification = ({
       dateTime = moment(dateTime).add(1, 'd').toDate();
     }
 
-    console.log({
-      id: notifiId,
-      title: appName,
-      message: textState,
-      date: dateTime,
-      repeatType: undefined,
-      picture: imgUrl,
-    });
-
     localNotificationSchedule({
       id: notifiId,
       title: appName,

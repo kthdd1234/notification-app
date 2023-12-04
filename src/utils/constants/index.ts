@@ -298,6 +298,11 @@ const anDetails: any = [
   },
 ];
 
+const ampmString = {
+  AM: '오전',
+  PM: '오후',
+};
+
 export {
   StringIsNumber,
   imageUrl,
@@ -315,6 +320,7 @@ export {
   dayTextColor,
   tagColor,
   itemBgColor,
+  ampmString,
   anDetails,
   filterDays,
   timestampTypes,

@@ -18,7 +18,14 @@ import SelectedSection from '../components/section/SelectedSection';
 import {useObject, useQuery, useRealm} from '@realm/react';
 import {User} from '../schema/User';
 import {useTranslation} from 'react-i18next';
-import {anColor, anDetails, bgColor, langs, themas} from '../utils/constants';
+import {
+  anColor,
+  anDetails,
+  bgColor,
+  calendarLocales,
+  langs,
+  themas,
+} from '../utils/constants';
 import {
   ALERT_TYPE,
   AlertNotificationRoot,
@@ -31,8 +38,9 @@ import {useRecoilState, useRecoilValue} from 'recoil';
 import {themaAtom, userIdAtom} from '../states';
 // import Share from 'react-native-share';
 // import * as StoreReview from 'react-native-store-review';
-import {Linking, Platform} from 'react-native';
+import {Linking} from 'react-native';
 import moment from 'moment';
+import {LocaleConfig} from 'react-native-calendars';
 
 const {Language, Thema, Font, Reset, Review, ShareLink, Private, Version} =
   eSettingTypes;
@@ -67,7 +75,20 @@ const SettingScreen = () => {
     realm.write(() => (userObject!.language = lang));
 
     i18n.changeLanguage(lang);
-    // moment.updateLocale(lang);
+    moment.locale(lang);
+
+    const {monthNames, monthNamesShort, dayNames, dayNamesShort, today} =
+      calendarLocales[lang];
+
+    LocaleConfig.locales[lang] = {
+      monthNames: monthNames,
+      monthNamesShort: monthNamesShort,
+      dayNames: dayNames,
+      dayNamesShort: dayNamesShort,
+      today: today,
+    };
+
+    LocaleConfig.defaultLocale = lang;
 
     langRef.current?.close();
   };
@@ -265,8 +286,6 @@ const SettingScreen = () => {
               onPressClose={onPressLangModal}
             />
           }
-          isDetached={true}
-          snapPoint={30}
         />
         <BottomSheetModalContainer
           title="테마 변경"
@@ -279,8 +298,6 @@ const SettingScreen = () => {
               onPressClose={onPressThemaModal}
             />
           }
-          isDetached={true}
-          snapPoint={30}
         />
       </NSafeAreaView>
     </AlertNotificationRoot>
