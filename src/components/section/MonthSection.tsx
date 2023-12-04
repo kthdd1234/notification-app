@@ -56,7 +56,7 @@ const MonthSection = ({initialDate, onPress}: IProps) => {
       />
       <NView className={'p-4'}>
         <DefaultButton
-          name="선택 완료"
+          name={t('선택 완료')}
           isEnabled={true}
           height={50}
           onPress={() => onPress(dateString)}

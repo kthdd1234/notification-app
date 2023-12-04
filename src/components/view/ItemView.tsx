@@ -91,10 +91,10 @@ const ItemView = ({item, onPressMore}: IProps) => {
       const days = notifications
         .map(noti => t(eKoDays[moment(noti.dateTime).day()]))
         .join(' ･ ');
-      return `${t('매주')} ${days}${t('요일')} ${Hmm}`;
+      return `${t('매주')} ${days} ${Hmm}`;
     } else if (state === _everyMonth) {
       const day = moment(dateTime).format('Do');
-      return `${t('매달')} ${day}${t('일')} ${Hmm}`;
+      return `${t('매달')} ${day}${t(' 일')} ${Hmm}`;
     }
   };
 

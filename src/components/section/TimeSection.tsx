@@ -77,7 +77,7 @@ const TimeSection = ({timeInfo, onPress}: IProps) => {
         ))}
       </NView>
       <DefaultButton
-        name="완료"
+        name={t('완료')}
         isEnabled={true}
         height={50}
         onPress={() => onPress({ampm, hour, minute})}

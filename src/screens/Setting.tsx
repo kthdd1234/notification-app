@@ -32,6 +32,7 @@ import {themaAtom, userIdAtom} from '../states';
 // import Share from 'react-native-share';
 // import * as StoreReview from 'react-native-store-review';
 import {Linking, Platform} from 'react-native';
+import moment from 'moment';
 
 const {Language, Thema, Font, Reset, Review, ShareLink, Private, Version} =
   eSettingTypes;
@@ -66,6 +67,8 @@ const SettingScreen = () => {
     realm.write(() => (userObject!.language = lang));
 
     i18n.changeLanguage(lang);
+    // moment.updateLocale(lang);
+
     langRef.current?.close();
   };
 

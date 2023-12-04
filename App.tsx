@@ -10,10 +10,6 @@ import NotificationScreen from './src/screens/Notification';
 import SettingScreen from './src/screens/Setting';
 import TaskScreen from './src/screens/Task';
 import PhotoScreen from './src/screens/Photo';
-import {languageCode} from './src/utils/i18n/i18n.config';
-import {calendarLocales} from './src/utils/constants';
-import {LocaleConfig} from 'react-native-calendars';
-import moment from 'moment';
 import './src/utils/i18n/i18n.config';
 import PushNotification from 'react-native-push-notification';
 
@@ -22,29 +18,6 @@ const {Navigator, Screen} = createNativeStackNavigator();
 
 /** style */
 const style = {flex: 1};
-
-const {monthNames, monthNamesShort, dayNames, dayNamesShort, today, meridiem} =
-  calendarLocales[languageCode];
-
-LocaleConfig.locales[languageCode] = {
-  monthNames: monthNames,
-  monthNamesShort: monthNamesShort,
-  dayNames: dayNames,
-  dayNamesShort: dayNamesShort,
-  today: today,
-};
-LocaleConfig.defaultLocale = languageCode;
-
-moment.locale(languageCode, {
-  months: monthNames,
-  monthsShort: monthNamesShort,
-  monthsParseExact: true,
-  weekdays: dayNames,
-  weekdaysShort: dayNamesShort,
-  weekdaysMin: dayNamesShort,
-  weekdaysParseExact: true,
-  meridiem: meridiem,
-});
 
 const App = () => {
   const screens = [

@@ -56,7 +56,7 @@ const SelectedSection = ({
         ))}
       </NView>
       <DefaultButton
-        name="닫기"
+        name={t('닫기')}
         isEnabled={true}
         height={48}
         onPress={() => onPressClose(false)}

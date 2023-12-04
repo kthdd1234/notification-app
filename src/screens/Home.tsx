@@ -22,14 +22,16 @@ import uuid from 'react-native-uuid';
 import {FlatList} from 'react-native';
 import ItemView from '../components/view/ItemView';
 import {IParamsMore} from '../types/interface';
-import {bgColor} from '../utils/constants';
+import {bgColor, calendarLocales} from '../utils/constants';
+import moment from 'moment';
+import {LocaleConfig} from 'react-native-calendars';
 // import * as StoreReview from 'react-native-store-review';
 
 const {ko, en} = eLanguageTypes;
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
 
   /** useRecoil */
   const [thema, setThema] = useRecoilState(themaAtom);
@@ -78,7 +80,38 @@ const HomeScreen = ({navigation}) => {
     } else {
       setUserId(user._id);
       setThema(user.thema);
+
+      i18n.changeLanguage(user.language);
     }
+
+    const {
+      monthNames,
+      monthNamesShort,
+      dayNames,
+      dayNamesShort,
+      today,
+      meridiem,
+    } = calendarLocales[languageCode];
+
+    LocaleConfig.locales[languageCode] = {
+      monthNames: monthNames,
+      monthNamesShort: monthNamesShort,
+      dayNames: dayNames,
+      dayNamesShort: dayNamesShort,
+      today: today,
+    };
+    LocaleConfig.defaultLocale = languageCode;
+
+    moment.locale(languageCode, {
+      months: monthNames,
+      monthsShort: monthNamesShort,
+      monthsParseExact: true,
+      weekdays: dayNames,
+      weekdaysShort: dayNamesShort,
+      weekdaysMin: dayNamesShort,
+      weekdaysParseExact: true,
+      meridiem: meridiem,
+    });
   }, []);
 
   const onPressFloatingAction = () => {

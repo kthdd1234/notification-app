@@ -288,6 +288,11 @@ const NotificationScreen = ({navigation, route}) => {
     textState !== '' ? 'border-blue-400' : inputBorderColor(thema);
   const placeholderTextColor = thema === 'White' ? 'darkgray' : 'gray';
 
+  /** */
+  const dateString = moment(dateState).format(t(formatString.date));
+
+  console.log('formatString.date:', formatString.date);
+
   return (
     <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
       <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>
@@ -313,7 +318,7 @@ const NotificationScreen = ({navigation, route}) => {
               <NTextInput
                 className={`h-16 px-5 font-semibold py-3 text-lg leading-[0px] border-2 rounded-xl ${inputTextColor} ${borderColor} `}
                 autoFocus={true}
-                placeholder={t('ex. 할 일, 약속, 스케줄 등')}
+                placeholder={`ex. ${t('할 일, 약속, 스케줄 등')}`}
                 placeholderTextColor={placeholderTextColor}
                 value={textState}
                 onChangeText={onChangeText}
@@ -344,10 +349,7 @@ const NotificationScreen = ({navigation, route}) => {
             <AddSection
               title="날짜"
               component={
-                <DisplayButton
-                  text={moment(dateState).format(t(formatString.date))}
-                  onPress={onPressDateButton}
-                />
+                <DisplayButton text={dateString} onPress={onPressDateButton} />
               }
             />
           )}
@@ -356,7 +358,7 @@ const NotificationScreen = ({navigation, route}) => {
             <AddSection
               title="요일"
               component={
-                <NView className="flex-row justify-between">
+                <NScrollView horizontal={true} className="flex-row">
                   {filterDays.map((day, idx) => (
                     <SelectButton
                       key={day}
@@ -370,16 +372,18 @@ const NotificationScreen = ({navigation, route}) => {
                       onPress={onPressDay}
                     />
                   ))}
-                </NView>
+                </NScrollView>
               }
             />
           )}
           {triggerState === EveryMonth.toString() && (
             <AddSection
-              title="일"
+              title="날짜"
               component={
                 <DisplayButton
-                  text={`${t('매달')} ${monthDayState.split('-')[2]}${t('일')}`}
+                  text={`${t('매달')} ${monthDayState.split('-')[2]}${t(
+                    ' 일',
+                  )}`}
                   onPress={onPressMonthDayButton}
                 />
               }
@@ -407,7 +411,7 @@ const NotificationScreen = ({navigation, route}) => {
             onPress={onPressTest}
           />
           <DefaultButton
-            name={itemId ? '완료' : '추가'}
+            name={t(itemId ? '완료' : '추가')}
             isEnabled={isEnabledDone}
             height={60}
             onPress={handlerDone}
