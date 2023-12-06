@@ -50,11 +50,16 @@ const displayNotification = async ({
   body: string;
   url: any;
 }) => {
+  const channelId = await notifee.createChannel({
+    id: 'Channel',
+    name: 'Channel',
+  });
+
   const notification = {
     title: title,
     body: body,
     android: {
-      channelId: 'Notification',
+      channelId: channelId,
     },
     ios: {
       categoryId: 'Notification',

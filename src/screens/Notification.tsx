@@ -24,7 +24,7 @@ import {
   anDetails,
   bgColor,
   inputBorderColor,
-  ampmString,
+  getRandomInt,
 } from '../utils/constants';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import BottomSheetModalContainer from '../components/bottomsheet';
@@ -49,7 +49,7 @@ import {
   AlertNotificationRoot,
   Dialog,
 } from 'react-native-alert-notification';
-import {Linking} from 'react-native';
+import {Linking, Platform} from 'react-native';
 // import {randomUUID} from 'crypto';
 import uuid from 'react-native-uuid';
 import {themaAtom} from '../states';
@@ -192,19 +192,24 @@ const NotificationScreen = ({navigation, route}) => {
     monthDayRef.current?.close();
   };
 
+  console.log(uuid.v1());
+  console.log(new Date(Date.now()).getTime());
+
   const onPressTest = async () => {
     const permission = await checkPermissions();
+    const params = {
+      id: getRandomInt(),
+      title: t('알림'),
+      message: textState,
+      picture: imageUrl(iconState),
+      largeIconUrl: imageUrl(iconState),
+    };
 
     if (permission === false) {
       return showNotificationDialog();
     }
 
-    localNotification({
-      id: Date.now(),
-      title: t('앱 이름'),
-      message: textState,
-      picture: imageUrl(iconState),
-    });
+    localNotification(params);
   };
 
   const showNotificationDialog = () => {
@@ -240,7 +245,7 @@ const NotificationScreen = ({navigation, route}) => {
     });
 
     const notifications = setPushNotification({
-      appName: t('앱 이름'),
+      appName: t('알림'),
       icon: iconState,
       itemId,
       itemObj,
@@ -288,14 +293,12 @@ const NotificationScreen = ({navigation, route}) => {
   const borderColor =
     textState !== '' ? 'border-blue-400' : inputBorderColor(thema);
   const placeholderTextColor = thema === 'White' ? 'darkgray' : 'gray';
+  const isInputLeading = Platform.OS === 'ios' && 'leading-[0px]';
 
   /** format string */
   const dateFormat = moment(dateState).format(t(formatString.date));
   const timeTrans = t(`${timeState.ampm} {}시 {}분`);
   const timeFormat = format(timeTrans, timeState.hour, timeState.minute);
-
-  console.log(timeTrans);
-  console.log(timeFormat);
 
   return (
     <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
@@ -320,11 +323,13 @@ const NotificationScreen = ({navigation, route}) => {
             title="내용"
             component={
               <NTextInput
-                className={`h-16 px-5 font-semibold py-3 text-lg leading-[0px] border-2 rounded-xl ${inputTextColor} ${borderColor} `}
+                underlineColorAndroid="transparent"
+                className={`h-16 px-5 font-semibold py-3 text-lg border-2 rounded-xl  ${inputTextColor} ${borderColor} ${isInputLeading}`}
                 autoFocus={true}
                 placeholder={`ex. ${t('할 일, 약속, 스케줄 등')}`}
                 placeholderTextColor={placeholderTextColor}
                 value={textState}
+                autoCorrect={false}
                 onChangeText={onChangeText}
               />
             }
@@ -460,7 +465,7 @@ export default NotificationScreen;
 // console.log('now.getMinutes', now.getMinutes());
 // localNotificationSchedule({
 //   id: id,
-//   title: t('앱 이름'),
+//   title: t('알림'),
 //   message: textState,
 //   date: now,
 //   repeatType: repeatType,

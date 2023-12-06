@@ -12,6 +12,8 @@ import TaskScreen from './src/screens/Task';
 import PhotoScreen from './src/screens/Photo';
 import './src/utils/i18n/i18n.config';
 import PushNotification from 'react-native-push-notification';
+import {PermissionsAndroid, Platform} from 'react-native';
+import {languageCode} from './src/utils/i18n/i18n.config';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
@@ -48,9 +50,19 @@ const App = () => {
     },
   ];
 
+  console.log(languageCode);
+
   useEffect(() => {
     const req = async () => {
       await PushNotification.requestPermissions(['alert', 'badge', 'sound']);
+
+      if (Platform.OS === 'android') {
+        try {
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+        } catch (error) {}
+      }
     };
 
     req();

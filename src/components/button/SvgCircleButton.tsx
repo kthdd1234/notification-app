@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ActivityIndicator} from 'react-native';
 import {imageUrl, notSelectColor} from '../../utils/constants';
 import {NImage, NTouchableOpacity} from '../styled';
@@ -24,19 +24,18 @@ const SvgCircleButton = ({
 }: IProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const onLoadStart = () => {
+  useEffect(() => {
     setIsLoading(true);
-  };
-
-  const onLoadEnd = () => {
-    setIsLoading(false);
-  };
+    setTimeout(() => setIsLoading(false), 1000);
+  }, []);
 
   /** useRecoilValue */
   const thema = useRecoilValue(themaAtom);
 
   const selectedClass =
     selectedIcon === name ? selectedColor : notSelectColor(thema);
+
+  // console.log('imageUrl(name):', imageUrl(name));
 
   return (
     <NTouchableOpacity
@@ -45,8 +44,6 @@ const SvgCircleButton = ({
       <NImage
         className={`w-10 h-10 ${isLoading && 'hidden'}`}
         source={{uri: imageUrl(name)}}
-        onLoadStart={onLoadStart}
-        onLoadEnd={onLoadEnd}
       />
       {isLoading && (
         <ActivityIndicator size="small" color="#4F95F1" animating={isLoading} />

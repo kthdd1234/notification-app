@@ -11,11 +11,11 @@ import {
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {Day, Hour, Minute} = eIntervalTypes;
 
-// const getRandomInt = (min, max) => {
-//   min = Math.ceil(min);
-//   max = Math.floor(max);
-//   return Math.floor(Math.random() * (max - min + 1)) + min;
-// };
+const getRandomInt = () => {
+  let min = 0;
+  let max = 999999999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 const themaColor = {
   White: {
@@ -320,6 +320,7 @@ export {
   dayTextColor,
   tagColor,
   itemBgColor,
+  getRandomInt,
   ampmString,
   anDetails,
   filterDays,

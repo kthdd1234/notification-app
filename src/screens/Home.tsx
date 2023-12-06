@@ -25,6 +25,7 @@ import {IParamsMore} from '../types/interface';
 import {bgColor, calendarLocales} from '../utils/constants';
 import moment from 'moment';
 import {LocaleConfig} from 'react-native-calendars';
+import {getScheduledLocalNotifications} from '../utils/push-notification';
 // import * as StoreReview from 'react-native-store-review';
 
 const {ko, en} = eLanguageTypes;
@@ -61,6 +62,8 @@ const HomeScreen = ({navigation}) => {
   });
 
   useEffect(() => {
+    const user = userList[0];
+
     const setLocale = (lang: string) => {
       const {
         monthNames,
@@ -91,8 +94,6 @@ const HomeScreen = ({navigation}) => {
         meridiem: meridiem,
       });
     };
-
-    const user = userList[0];
 
     if (user === undefined) {
       const userId = uuid.v4().toString();
@@ -133,6 +134,8 @@ const HomeScreen = ({navigation}) => {
   };
 
   const headerActions = [{id: eSvg.setting, onPress: onPressSetting}];
+
+  console.log(getScheduledLocalNotifications().then(res => console.log(res)));
 
   return (
     <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>

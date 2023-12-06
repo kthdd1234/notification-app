@@ -4,7 +4,7 @@ import PushNotification, {
 } from 'react-native-push-notification';
 import {eKoDays, eTimestampTypes} from '../../types/enum';
 import moment from 'moment';
-import {imageUrl, nId} from '../constants';
+import {getRandomInt, imageUrl} from '../constants';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -23,10 +23,11 @@ export type RepeatType =
   | undefined;
 
 interface IParamsLocalNotification {
-  id?: number;
+  id?: number | string;
   title: string;
   message: string;
-  picture: string;
+  picture?: string;
+  largeIconUrl?: string;
 }
 
 interface IParamsLocalNotificationSchedule extends IParamsLocalNotification {
@@ -55,13 +56,17 @@ const localNotification = (params: IParamsLocalNotification) => {
   PushNotification.localNotification({
     ...params,
     channelId: 'notification-app',
+    allowWhileIdle: true,
   });
 };
 
 const localNotificationSchedule = (
   params: IParamsLocalNotificationSchedule,
 ) => {
-  PushNotification.localNotificationSchedule(params);
+  PushNotification.localNotificationSchedule({
+    ...params,
+    channelId: 'notification-app',
+  });
 };
 
 const getScheduledLocalNotifications = async () => {
@@ -76,7 +81,6 @@ const getScheduledLocalNotifications = async () => {
 
 const cancelLocalNotification = (id: string) => {
   PushNotification.cancelLocalNotification(id);
-  PushNotification.removeDeliveredNotifications([id]);
 };
 
 const cancelAllLocalNotifications = () => {
@@ -95,7 +99,9 @@ const setPushNotification = ({
   monthDayState,
 }) => {
   const notifications: IParamsNotification[] = [];
-  const notifiId = itemId ? Number(itemObj!.notifications[0]._id) : nId(0);
+  const notifiId = itemId
+    ? Number(itemObj!.notifications[0]._id)
+    : getRandomInt();
   const now = new Date(Date.now());
   const imgUrl = imageUrl(icon);
 
@@ -110,6 +116,7 @@ const setPushNotification = ({
       message: textState,
       date: dateTime,
       repeatType: undefined,
+      largeIconUrl: imgUrl,
       picture: imgUrl,
     });
 
@@ -120,8 +127,8 @@ const setPushNotification = ({
       .map(state => moment(dateTime).day(eKoDays[state]).toDate());
 
     const createEveryWeekNoti = (list: Date[]) => {
-      list.forEach((newDate, key) => {
-        const id = nId(key);
+      list.forEach(newDate => {
+        const id = getRandomInt();
 
         localNotificationSchedule({
           id: id,
@@ -129,6 +136,7 @@ const setPushNotification = ({
           message: textState,
           date: newDate,
           repeatType: 'week',
+          largeIconUrl: imgUrl,
           picture: imgUrl,
         });
 
@@ -154,6 +162,7 @@ const setPushNotification = ({
       message: textState,
       date: dateTime,
       repeatType: 'month',
+      largeIconUrl: imgUrl,
       picture: imgUrl,
     });
 

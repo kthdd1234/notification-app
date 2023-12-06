@@ -14,11 +14,12 @@ import {useObject, useRealm} from '@realm/react';
 import {Item} from '../../schema/Item';
 import {
   cancelLocalNotification,
+  localNotificationSchedule,
   setPushNotification,
 } from '../../utils/push-notification';
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import {nId, notSelectColor} from '../../utils/constants';
+import {getRandomInt, imageUrl, notSelectColor} from '../../utils/constants';
 import {eTimestampTypes} from '../../types/enum';
 import SvgBlockButton from '../button/SvgBlockButton';
 import {useRecoilValue} from 'recoil';
@@ -62,7 +63,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   const body = itemObject?.body || '';
   const state = itemObject?.state || 'Default';
   const notifications = itemObject?.notifications || [];
-  const order = itemObject?.order || nId(0);
+  const order = itemObject?.order || getRandomInt();
   const isNotify = itemObject?.isNotify as boolean;
 
   const days = notifications.map(noti => eKoDays[moment(noti.dateTime).day()]);
@@ -72,7 +73,7 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
 
   const onPressCopy = () => {
     const newNotifications = setPushNotification({
-      appName: t('앱 이름'),
+      appName: t('알림'),
       itemId: null,
       itemObj: itemObject,
       icon: icon,
@@ -132,17 +133,31 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   const onPressOn = () => {
     realm.write(() => (itemObject!.isNotify = true));
 
-    setPushNotification({
-      appName: t('앱 이름'),
-      itemId: itemId,
-      itemObj: itemObject,
-      icon: icon,
-      textState: body,
-      dateTime: notifications[0].dateTime,
-      triggerState: state,
-      daysState: days,
-      monthDayState: monthDay,
-    });
+    if (state === eTimestampTypes.EveryWeek) {
+      notifications.forEach(info => {
+        localNotificationSchedule({
+          id: Number(info._id),
+          title: t('알림'),
+          message: body,
+          date: info.dateTime,
+          repeatType: 'week',
+          largeIconUrl: imageUrl(icon),
+          picture: imageUrl(icon),
+        });
+      });
+    } else {
+      setPushNotification({
+        appName: t('알림'),
+        itemId: itemId,
+        itemObj: itemObject,
+        icon: icon,
+        textState: body,
+        dateTime: notifications[0].dateTime,
+        triggerState: state,
+        daysState: days,
+        monthDayState: monthDay,
+      });
+    }
 
     onPreeClose();
   };
