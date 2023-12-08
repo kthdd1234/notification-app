@@ -109,6 +109,7 @@ const ItemView = ({item, onPressMore}: IProps) => {
       cancelLocalNotification(notifications[0]._id);
     }
 
+    console.log('itemObject ===>', itemObject);
     realm.write(() => realm.delete(itemObject));
   };
 
@@ -134,60 +135,62 @@ const ItemView = ({item, onPressMore}: IProps) => {
   };
 
   return (
-    <SwipeableItem
-      key={item._id}
-      item={item}
-      renderUnderlayLeft={() => (
+    <NView>
+      <SwipeableItem
+        key={item._id}
+        item={item}
+        renderUnderlayLeft={() => (
+          <NTouchableOpacity
+            className="items-end justify-center flex-1 pr-12"
+            onPress={onPressDelete}>
+            <TrashSvg width={27} height={27} />
+            <NText className={`mt-2 font-semibold ${textColor(thema)}`}>
+              {t('삭제')}
+            </NText>
+          </NTouchableOpacity>
+        )}
+        snapPointsLeft={[150]}>
         <NTouchableOpacity
-          className="items-end justify-center flex-1 pr-12"
-          onPress={onPressDelete}>
-          <TrashSvg width={27} height={27} />
-          <NText className={`mt-2 font-semibold ${textColor(thema)}`}>
-            {t('삭제')}
-          </NText>
-        </NTouchableOpacity>
-      )}
-      snapPointsLeft={[150]}>
-      <NTouchableOpacity
-        style={style}
-        className={`flex-row p-5 mb-5 ${itemBgColor(
-          thema,
-        )} ${opacityClassName} rounded-xl`}
-        onPress={() => onPressItem(_id)}>
-        <NImage className="w-8 h-8 mr-4" source={{uri: imageUrl(icon)}} />
-        <NView className="flex-grow w-0">
-          <NText className={`mb-3 text-base font-semibold ${textClassName}`}>
-            {body}
-          </NText>
-          <NText className={`mb-1 text-xs ${notiTitleClassName}`}>
-            {t('알림 날짜/시간')}
-          </NText>
-          <NText className={`mb-3 font-bold ${dateTimeClassName}`}>
-            {setDateTime()}
-          </NText>
-          <NView className="flex-row">
-            <Tag
-              color={t(notiTimestampTypes[state].color)}
-              text={t(notiTimestampTypes[state].name)}
-              isNotMl={true}
-            />
-            <NotiStatusTag
-              isNotify={isNotify}
-              notifications={notifications}
-              onStatus={onStatus}
-            />
+          style={style}
+          className={`flex-row p-5 mb-5 ${itemBgColor(
+            thema,
+          )} ${opacityClassName} rounded-xl`}
+          onPress={() => onPressItem(_id)}>
+          <NImage className="w-8 h-8 mr-4" source={{uri: imageUrl(icon)}} />
+          <NView className="flex-grow w-0">
+            <NText className={`mb-3 text-base font-semibold ${textClassName}`}>
+              {body}
+            </NText>
+            <NText className={`mb-1 text-xs ${notiTitleClassName}`}>
+              {t('알림 날짜/시간')}
+            </NText>
+            <NText className={`mb-3 font-bold ${dateTimeClassName}`}>
+              {setDateTime()}
+            </NText>
+            <NView className="flex-row">
+              <Tag
+                color={t(notiTimestampTypes[state].color)}
+                text={t(notiTimestampTypes[state].name)}
+                isNotMl={true}
+              />
+              <NotiStatusTag
+                isNotify={isNotify}
+                notifications={notifications}
+                onStatus={onStatus}
+              />
+            </NView>
           </NView>
-        </NView>
-        <NView className="w-10 h-full" />
-        <IconButton
-          containerClassName="absolute right-0 p-4"
-          icon={eIcon.more}
-          size={18}
-          color="gray"
-          onPress={() => onPressMore({itemId: _id, name: body})}
-        />
-      </NTouchableOpacity>
-    </SwipeableItem>
+          <NView className="w-10 h-full" />
+          <IconButton
+            containerClassName="absolute right-0 p-4"
+            icon={eIcon.more}
+            size={18}
+            color="gray"
+            onPress={() => onPressMore({itemId: _id, name: body})}
+          />
+        </NTouchableOpacity>
+      </SwipeableItem>
+    </NView>
   );
 };
 

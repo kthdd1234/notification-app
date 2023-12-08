@@ -7,9 +7,13 @@ import {
   eLanguageTypes,
   eThemaTypes,
 } from '../../types/enum';
+import {TestIds} from 'react-native-google-mobile-ads';
+import {Platform} from 'react-native';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const {Day, Hour, Minute} = eIntervalTypes;
+
+const androidChannelId = 'notification-app';
 
 const getRandomInt = () => {
   let min = 0;
@@ -303,6 +307,29 @@ const ampmString = {
   PM: '오후',
 };
 
+const adUnitIds = {
+  ios: {
+    banner: 'ca-app-pub-6804308271128440/2458152114',
+    appOpen: 'ca-app-pub-6804308271128440/2833518640',
+  },
+  android: {
+    banner: 'ca-app-pub-6804308271128440/7754656921',
+    appOpen: 'ca-app-pub-6804308271128440/5866860187',
+  },
+};
+
+const bannerId = __DEV__
+  ? TestIds.ADAPTIVE_BANNER!
+  : Platform.OS === 'ios'
+  ? adUnitIds.ios.banner
+  : adUnitIds.android.banner;
+
+const appOpenId = __DEV__
+  ? TestIds.APP_OPEN
+  : Platform.OS === 'ios'
+  ? adUnitIds.ios.banner
+  : adUnitIds.android.banner;
+
 export {
   StringIsNumber,
   imageUrl,
@@ -321,6 +348,8 @@ export {
   tagColor,
   itemBgColor,
   getRandomInt,
+  bannerId,
+  appOpenId,
   ampmString,
   anDetails,
   filterDays,
@@ -337,4 +366,5 @@ export {
   langs,
   themas,
   themaColor,
+  androidChannelId,
 };

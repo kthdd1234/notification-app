@@ -7,6 +7,8 @@ import {useEffect, useState} from 'react';
 import {getScheduledLocalNotifications} from '../../utils/push-notification';
 import {Notification} from '../../schema/Notification';
 import {eNotiStatusTypes} from '../../types/enum';
+import notifee from '@notifee/react-native';
+import {AppState} from 'react-native';
 
 interface IProps {
   /** */
@@ -25,15 +27,22 @@ const NotiStatusTag = ({isNotify, notifications, onStatus}: IProps) => {
   const [status, setStatus] = useState({color: 'gray', text: ''});
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const req = async () => {
-      setIsLoading(true);
-      await handleTimeDelay();
-      setIsLoading(false);
-    };
+  const handleNotiStatus = async () => {
+    setIsLoading(true);
+    await handleTimeDelay();
+    setIsLoading(false);
+  };
 
-    req();
+  useEffect(() => {
+    handleNotiStatus();
   }, [isNotify]);
+
+  useEffect(() => {
+    AppState.addEventListener(
+      'change',
+      appState => appState === 'active' && handleNotiStatus(),
+    );
+  }, []);
 
   const handleTimeDelay = () => {
     return new Promise(resolve => {

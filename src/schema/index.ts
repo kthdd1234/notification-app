@@ -5,5 +5,5 @@ import {Realm} from '@realm/react';
 
 export const realmConfig: Realm.Configuration = {
   schema: [User, Notification, Item],
-  deleteRealmIfMigrationNeeded: true,
+  schemaVersion: 0,
 };

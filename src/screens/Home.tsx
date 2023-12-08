@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {NSafeAreaView, NView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
 import {eLanguageTypes, eSvg, eThemaTypes} from '../types/enum';
@@ -22,13 +22,29 @@ import uuid from 'react-native-uuid';
 import {FlatList} from 'react-native';
 import ItemView from '../components/view/ItemView';
 import {IParamsMore} from '../types/interface';
-import {bgColor, calendarLocales} from '../utils/constants';
+import {
+  appOpenId,
+  bannerId,
+  bgColor,
+  calendarLocales,
+} from '../utils/constants';
 import moment from 'moment';
 import {LocaleConfig} from 'react-native-calendars';
 import {getScheduledLocalNotifications} from '../utils/push-notification';
-// import * as StoreReview from 'react-native-store-review';
+import {
+  AdEventType,
+  AppOpenAd,
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
 const {ko, en} = eLanguageTypes;
+
+const appOpenAd = AppOpenAd.createForAdRequest(appOpenId, {
+  keywords: ['fashion', 'clothing'],
+});
+
+appOpenAd.load();
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -60,6 +76,14 @@ const HomeScreen = ({navigation}) => {
     itemId: '',
     name: '',
   });
+
+  useLayoutEffect(() => {
+    appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
+      if (appOpenAd.loaded && itemRealm.length > 0) {
+        appOpenAd.show();
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const user = userList[0];
@@ -135,35 +159,49 @@ const HomeScreen = ({navigation}) => {
 
   const headerActions = [{id: eSvg.setting, onPress: onPressSetting}];
 
-  console.log(getScheduledLocalNotifications().then(res => console.log(res)));
+  getScheduledLocalNotifications().then(res => console.log(res));
 
   return (
-    <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>
-      <CommonHeader actions={headerActions} />
-      <NotiTitle />
+    <NSafeAreaView
+      className={`relative h-full flex-col justify-between ${bgColor(thema)}`}>
+      <NView>
+        <CommonHeader actions={headerActions} />
+        <NotiTitle />
+      </NView>
+
       {itemList.length > 0 ? (
-        <NView className={`${bgColor(thema)} h-full pb-40`}>
-          <FlatList
-            style={{padding: 16}}
-            data={itemList}
-            keyExtractor={item => item._id}
-            renderItem={({item}) => (
-              <ItemView item={item} onPressMore={onPressMore} />
-            )}
-          />
-        </NView>
+        <FlatList
+          style={{padding: 16}}
+          data={itemList}
+          keyExtractor={item => item._id}
+          renderItem={({item}) => (
+            <ItemView item={item} onPressMore={onPressMore} />
+          )}
+        />
       ) : (
         <EmptySection />
       )}
-      <FAB
-        placement="right"
-        icon={{name: 'add', color: 'white'}}
-        buttonStyle={{backgroundColor: '#4F95F1'}}
-        titleStyle={{fontWeight: 'bold'}}
-        title={t('알림 추가')}
-        size="large"
-        onPress={onPressFloatingAction}
-      />
+
+      <NView className="sticky bottom-0">
+        <NView>
+          <FAB
+            placement="right"
+            icon={{name: 'add', color: 'white'}}
+            buttonStyle={{backgroundColor: '#4F95F1'}}
+            titleStyle={{fontWeight: 'bold'}}
+            title={t('알림 추가')}
+            size="large"
+            onPress={onPressFloatingAction}
+          />
+        </NView>
+        <NView>
+          <BannerAd
+            unitId={bannerId}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
+        </NView>
+      </NView>
+
       <BottomSheetModalContainer
         title={selectedMore.name}
         bottomSheetModalRef={moreRef}

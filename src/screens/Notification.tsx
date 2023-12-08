@@ -52,8 +52,9 @@ import {
 import {Linking, Platform} from 'react-native';
 // import {randomUUID} from 'crypto';
 import uuid from 'react-native-uuid';
-import {themaAtom} from '../states';
+import {themaAtom, userIdAtom} from '../states';
 import {useRecoilValue} from 'recoil';
+import {User} from '../schema/User';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -101,6 +102,7 @@ const NotificationScreen = ({navigation, route}) => {
 
   /** useRecoilValue */
   const thema = useRecoilValue(themaAtom);
+  const userId = useRecoilValue(userIdAtom);
 
   /** useRef */
   const dateRef = useRef<BottomSheetModal>(null);
@@ -109,6 +111,7 @@ const NotificationScreen = ({navigation, route}) => {
 
   /** useRealm */
   const realm = useRealm();
+  const userObj = useObject(User, userId || '');
   const itemObj = useObject(Item, itemId || '');
 
   /** useEffect */
@@ -192,9 +195,6 @@ const NotificationScreen = ({navigation, route}) => {
     monthDayRef.current?.close();
   };
 
-  console.log(uuid.v1());
-  console.log(new Date(Date.now()).getTime());
-
   const onPressTest = async () => {
     const permission = await checkPermissions();
     const params = {
@@ -243,6 +243,8 @@ const NotificationScreen = ({navigation, route}) => {
       hour,
       minute,
     });
+
+    // console.log('toLocaleString => ', dateTime.toLocaleString());
 
     const notifications = setPushNotification({
       appName: t('알림'),
@@ -354,6 +356,32 @@ const NotificationScreen = ({navigation, route}) => {
               </NView>
             }
           />
+
+          {triggerState === EveryWeek.toString() && (
+            <AddSection
+              title="요일"
+              component={
+                // <NScrollView horizontal={true}>
+                <NView className="flex-row">
+                  {filterDays.map((day, idx) => (
+                    <SelectButton
+                      key={day}
+                      id={day}
+                      numberType="odd"
+                      name={day}
+                      rounded="rounded-md"
+                      selectedId={daysState[idx]}
+                      isGap={idx !== 0 && idx % 2 !== 0}
+                      padding={userObj?.language === 'ko' ? 'p-3' : 'p-2'}
+                      onPress={onPressDay}
+                    />
+                  ))}
+                </NView>
+                // </NScrollView>
+              }
+            />
+          )}
+
           {triggerState === Default.toString() && (
             <AddSection
               title="날짜"
@@ -363,30 +391,6 @@ const NotificationScreen = ({navigation, route}) => {
             />
           )}
 
-          {triggerState === EveryWeek.toString() && (
-            <AddSection
-              title="요일"
-              component={
-                <NScrollView horizontal={true}>
-                  <NView className="flex-row">
-                    {filterDays.map((day, idx) => (
-                      <SelectButton
-                        key={day}
-                        id={day}
-                        numberType="odd"
-                        name={day}
-                        rounded="rounded-full"
-                        selectedId={daysState[idx]}
-                        isGap={idx !== 0 && idx % 2 !== 0}
-                        padding="p-4"
-                        onPress={onPressDay}
-                      />
-                    ))}
-                  </NView>
-                </NScrollView>
-              }
-            />
-          )}
           {triggerState === EveryMonth.toString() && (
             <AddSection
               title="날짜"

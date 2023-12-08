@@ -4,7 +4,7 @@ import PushNotification, {
 } from 'react-native-push-notification';
 import {eKoDays, eTimestampTypes} from '../../types/enum';
 import moment from 'moment';
-import {getRandomInt, imageUrl} from '../constants';
+import {androidChannelId, getRandomInt, imageUrl} from '../constants';
 
 const {Default, EveryWeek, EveryMonth} = eTimestampTypes;
 const [_default, _everyWeek, _everyMonth] = [
@@ -55,7 +55,7 @@ const checkPermissions = async () => {
 const localNotification = (params: IParamsLocalNotification) => {
   PushNotification.localNotification({
     ...params,
-    channelId: 'notification-app',
+    channelId: androidChannelId,
     allowWhileIdle: true,
   });
 };
@@ -65,7 +65,7 @@ const localNotificationSchedule = (
 ) => {
   PushNotification.localNotificationSchedule({
     ...params,
-    channelId: 'notification-app',
+    channelId: androidChannelId,
   });
 };
 
@@ -81,6 +81,7 @@ const getScheduledLocalNotifications = async () => {
 
 const cancelLocalNotification = (id: string) => {
   PushNotification.cancelLocalNotification(id);
+  PushNotification.removeDeliveredNotifications([id]);
 };
 
 const cancelAllLocalNotifications = () => {
@@ -122,9 +123,18 @@ const setPushNotification = ({
 
     notifications.push({_id: `${notifiId}`, dateTime: dateTime});
   } else if (triggerState === _everyWeek) {
-    const dateTimeList = daysState
-      .filter(state => !!state)
-      .map(state => moment(dateTime).day(eKoDays[state]).toDate());
+    const filterDateTimeList = daysState.filter(state => !!state);
+    const dateTimeList = filterDateTimeList.map(state => {
+      let date = moment(dateTime).day(eKoDays[state]).toDate();
+
+      if (moment().isAfter(date)) {
+        date = moment(dateTime)
+          .day(eKoDays[state] + 7)
+          .toDate();
+      }
+
+      return date;
+    });
 
     const createEveryWeekNoti = (list: Date[]) => {
       list.forEach(newDate => {
