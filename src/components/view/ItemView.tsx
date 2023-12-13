@@ -109,8 +109,12 @@ const ItemView = ({item, onPressMore}: IProps) => {
       cancelLocalNotification(notifications[0]._id);
     }
 
-    console.log('itemObject ===>', itemObject);
-    realm.write(() => realm.delete(itemObject));
+    realm.write(() => {
+      if (itemObject) {
+        console.log('itemObject ===>', itemObject);
+        realm.delete(itemObject);
+      }
+    });
   };
 
   const opacityThema = thema === 'White' ? 'opacity-50' : 'opacity-30';

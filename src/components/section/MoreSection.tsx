@@ -119,7 +119,11 @@ const MoreSection = ({moreRef, itemId}: IProps) => {
   const onPressRemove = () => {
     onCancelNotification();
 
-    realm.write(() => realm.delete(itemObject));
+    realm.write(() => {
+      if (itemObject) {
+        realm.delete(itemObject);
+      }
+    });
     onPreeClose();
   };
 

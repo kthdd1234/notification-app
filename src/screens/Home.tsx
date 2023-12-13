@@ -1,10 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {NSafeAreaView, NView} from '../components/styled';
 import {useTranslation} from 'react-i18next';
-import {eLanguageTypes, eSvg, eThemaTypes} from '../types/enum';
-import CommonHeader from '../components/header/CommonHeader';
+import {eLanguageTypes, eThemaTypes} from '../types/enum';
 import {useQuery, useRealm} from '@realm/react';
 import {Item} from '../schema/Item';
 import {FAB} from '@rneui/base';
@@ -17,34 +16,18 @@ import {seletedTagAtom, themaAtom, userIdAtom} from '../states';
 import BottomSheetModalContainer from '../components/bottomsheet';
 import {BottomSheetModal} from '@gorhom/bottom-sheet';
 import MoreSection from '../components/section/MoreSection';
-import CalendarSection from '../components/section/CalendarSection';
+// import CalendarSection from '../components/section/CalendarSection';
 import uuid from 'react-native-uuid';
 import {FlatList} from 'react-native';
 import ItemView from '../components/view/ItemView';
 import {IParamsMore} from '../types/interface';
-import {
-  appOpenId,
-  bannerId,
-  bgColor,
-  calendarLocales,
-} from '../utils/constants';
+import {bannerId, bgColor, calendarLocales} from '../utils/constants';
 import moment from 'moment';
 import {LocaleConfig} from 'react-native-calendars';
 import {getScheduledLocalNotifications} from '../utils/push-notification';
-import {
-  AdEventType,
-  AppOpenAd,
-  BannerAd,
-  BannerAdSize,
-} from 'react-native-google-mobile-ads';
+import {BannerAd, BannerAdSize} from 'react-native-google-mobile-ads';
 
 const {ko, en} = eLanguageTypes;
-
-const appOpenAd = AppOpenAd.createForAdRequest(appOpenId, {
-  keywords: ['fashion', 'clothing'],
-});
-
-appOpenAd.load();
 
 const HomeScreen = ({navigation}) => {
   /** useTranslation */
@@ -77,14 +60,6 @@ const HomeScreen = ({navigation}) => {
     name: '',
   });
 
-  useLayoutEffect(() => {
-    appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
-      if (appOpenAd.loaded && itemRealm.length > 0) {
-        appOpenAd.show();
-      }
-    });
-  }, []);
-
   useEffect(() => {
     const user = userList[0];
 
@@ -107,16 +82,20 @@ const HomeScreen = ({navigation}) => {
       };
       LocaleConfig.defaultLocale = lang;
 
-      moment.locale(lang, {
-        months: monthNames,
-        monthsShort: monthNamesShort,
-        monthsParseExact: true,
-        weekdays: dayNames,
-        weekdaysShort: dayNamesShort,
-        weekdaysMin: dayNamesShort,
-        weekdaysParseExact: true,
-        meridiem: meridiem,
-      });
+      try {
+        moment.locale(lang, {
+          months: monthNames,
+          monthsShort: monthNamesShort,
+          monthsParseExact: true,
+          weekdays: dayNames,
+          weekdaysShort: dayNamesShort,
+          weekdaysMin: dayNamesShort,
+          weekdaysParseExact: true,
+          meridiem: meridiem,
+        });
+      } catch (error) {
+        console.log('moment.locale =>', error);
+      }
     };
 
     if (user === undefined) {
@@ -153,21 +132,12 @@ const HomeScreen = ({navigation}) => {
     moreRef.current?.present();
   };
 
-  const onPressSetting = () => {
-    navigation.navigate('SettingScreen');
-  };
-
-  const headerActions = [{id: eSvg.setting, onPress: onPressSetting}];
-
   getScheduledLocalNotifications().then(res => console.log(res));
 
   return (
     <NSafeAreaView
       className={`relative h-full flex-col justify-between ${bgColor(thema)}`}>
-      <NView>
-        <CommonHeader actions={headerActions} />
-        <NotiTitle />
-      </NView>
+      <NotiTitle />
 
       {itemList.length > 0 ? (
         <FlatList
@@ -209,11 +179,6 @@ const HomeScreen = ({navigation}) => {
           <MoreSection itemId={selectedMore.itemId} moreRef={moreRef} />
         }
       />
-      <BottomSheetModalContainer
-        title="캘린더"
-        bottomSheetModalRef={calendarRef}
-        component={<CalendarSection />}
-      />
     </NSafeAreaView>
   );
 };
@@ -227,3 +192,10 @@ export default HomeScreen;
     size="medium"
     onToggle={isOn => console.log('changed to : ', isOn)}
     /> */
+{
+  /* <BottomSheetModalContainer
+        title="캘린더"
+        bottomSheetModalRef={calendarRef}
+        component={<CalendarSection />}
+      /> */
+}

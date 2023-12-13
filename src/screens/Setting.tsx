@@ -231,18 +231,18 @@ const SettingScreen = () => {
       svg: <ResetSvg {...props} />,
       onPress: onPressReset,
     },
-    {
-      id: Review,
-      name: '앱 리뷰',
-      svg: <ReviewSvg {...props} />,
-      onPress: onPressReview,
-    },
-    {
-      id: ShareLink,
-      name: '앱 공유',
-      svg: <ShareSvg {...props} />,
-      onPress: onPressShareLink,
-    },
+    // {
+    //   id: Review,
+    //   name: '앱 리뷰',
+    //   svg: <ReviewSvg {...props} />,
+    //   onPress: onPressReview,
+    // },
+    // {
+    //   id: ShareLink,
+    //   name: '앱 공유',
+    //   svg: <ShareSvg {...props} />,
+    //   onPress: onPressShareLink,
+    // },
     {
       id: Private,
       name: '개인정보처리방침',
@@ -261,7 +261,7 @@ const SettingScreen = () => {
   return (
     <AlertNotificationRoot theme={anColor(thema)} colors={anDetails}>
       <NSafeAreaView className={`relative h-full ${bgColor(thema)}`}>
-        <CommonHeader isBack={true} title="설정" />
+        <CommonHeader isBack={false} title="설정" />
         <NView className="p-4">
           {settingInfo.map(({id, svg, name, tag, onPress}) => (
             <SvgBlockButton

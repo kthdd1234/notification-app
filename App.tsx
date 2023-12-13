@@ -12,9 +12,11 @@ import TaskScreen from './src/screens/Task';
 import PhotoScreen from './src/screens/Photo';
 import PushNotification from 'react-native-push-notification';
 import {PermissionsAndroid, Platform} from 'react-native';
-import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+// import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {AdsConsent} from 'react-native-google-mobile-ads';
 import './src/utils/i18n/i18n.config';
+import NavigatorScreen from './src/screens/Navigator';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 /** createNativeStackNavigator */
 const {Navigator, Screen} = createNativeStackNavigator();
@@ -49,15 +51,20 @@ const App = () => {
       component: PhotoScreen,
       headerShown: false,
     },
+    {
+      name: 'NavigatorScreen',
+      component: NavigatorScreen,
+      headerShown: false,
+    },
   ];
 
   useLayoutEffect(() => {
     const req = async () => {
-      const result = await check(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+      // const result = await check(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
 
-      if (result === RESULTS.DENIED) {
-        await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
-      }
+      // if (result === RESULTS.DENIED) {
+      //   await request(PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY);
+      // }
 
       const consentInfo = await AdsConsent.requestInfoUpdate();
       const {status} = await AdsConsent.loadAndShowConsentFormIfRequired();
@@ -89,23 +96,25 @@ const App = () => {
     <RealmProvider {...realmConfig}>
       <RecoilRoot>
         <GestureHandlerRootView style={style}>
-          <NavigationContainer>
-            <Navigator initialRouteName="HomeScreen">
-              {screens.map(({name, headerShown, component}) => (
-                <Screen
-                  key={name}
-                  name={name}
-                  component={component}
-                  options={{
-                    headerShown: headerShown,
-                    headerShadowVisible: false,
-                    headerBackTitleVisible: false,
-                    animation: name === 'PhotoScreen' ? 'fade' : 'default',
-                  }}
-                />
-              ))}
-            </Navigator>
-          </NavigationContainer>
+          <BottomSheetModalProvider>
+            <NavigationContainer>
+              <Navigator initialRouteName="NavigatorScreen">
+                {screens.map(({name, headerShown, component}) => (
+                  <Screen
+                    key={name}
+                    name={name}
+                    component={component}
+                    options={{
+                      headerShown: headerShown,
+                      headerShadowVisible: false,
+                      headerBackTitleVisible: false,
+                      animation: name === 'PhotoScreen' ? 'fade' : 'default',
+                    }}
+                  />
+                ))}
+              </Navigator>
+            </NavigationContainer>
+          </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </RecoilRoot>
     </RealmProvider>

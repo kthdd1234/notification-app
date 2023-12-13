@@ -39,7 +39,7 @@ const CommonHeader = ({title, isBack, actions}: IProps) => {
           color={thema === 'White' ? 'black' : 'white'}
         />
       ) : (
-        <NView />
+        <AntDesignIcon name="left" size={30} color="transparent" />
       )}
 
       {title && (

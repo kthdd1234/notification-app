@@ -81,5 +81,6 @@
   "초기화": "Initialize",
   "알림 접근 권한이 없어요.": "You do not have access to notifications.",
   "설정으로 이동하여 알림 허용을 해주세요.": "You do not have access to notifications.",
-  "날짜 선택": "Select Date"
+  "날짜 선택": "Select Date",
+  "홈": "Home"
 }

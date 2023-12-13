@@ -13,4 +13,6 @@ const seletedTagAtom = atom({
   default: eTimestampTypes.All.toString(),
 });
 
-export {seletedTagAtom, themaAtom, userIdAtom};
+const isShowBNBAtom = atom({key: 'isShowBNBAtom', default: 0});
+
+export {seletedTagAtom, themaAtom, userIdAtom, isShowBNBAtom};

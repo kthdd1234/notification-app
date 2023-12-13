@@ -37,7 +37,7 @@ const NotiTitle = () => {
   };
 
   return (
-    <NView className="flex-row items-end justify-between px-4 mb-5">
+    <NView className="flex-row items-end justify-between px-4 mt-10">
       <NText className={`text-3xl font-bold ${textColor(thema)}`}>
         {t('알림')}
       </NText>

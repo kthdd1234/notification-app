@@ -283,6 +283,12 @@ const tagColor = (thema: string) => (thema === White ? 'gray' : 'black');
 const itemBgColor = (thema: string) =>
   thema === White ? 'bg-[#ffffff]' : 'bg-[#424242]';
 
+const bottomBgColor = (thema: string) =>
+  thema === White ? '#F9F9FC' : '#282828';
+
+const bottomDividerColor = (thema: string) =>
+  thema === White ? '#D9D9D9' : '#424242';
+
 const anDetails: any = [
   {
     label: 'black',
@@ -348,6 +354,8 @@ export {
   tagColor,
   itemBgColor,
   getRandomInt,
+  bottomBgColor,
+  bottomDividerColor,
   bannerId,
   appOpenId,
   ampmString,

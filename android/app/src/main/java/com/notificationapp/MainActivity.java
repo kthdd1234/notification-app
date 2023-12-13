@@ -1,4 +1,4 @@
-package com.notificationapp;
+package com.simplenotificationapp;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

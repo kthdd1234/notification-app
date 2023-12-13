@@ -1,4 +1,4 @@
-package com.notificationapp;
+package com.simplenotificationapp;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

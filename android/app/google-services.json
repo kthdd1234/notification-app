@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:594425927784:android:01212be9f1ac08cb6f03dd",
         "android_client_info": {
-          "package_name": "com.notificationapp"
+          "package_name": "com.simplenotificationapp"
         }
       },
       "oauth_client": [],
@@ -28,7 +28,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:594425927784:android:a7b76ae92ea099f76f03dd",
         "android_client_info": {
-          "package_name": "com.notificationapp.simpleNotification"
+          "package_name": "com.simplenotificationapp.simpleNotification"
         }
       },
       "oauth_client": [],
