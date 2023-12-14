@@ -336,6 +336,17 @@ const appOpenId = __DEV__
   ? adUnitIds.ios.banner
   : adUnitIds.android.banner;
 
+const storeInfo = {
+  appStore: {
+    id: '6474116876',
+    link: 'https://apps.apple.com/kr/app/%EC%8B%AC%ED%94%8C-%EC%95%8C%EB%A6%BC-%ED%95%A0-%EC%9D%BC-%EC%95%BD%EC%86%8D-%EC%8A%A4%EC%BC%80%EC%A4%84-%EC%98%88%EC%95%BD-%EC%95%8C%EB%A6%BC/id6474116876',
+  },
+  playStore: {
+    id: '',
+    link: '',
+  },
+};
+
 export {
   StringIsNumber,
   imageUrl,
@@ -375,4 +386,5 @@ export {
   themas,
   themaColor,
   androidChannelId,
+  storeInfo,
 };

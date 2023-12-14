@@ -24,6 +24,7 @@ import {
   bgColor,
   calendarLocales,
   langs,
+  storeInfo,
   themas,
 } from '../utils/constants';
 import {
@@ -36,9 +37,9 @@ import {cancelAllLocalNotifications} from '../utils/push-notification';
 import {Item} from '../schema/Item';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {themaAtom, userIdAtom} from '../states';
-// import Share from 'react-native-share';
+import Share from 'react-native-share';
 // import * as StoreReview from 'react-native-store-review';
-import {Linking} from 'react-native';
+import {Linking, Platform} from 'react-native';
 import moment from 'moment';
 import {LocaleConfig} from 'react-native-calendars';
 
@@ -105,6 +106,8 @@ const SettingScreen = () => {
   };
 
   const onPressFontModal = (isOpen: boolean) => {
+    isOpen;
+
     Toast.show({
       type: ALERT_TYPE.WARNING,
       title: t('기능 준비 중'),
@@ -132,47 +135,41 @@ const SettingScreen = () => {
   };
 
   const onPressReview = () => {
-    // try {
-    //   const APP_STORE_LINK = `itms-apps://apps.apple.com/app/id${1}?action=write-review`;
-    //   const PLAY_STORE_LINK = `market://details?id=${'1'}`;
-    //   const STORE_LINK = Platform.select({
-    //     ios: APP_STORE_LINK,
-    //     android: PLAY_STORE_LINK,
-    //   });
-    //   Linking.openURL(STORE_LINK || '');
-    // } catch (error) {
-    //   Toast.show({
-    //     type: ALERT_TYPE.DANGER,
-    //     title: t('에러 발생'),
-    //     textBody: t('알 수 없는 에러가 발생하였습니다.'),
-    //   });
-    // }
-    Toast.show({
-      type: ALERT_TYPE.WARNING,
-      title: t('기능 준비 중'),
-      textBody: t('현재 준비 중인 기능입니다. 🙌'),
-    });
+    try {
+      const APP_STORE_LINK = `itms-apps://apps.apple.com/app/id${storeInfo.appStore.id}?action=write-review`;
+      const PLAY_STORE_LINK = `market://details?id=${'1'}`;
+      const STORE_LINK = Platform.select({
+        ios: APP_STORE_LINK,
+        android: PLAY_STORE_LINK,
+      });
+      Linking.openURL(STORE_LINK || '');
+    } catch (error) {
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: t('에러 발생'),
+        textBody: t('알 수 없는 에러가 발생하였습니다.'),
+      });
+    }
   };
 
   const onPressShareLink = async () => {
-    // try {
-    //   const responce = await Share.open({url: 'https://www.naver.com/'});
+    try {
+      const url = Platform.select({
+        ios: storeInfo.appStore.link,
+        android: storeInfo.playStore.link,
+      });
+      const responce = await Share.open({url: url});
 
-    //   if (responce.success) {
-    //     Toast.show({
-    //       type: ALERT_TYPE.SUCCESS,
-    //       title: t('공유 완료'),
-    //       textBody: '앱 링크 공유를 하였습니다.',
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    Toast.show({
-      type: ALERT_TYPE.WARNING,
-      title: t('기능 준비 중'),
-      textBody: t('현재 준비 중인 기능입니다. 🙌'),
-    });
+      if (responce.success) {
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: t('공유 완료'),
+          textBody: '앱 링크 공유를 하였습니다.',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onPressPrivate = () => {
@@ -231,18 +228,18 @@ const SettingScreen = () => {
       svg: <ResetSvg {...props} />,
       onPress: onPressReset,
     },
-    // {
-    //   id: Review,
-    //   name: '앱 리뷰',
-    //   svg: <ReviewSvg {...props} />,
-    //   onPress: onPressReview,
-    // },
-    // {
-    //   id: ShareLink,
-    //   name: '앱 공유',
-    //   svg: <ShareSvg {...props} />,
-    //   onPress: onPressShareLink,
-    // },
+    {
+      id: Review,
+      name: '앱 리뷰',
+      svg: <ReviewSvg {...props} />,
+      onPress: onPressReview,
+    },
+    {
+      id: ShareLink,
+      name: '앱 공유',
+      svg: <ShareSvg {...props} />,
+      onPress: onPressShareLink,
+    },
     {
       id: Private,
       name: '개인정보처리방침',

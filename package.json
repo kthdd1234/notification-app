@@ -51,6 +51,7 @@
     "react-native-screens": "^3.27.0",
     "react-native-share": "^10.0.1",
     "react-native-snackbar": "^2.6.2",
+    "react-native-splash-screen": "^3.3.0",
     "react-native-store-review": "^0.4.3",
     "react-native-svg": "^13.14.0",
     "react-native-swipeable-item": "^2.0.9",

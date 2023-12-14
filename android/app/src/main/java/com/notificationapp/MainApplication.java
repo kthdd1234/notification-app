@@ -1,5 +1,6 @@
 package com.simplenotificationapp;
 
+import android.os.Bundle;
 import android.app.Application;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -10,6 +11,8 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; 
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import org.devio.rn.splashscreen.SplashScreen;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -28,11 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
           // packages.add(new ReactNativePushNotificationPackage());
           
+          packages.add(new SplashScreenReactPackage());
           return packages;
-          // return Arrays.<ReactPackage>asList(
-          //     new MainReactPackage(),
-          //     new ReactNativePushNotificationPackage() 
-          // );
         }
 
 
